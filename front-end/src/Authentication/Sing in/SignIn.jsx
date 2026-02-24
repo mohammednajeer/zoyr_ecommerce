@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import { toast } from 'react-toastify';
+import api from "../../api/api"
 
 function SignIn() {
   const [user, setuser] = useState("")
@@ -13,12 +14,12 @@ function SignIn() {
   let [error, setError] = useState({})
   let nav = useNavigate()
 
-   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("loggedInUser"));
-    if (user) {
-      nav("/", { replace: true });
-    }
-  }, [nav]);
+//    useEffect(() => {
+//   const token = localStorage.getItem("access");
+//   if (token) {
+//     nav("/", { replace: true });
+//   }
+// }, [nav]);
 
   async function handleSubmit() {
   let newError = {}
@@ -27,31 +28,49 @@ function SignIn() {
 
   if (Object.keys(newError).length === 0) {
     try {
-      let res = await axios.get(
-        `http://localhost:4000/Users?username=${user}&password=${password}`
-      );
+      
+      let res = await api.post("login/",{
+        username:user,
+        password: password
+      });
+      localStorage.setItem("access",res.data.access);
+      localStorage.setItem("refresh",res.data.refresh);
 
-      if (res.data.length === 0) {
-        toast.error("Invalid username or password ");
-        return;
+      let profile = await api.get("profile/");
+      localStorage.setItem("user",JSON.stringify(profile.data))
+      if(profile.data.role == "admin"){
+        nav("/dashboard");
       }
-
-      const loggedUser = res.data[0];
-
-      if (loggedUser.status === "block") {
-        toast.error("You have been blocked by admin ");
-        return;
+      else{
+        toast.dark("login success");
+        nav("/");
       }
+      
+      // let res = await axios.get(
+      //   `http://localhost:4000/Users?username=${user}&password=${password}`
+      // );
 
-      localStorage.setItem("loggedInUser", JSON.stringify(loggedUser));
+      // if (res.data.length === 0) {
+      //   toast.error("Invalid username or password ");
+      //   return;
+      // }
 
-      if (loggedUser.role === "admin") {
-        toast.dark("Welcome Admin");
-        nav("/dashboard", { replace: true });
-      } else {
-        toast.dark("Login success");
-        nav("/", { replace: true });
-      }
+      // const loggedUser = res.data[0];
+
+      // if (loggedUser.status === "block") {
+      //   toast.error("You have been blocked by admin ");
+      //   return;
+      // }
+
+      // localStorage.setItem("loggedInUser", JSON.stringify(loggedUser));
+
+      // if (loggedUser.role === "admin") {
+      //   toast.dark("Welcome Admin");
+      //   nav("/dashboard", { replace: true });
+      // } else {
+      //   toast.dark("Login success");
+      //   nav("/", { replace: true });
+      // }
 
     } catch (err) {
       console.error("Login error:", err);

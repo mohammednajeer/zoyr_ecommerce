@@ -15,7 +15,7 @@ function NavBar(props) {
 
   
   useEffect(() => {
-    const storedUser = localStorage.getItem("loggedInUser");
+    const storedUser = localStorage.getItem("user");
     if (storedUser) {
       setLoggedUser(JSON.parse(storedUser));
     }
@@ -46,7 +46,9 @@ function NavBar(props) {
   }, [loggedUser]);
 
   const handleLogout = () => {
-    localStorage.removeItem("loggedInUser");
+    localStorage.removeItem("access");
+    localStorage.removeItem("refresh");
+    localStorage.removeItem("user");
     setLoggedUser(null);
     toast.dark("Logged out");
   };
