@@ -33,8 +33,6 @@ function SignIn() {
         username:user,
         password: password
       });
-      localStorage.setItem("access",res.data.access);
-      localStorage.setItem("refresh",res.data.refresh);
 
       let profile = await api.get("profile/");
       localStorage.setItem("user",JSON.stringify(profile.data))
