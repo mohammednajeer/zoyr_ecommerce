@@ -1,0 +1,218 @@
+.vl-cont {
+  display: flex;
+  width: 100%;
+  height: auto;
+  background-color: black;
+}
+
+.vl-body {
+  color: white;
+  width: 80%;
+  margin-left: 20%;
+  min-height: 100vh;
+  background-color: #000;
+  padding: 30px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
+  justify-content: center;
+}
+
+
+.Prd-cards {
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 320px;
+  height: 440px;
+  background: rgba(33, 37, 41, 0.4);
+  backdrop-filter: blur(14px) saturate(180%);
+  -webkit-backdrop-filter: blur(14px) saturate(180%);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.Prd-cards:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 25px rgba(0, 212, 255, 0.15);
+}
+
+
+.Prdimg-div {
+  margin-top: 10px;
+  width: 300px;
+  height: 190px;
+  border-radius: 15px;
+  overflow: hidden;
+  transition: transform 0.3s ease;
+}
+
+.Prdimg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.Prd-cards:hover .Prdimg {
+  transform: scale(1.05);
+}
+
+
+.prdcards-details {
+  width: 85%;
+  margin-top: 10px;
+}
+
+.Btn--secion {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.prd-btn {
+  padding: 6px 14px;
+  background: linear-gradient(145deg, #3c6e91, #325c7a);
+  color: #fff;
+  font-weight: 600;
+  font-size: 14px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: inset 1px 1px 3px rgba(255, 255, 255, 0.05),
+              2px 2px 6px rgba(0, 0, 0, 0.4);
+}
+
+.prd-btn:hover {
+  background: linear-gradient(145deg, #437da6, #3a698a);
+  transform: translateY(-2px);
+}
+
+.Btn--secion h5 {
+  font-size: 17px;
+  color: #ffffffc7;
+}
+
+.Car-model-text {
+  text-align: center;
+  margin-top: 6px;
+  margin-bottom: 8px;
+}
+
+.Car-model-text span {
+  font-size: 15px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.75);
+}
+
+.Car-details {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  margin-top: 4px;
+}
+
+.DT-cntr {
+  width: 290px;
+  height: 80px;
+  border-radius: 14px;
+  display: flex;
+  justify-content: space-between;
+  border: 2px solid #ffffff71;
+  padding: 8px;
+}
+
+.Detail-sections {
+  width: 30%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #ffffffb4;
+}
+
+.Detail-sections p {
+  font-size: 9px;
+  font-weight: 600;
+  margin: 2px;
+}
+
+.Detail-sections h6 {
+  font-size: 15px;
+}
+
+
+.Btn-wrapper {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+
+.Edit-Btn {
+  padding: 8px 22px;
+  background: linear-gradient(145deg, #7a1c1c, #5f1414);
+  color: #fff;
+  font-weight: 600;
+  font-size: 14px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: inset 1px 1px 3px rgba(255, 255, 255, 0.05),
+              2px 2px 6px rgba(0, 0, 0, 0.4);
+}
+
+.Edit-Btn:hover {
+  background: linear-gradient(145deg, #8b2222, #6e1818);
+  transform: translateY(-2px);
+  box-shadow: 0 0 10px rgba(255, 40, 40, 0.2);
+}
+
+
+.Status-Btn {
+  padding: 8px 22px;
+  background: linear-gradient(145deg, #1f3f91, #1a3578);
+  color: #fff;
+  font-weight: 600;
+  font-size: 14px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: inset 1px 1px 3px rgba(255, 255, 255, 0.05),
+              2px 2px 6px rgba(0, 0, 0, 0.4);
+}
+
+.Status-Btn:hover {
+  background: linear-gradient(145deg, #2748a3, #203d85);
+  transform: translateY(-2px);
+  box-shadow: 0 0 10px rgba(59, 130, 246, 0.25);
+}
+.vl-top-bar {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.Add-Btn {
+  background: linear-gradient(145deg, #198754, #126b42);
+  color: white;
+  border: none;
+  padding: 10px 22px;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.Add-Btn:hover {
+  background: linear-gradient(145deg, #20a063, #177a4f);
+  transform: translateY(-2px);
+}

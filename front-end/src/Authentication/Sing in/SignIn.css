@@ -1,0 +1,195 @@
+.maind {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+  
+    padding: 0;
+    margin: 0;
+    background-color: #000;
+}
+
+.maind::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* background: url('../../assets/wp8156270-ferrari-black-wallpapers.jpg') no-repeat center center; */
+    background-size: cover;
+    opacity: 0.5;
+    z-index: 0;
+}
+
+
+.container {
+    display: flex;
+    flex-direction: column;
+    background: rgba(40, 40, 40, 0.25);
+    backdrop-filter: blur(5px) saturate(10%);
+    -webkit-backdrop-filter: blur(5px) saturate(10%);
+    padding: 25px 20px; 
+    border-radius: 15px; 
+    box-shadow: 0 8px 30px rgba(0,0,0,0.7);
+    width: 350px; 
+    position: relative;
+    z-index: 1;
+    border: 1px solid rgba(255,255,255,0.2);
+}
+
+
+.logo-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+.logo-container img {
+    width: 180px;  
+    height: auto;  
+    object-fit: contain;
+}
+
+
+.header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+}
+
+.text {
+    color: #f2f2f2;
+    font-size: 36px; 
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.underline {
+    width: 60px; 
+    height: 5px;
+    background: linear-gradient(90deg, #bb86fc, #8a2be2);
+    border-radius: 5px;
+}
+
+
+.inputs {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.input {
+    display: flex;
+    align-items: center;
+    background: rgba(255,255,255,0.05);
+    border-radius: 10px; 
+    padding: 0 15px; 
+    height: 50px; 
+    border: 1px solid rgba(255,255,255,0.1);
+    transition: all 0.3s ease;
+}
+
+.input:hover {
+    background: rgba(255,255,255,0.08);
+    border-color: #bb86fc;
+}
+
+.input img {
+    width: 20px;
+    height: 20px; 
+    margin-right: 15px;
+    filter: invert(75%) sepia(10%) saturate(100%) hue-rotate(200deg);
+}
+
+.input input {
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: #fff;
+    font-size: 16px;
+}
+
+
+.errortext {
+    color: #ff6b6b;
+    font-size: 13px; 
+    margin-top: 4px;
+    margin-left: 8px;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+
+.submit-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 15px;
+}
+
+.submit {
+    width: 100%;
+    padding: 12px 0; 
+    background-color: #708090;
+    border: none;
+    border-radius: 10px;
+    color: rgba(242, 230, 230, 0.9); 
+    font-size: 18px; 
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(112, 128, 144, 0.5);
+}
+
+.submit:hover {
+    background-color: #6d8398;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(112, 128, 144, 0.7);
+}
+
+
+.guidtosign {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-top: 15px;
+}
+
+.guidtosign p {
+    color: #ccc;
+    font-size: 14px; 
+}
+
+.navigateLink {
+    color: #1a73e8;
+    font-weight: 500;
+    font-size: 14px;
+    font-family: "Segoe UI", Arial, sans-serif;
+    text-decoration: none;
+    cursor: pointer;
+    transition: color 0.2s ease, text-decoration 0.2s ease;
+}
+
+.navigateLink:hover {
+    color: #0c47a1;
+    text-decoration: underline;
+}
+
+.navigateLink:active {
+    color: #174ea6;
+}
+
+a.navigateLink:visited {
+    color: #6a1b9a;
+}
+
+@keyframes fadeIn {
+    0% {opacity: 0;}
+    100% {opacity: 1;}
+}

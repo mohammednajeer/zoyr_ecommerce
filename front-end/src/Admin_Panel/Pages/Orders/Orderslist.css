@@ -1,0 +1,151 @@
+/* Container */
+.ord-cont {
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+  background-color: #0d0d0d;
+  font-family: 'Poppins', sans-serif;
+}
+
+
+.ord-body {
+  width: 80%;
+  margin-left: 20%;
+  padding: 20px;
+  box-sizing: border-box;
+  background: linear-gradient(160deg, #0f0f0f, #1a1a1a);
+  color: #fff;
+}
+
+
+.ord-body h2 {
+  font-size: 24px;
+  margin-bottom: 15px;
+  color: #e0e0e0;
+  font-weight: 600;
+}
+
+
+.ords-list {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+
+.ordl {
+  background-color: #1c1c1c;
+  border-radius: 15px;
+  border: 1px solid #2a2a2a;
+  padding: 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.ordl:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+}
+
+.ordl h2 {
+  font-size: 18px;
+  margin-bottom: 3px;
+  color: #fff;
+}
+
+.ordl p {
+  font-size: 13px;
+  margin: 2px 0;
+  color: #bfbfbf;
+}
+
+.ordl h4 {
+  margin-top: 10px;
+  margin-bottom: 8px;
+  color: #fff;
+  font-size: 15px;
+}
+
+
+.order-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-top: 10px;
+}
+
+
+.crds {
+  flex: 1 1 calc(50% - 15px); 
+  display: flex;
+  align-items: center;
+  background-color: #262626;
+  border-radius: 10px;
+  padding: 10px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  gap: 15px;
+}
+
+.crds:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+}
+
+
+.Ords-img {
+  width: 150px;
+  height: 110px;
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: #333;
+  flex-shrink: 0;
+}
+
+.Ords-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+
+.cart-detls h3 {
+  margin: 0 0 3px 0;
+  font-size: 14px;
+  color: #f1f1f1;
+}
+
+.cart-detls p {
+  font-size: 12px;
+  margin: 1px 0;
+  color: #bfbfbf;
+}
+
+
+.line {
+  height: 1px;
+  background-color: #333;
+  margin-top: 10px;
+}
+
+
+.status-btn {
+  margin-top: 15px;
+  margin-right: 20px;
+  width: 120px;
+  height: 40px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.status-btn:hover {
+  background-color: #0056b3;
+  transform: translateY(-1px);
+}
+.sdfg{
+  display: flex;
+  justify-content: space-between;
+}

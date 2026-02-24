@@ -1,0 +1,149 @@
+
+body{
+  margin: 0%;
+}
+.navbar {
+
+  height: 100px;
+  position: fixed;
+  top: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 40px;
+
+
+  
+  background: rgba(255, 255, 255, 0.1); 
+  backdrop-filter: blur(12px) saturate(150%); 
+  -webkit-backdrop-filter: blur(12px) saturate(150%);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15); 
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2); 
+}
+
+
+.leftside  {
+    width: 40%;
+    height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+}
+.leftside ul li{
+  color: #ffffffb8;
+}
+.leftside ul li:hover{
+   color: #ffffffd7;
+}
+.rightside{
+  width: 40%;
+
+  align-items: center;
+  
+}
+
+
+.logocont {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  width: 20%;
+}
+
+.logocont img {
+  height: 100px;
+  width: 300px;
+
+}
+
+
+ul {
+  list-style: none;
+  display: flex;
+  gap: 30px;
+  margin: 0;
+  padding: 0;
+  width: 60%;
+  justify-content: space-between;
+}
+
+ul li {
+  cursor: pointer;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+ul li:hover {
+  color: #a9a3b0; 
+}
+
+
+.rightside ul li {
+  
+  font-weight: 500;
+  color: #ffffffb8;
+}
+.rightside ul li:hover{
+  color: #ffffffd7;
+}
+.rightside ul{
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-left: 20px;
+  column-gap: 40px;
+
+}
+.navimgs{
+  width: 25px;
+  height: 25px;
+  opacity: 0.8;
+}
+.navimgs:hover{
+  opacity: 0.9;
+}
+.user-select {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.6);
+  color: white;
+  font-size: 15px;
+  font-weight: 500;
+  padding: 5px 10px;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+
+.user-select:hover {
+  border-bottom: 1px solid white;
+}
+
+.user-select:focus {
+  border-bottom: 1px solid #00bcd4;
+}
+
+.user-select option {
+  background: rgba(0, 0, 0, 0.9); 
+  color: white;
+  font-size: 14px;
+}
+.cart-count {
+  background: rgb(107, 107, 107);
+  color: white;
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  font-size: 12px;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: -6px;
+}
+.cartdiv{
+  display: flex;
+  
+}

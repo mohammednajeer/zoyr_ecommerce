@@ -1,0 +1,38 @@
+.oplcont {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column; 
+  align-items: center;
+  
+  background-color: black;
+  color: white;
+  padding: 20px 0;
+}
+
+.opl-video {
+    margin-top: -60px;
+  width: 60%;
+  max-height:600px; 
+  object-fit: cover;
+}
+
+.opl-body {
+  margin-top: -90px;
+  text-align: center;
+}
+.hm-btn{
+    margin-top: 20px;
+ padding: 12px 28px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+  background: linear-gradient(135deg, #0d47a1, #1976d2); 
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: transform 0.3s ease, background 0.3s ease;
+}
+.hm-btn:hover{
+    transform: scale(1.05);
+}

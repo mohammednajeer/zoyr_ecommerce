@@ -1,0 +1,186 @@
+.Wcontainer {
+  width: 100%;
+  min-height: 100vh;
+  padding-top: 80px;
+  background-color: #111;
+  color: white;
+  box-sizing: border-box;
+}
+
+.wbody {
+  width: 100%;
+  background-color: black;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  column-gap: 40px;
+  row-gap: 40px;
+  padding: 40px;
+  min-height: 520px;
+}
+
+
+.prd-cards {
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 400px;
+  height: 540px;
+  background-color: #212529;
+  border-radius: 20px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  background: rgba(33, 37, 41, 0.35);
+  backdrop-filter: blur(12px) saturate(160%);
+  -webkit-backdrop-filter: blur(12px) saturate(160%);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+}
+
+.prd-cards:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+}
+
+.prdimg-div {
+  margin-top: 9px;
+  width: 380px;
+  height: 260px;
+  border-radius: 20px;
+  overflow: hidden;
+  box-sizing: border-box;
+  transition: transform 0.2s ease;
+}
+
+.prdimg {
+  width: 380px;
+  height: 260px;
+  object-fit: cover;
+  transition: transform 0.2s ease;
+}
+
+.prd-cards:hover .prdimg {
+  transform: scale(1.03);
+}
+
+.prdcard-details {
+  width: 80%;
+}
+
+.btn--secion {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.btn--secion h5 {
+  font-size: 20px;
+  margin-right: -8px;
+  color: #ffffffc7;
+}
+
+.car-model-text {
+  display: flex;
+  justify-content: center;
+  margin-top: 5px;
+  margin-bottom: 10px;
+}
+
+.car-model-text span {
+  font-size: 17px;
+  font-weight: 500;
+  margin-left: 10px;
+  color: rgba(255, 255, 255, 0.723);
+}
+
+.car-details {
+  margin-top: -10px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.dt-cntr {
+  margin-top: -20px;
+  width: 350px;
+  height: 90px;
+  border-radius: 14px;
+  display: flex;
+  justify-content: space-between;
+  border: 2px solid #ffffff71;
+}
+
+.detail-sections {
+  width: 30%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  row-gap: 3px;
+  align-items: center;
+  color: #ffffff99;
+}
+
+.detail-sections p {
+  font-size: 10px;
+  font-weight: 600;
+  margin: 5px;
+}
+
+.detail-sections h6 {
+  font-size: 18px;
+}
+
+.AddBtn {
+  padding: 12px 28px;
+  width: 45%;
+  background: linear-gradient(135deg, #8b0000, #b22222);
+  color: #fff;
+  font-weight: 600;
+  font-size: 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.AddBtn:hover {
+  background: linear-gradient(135deg, #8b0000da, #b22222db);
+  transform: translateY(-2px);
+}
+
+.remove-btn {
+  padding: 12px 28px;
+  width: 45%;
+  background: linear-gradient(135deg, #555, #333);
+  color: #fff;
+  font-weight: 600;
+  font-size: 16px;
+  margin-top: 14px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.remove-btn:hover {
+  background: linear-gradient(135deg, #777, #555);
+  transform: translateY(-2px);
+}
+
+.actions {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.empty-msg {
+  font-size: 18px;
+  text-align: center;
+  margin-top: 50px;
+  color: #888;
+}

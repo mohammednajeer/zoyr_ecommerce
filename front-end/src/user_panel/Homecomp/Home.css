@@ -1,0 +1,485 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: "Poppins", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+
+
+}
+
+body, html {
+  overflow-x: hidden; /* prevents horizontal scroll */
+}
+
+/* Navbar */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 10;
+  background: rgba(0, 0, 0, 0.216);
+  padding: 0 40px;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Fullscreen carousel */
+.carousel {
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+  overflow: hidden;
+}
+
+.carimg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 0;
+}
+
+/* Hero content */
+/* Hero content */
+.hero-content {
+  position: absolute;
+  top: 50%;
+  left: 50px;
+  right: 50px;
+  transform: translateY(-50%);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: calc(100% - 100px);
+  z-index: 5;
+}
+
+/* Hero heading */
+.hero-content h1 {
+  font-family: "DM Serif Display", serif;
+  color: #fff;
+  font-size: 3.8rem;
+  font-weight: 500;
+  text-shadow: 2px 2px 20px rgba(0,0,0,0.9);
+  max-width: 40%;
+  line-height: 1.2;
+  margin-top: 200px;
+}
+
+.hero-content h1 span {
+  background: linear-gradient(90deg, #d4af37, #b9972e);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 600;
+}
+
+/* Porsche details card */
+.Porschedetails {
+  width: 380px;
+  background: rgba(15, 15, 15, 0.65);
+  backdrop-filter: blur(8px) saturate(160%);
+  padding: 25px 22px;
+  border-radius: 15px;
+  color: #ffffffd9;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  box-shadow: 0 6px 25px rgba(0,0,0,0.6);
+  margin-top: 200px;
+  animation: fadeInUp 1s ease;
+}
+
+.Porschedetails h3 {
+  font-size: 22px;
+  font-weight: 600;
+  color: #f5f5f5;
+  margin-bottom: 8px;
+}
+
+.Porschedetails p {
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+/* Premium button */
+.product-btn {
+  padding: 10px 22px;
+  background: linear-gradient(135deg, #8b0000, #c62828);
+  color: #fff;
+  font-weight: 600;
+  font-size: 16px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  margin-top: 12px;
+  transition: all 0.3s ease;
+}
+
+.product-btn:hover {
+  background: linear-gradient(135deg, #a00000, #d63030);
+  box-shadow: 0 0 12px rgba(220, 20, 60, 0.6);
+  transform: translateY(-3px);
+}
+
+/* Subtle fade animation */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(40px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.price-btn{
+    padding: 8px 18px;
+  background:#4980b7;
+  color: #fff;
+  font-weight: 600;
+  font-size: 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-left: -15px;
+  margin-top: 10px;
+  transition: all 0.2s ease;
+}
+.price-btn:hover{
+    background:#4680ba;
+  box-shadow: 0 0 2px#4980b7, 0 0 2px #4980b7;
+  transform: translateY(-2px);
+}
+
+/* Product Card */
+.productcard {
+  overflow: hidden;           /* keeps zoomed image inside */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 400px;
+  height: 530px;
+  background-color: #212529;
+  border-radius: 20px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  /* Glass effect code . delete it  if doesnt needed */
+    background: rgba(33, 37, 41, 0.35); /* transparent version of #212529 */
+  backdrop-filter: blur(12px) saturate(160%);
+  -webkit-backdrop-filter: blur(12px) saturate(160%);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+
+  /* Shadow + hover transition */
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+}
+
+/* Slight lift on card hover */
+.productcard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+}
+
+/* Product Image */
+.productimg {
+  margin-top: 9px;
+  width: 380px;
+  height: 260px;
+  border-radius: 20px;
+  object-fit: cover;
+  transition: transform 0.2s ease;
+}
+.productimg-div{
+  width: 380px;
+  height: 260px;
+  border-radius: 20px;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* Zoom effect on hover */
+.productcard:hover .productimg {
+  transform: scale(1.03);
+}
+
+/* Product Card Details */
+.productcard-details {
+  width: 80%;
+}
+
+.btnsecion {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.btnsecion h5 {
+  margin-right: -8px;
+  font-size: 22px;
+  color: #ffffffc7;
+}
+
+.cardetails {
+  margin-top: -10px;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.dt-container {
+  margin-top: -20px;
+  width: 350px;
+  height: 90px;
+  border-radius: 14px;
+  display: flex;
+  justify-content: space-between;
+  border: 2px solid #ffffff71;
+}
+
+.detailsections {
+  width: 30%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  row-gap: 3px;
+  align-items: center;
+  color: #ffffff99;
+}
+
+.detailsections p {
+  font-size: 10px;
+  font-weight: 600;
+  margin: 5px;
+}
+
+.detailsections h6 {
+  font-size: 18px;
+}
+
+.Add-btn {
+  padding: 12px 28px;
+  width: 40%;
+ background: linear-gradient(135deg, #8b0000, #b22222);
+color: #fff;
+
+
+  font-weight: 600;
+  font-size: 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-left: -15px;
+  margin-top: 14px;
+  transition: all 0.2s ease;
+  box-shadow: 0 0 6px linear-gradient(135deg, #8b0000, #b22222);
+}
+
+.Add-btn:hover {
+  background: linear-gradient(135deg, #8b0000da, #b22222db);
+  box-shadow: 0 0 7px linear-gradient(135deg, #8b0000, #b22222), 0 0 7px linear-gradient(135deg, #8b0000, #b22222);
+  transform: translateY(-2px);
+}
+.carsections{
+  width: 100%;
+  min-height: 600px;
+  background-color: #000;
+
+  display: flex;
+  column-gap: 40px;
+  align-items: center;
+  justify-content: center;
+}
+.tittleofcars{
+  width: 100%;
+  height: 100px;
+  color: rgba(255, 255, 255, 0.795);
+   background-color: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.tittleofcars h2{
+   font-family: "Merriweather", serif;
+  font-optical-sizing: auto;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 40px;
+}
+.carmodeltext{
+  display: flex;
+  justify-content: center;
+  margin-top: 5px;
+  margin-bottom: 10px;
+
+}
+.carmodeltext span{
+  font-size: 18px;
+  font-weight: 500;
+  margin-left: 10px;
+  color: rgba(255, 255, 255, 0.723);
+
+}
+.abt {
+  width: 100%;
+  padding: 80px 50px;
+  display: flex;
+  flex-direction: column;
+  gap: 80px;
+  background: linear-gradient(180deg, #000000, #111111);
+}
+
+
+.abt-bx {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 50px;
+  justify-content: center;
+}
+
+
+
+.abt-img {
+  flex: 1 1 400px;
+  max-width: 600px;
+  height: 400px;
+  overflow: hidden;
+  border-radius: 20px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.7);
+  transition: transform 0.3s ease;
+}
+
+
+.abt-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.abt-img:hover img {
+  transform: scale(1.05);
+}
+
+
+
+.abt-ptag {
+  flex: 1 1 400px;
+  max-width: 600px;
+  color: #cccaca;
+  font-size: 17px;
+  line-height: 1.8;
+  font-weight: 400;
+  text-align: justify;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+  transition: transform 0.3s ease;
+}
+
+.abt-ptag:hover {
+  transform: translateY(-5px);
+}
+
+
+.abt-ptag h3 {
+  font-size: 28px;
+  color: #beae79;
+  margin-bottom: 15px;
+  font-family: "DM Serif Display", serif;
+}
+
+
+@media screen and (max-width: 1024px) {
+  .abt-bx {
+    flex-direction: column;
+    gap: 30px;
+  }
+  .abt-img, .abt-ptag {
+    max-width: 100%;
+    height: auto;
+  }
+  .abt-ptag {
+    padding: 20px;
+  }
+}
+
+
+.footer {
+  background-color: #0b0b0b;
+  color: #fff;
+  padding: 60px 20px 20px 20px;
+  font-family: "Poppins", sans-serif;
+}
+
+.footer-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 30px;
+}
+
+.footer-section {
+  flex: 1;
+  min-width: 250px;
+}
+
+.footer-section h3, .footer-section h4 {
+  font-family: "Merriweather", serif;
+  color: #beae79;
+  margin-bottom: 15px;
+}
+
+.footer-section p, .footer-section ul, .footer-section li {
+  color: #ffffffb3;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.footer-section ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer-section ul li {
+  margin-bottom: 10px;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.footer-section ul li:hover {
+  color: #beae79;
+}
+
+.social-icons {
+  display: flex;
+  gap: 15px;
+  margin-top: 10px;
+}
+.social-icons img {
+  width: 25px;
+  height: 25px;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.social-icons img:hover {
+  transform: scale(1.15);
+  opacity: 0.8; 
+}
+
+.footer-bottom {
+  margin-top: 40px;
+  text-align: center;
+  font-size: 13px;
+  color: #ffffff7a;
+  border-top: 1px solid #ffffff1f;
+  padding-top: 15px;
+}
