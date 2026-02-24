@@ -30,20 +30,13 @@ function SignUp() {
 
     if (Object.keys(newError).length === 0) {
       try {
-        const newUser = {
-          id:Date.now()+"",
-          username: trimmedUser,
-          email: trimmedEmail,
-          password: trimmedPassword,
-          status:"active",
-          role:"user",
-          cart:[],
-          wishlist:[],
-          orders:[]
-         
-        }
 
-        await axios.post("http://localhost:4000/Users", newUser)
+        await axios.post("http://127.0.0.1:8000/api/register/",
+          {
+            username:trimmedUser,
+            email : trimmedEmail,
+            password:trimmedPassword
+          })
 
         toast.dark("Signup successful ")
         nav("/login") 
