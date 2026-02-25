@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     'corsheaders',
     'accounts',
     'products',
+    "cloudinary",
+    "cloudinary_storage",
 
 ]
 
@@ -138,7 +140,13 @@ USE_I18N = True
 
 USE_TZ = True
 
+import cloudinary
 
+cloudinary.config(
+    cloud_name="YOUR_CLOUD_NAME",
+    api_key="YOUR_API_KEY",
+    api_secret="YOUR_SECRET"
+)
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 

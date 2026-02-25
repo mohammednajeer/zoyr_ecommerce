@@ -1,4 +1,6 @@
 from django.db import models
+from cloudinary.models import CloudinaryField
+from django.conf import settings
 
 class Product(models.Model):
 
@@ -19,8 +21,23 @@ class Product(models.Model):
                                     choices=AVAILABILITY_CHOICES,
                                     default="available")
     
-    imageSource = models.CharField( max_length=600)
+    image = CloudinaryField("image", blank=True, null=True)
 
     def __str__(self):
         return f"{self.brand} {self.model}"
+    
+User  = settings.AUTH_USER_MODEL
+
+class Reservation(models.Model):
+    user = models.ForeignKey(User,on_delete=models.CASCADE)
+    products = models.OneToOneField(Product, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user} reserved {self.product}"
+    
+class Order(models.Model):
+    user = models.ForeignKey(User,on_delete=models.CASCADE)
+    product = models.ForeignKey(Product,on_delete=models.CASCADE)
+    status = models.CharField(max_length=100,default="placed")
     
