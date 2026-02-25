@@ -1,34 +1,32 @@
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  font-family: "Poppins", sans-serif;
-  font-weight: 400;
-  font-style: normal;
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Rajdhani:wght@400;500;600;700&display=swap');
 
-
+/* ── CSS Variables ─────────────────────────────── */
+:root {
+  --gold: #c9a84c;
+  --gold-light: #e8cc7a;
+  --gold-glow: rgba(201, 168, 76, 0.28);
+  --gold-dim: rgba(201, 168, 76, 0.1);
+  --surface-1: rgba(14, 14, 16, 0.97);
+  --surface-2: rgba(22, 22, 26, 0.88);
+  --surface-3: rgba(36, 36, 42, 0.7);
+  --border: rgba(201, 168, 76, 0.18);
+  --border-hover: rgba(201, 168, 76, 0.5);
+  --text-primary: #f0ece4;
+  --text-secondary: #9e9a91;
+  --text-muted: #5a5650;
+  --bg-dark: #08080a;
+  --radius-lg: 18px;
+  --radius-md: 12px;
+  --radius-sm: 8px;
+  --transition: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-body, html {
-  overflow-x: hidden; /* prevents horizontal scroll */
-}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body, html { overflow-x: hidden; }
 
-/* Navbar */
-.navbar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  z-index: 10;
-  background: rgba(0, 0, 0, 0.216);
-  padding: 0 40px;
-  height: 100px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-/* Fullscreen carousel */
+/* ═══════════════════════════════════════════════
+   HERO / CAROUSEL
+═══════════════════════════════════════════════ */
 .carousel {
   width: 100vw;
   height: 100vh;
@@ -41,300 +39,487 @@ body, html {
   height: 100%;
   object-fit: cover;
   position: absolute;
-  top: 0;
-  left: 0;
+  inset: 0;
   z-index: 0;
+  filter: brightness(0.55) saturate(0.85);
+  transform: scale(1.04);
+  animation: heroZoom 18s ease-in-out infinite alternate;
 }
 
-/* Hero content */
-/* Hero content */
+@keyframes heroZoom {
+  from { transform: scale(1.04); }
+  to   { transform: scale(1.10); }
+}
+
+/* Gradient overlays */
+.carousel::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to right,
+    rgba(8,8,10,0.75) 0%,
+    rgba(8,8,10,0.15) 50%,
+    rgba(8,8,10,0.55) 100%
+  );
+  z-index: 1;
+}
+
+.carousel::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 220px;
+  background: linear-gradient(to top, var(--bg-dark) 0%, transparent 100%);
+  z-index: 1;
+}
+
+/* Gold top beam */
+.carousel .beam {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  animation: beam 4s ease-in-out infinite;
+  z-index: 20;
+}
+
+@keyframes beam {
+  0%, 100% { opacity: 0.4; transform: scaleX(0.6); }
+  50%       { opacity: 1;   transform: scaleX(1); }
+}
+
+/* ── Hero Content ──────────────────────────────── */
 .hero-content {
   position: absolute;
   top: 50%;
-  left: 50px;
-  right: 50px;
+  left: 60px;
+  right: 60px;
   transform: translateY(-50%);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  width: calc(100% - 100px);
   z-index: 5;
 }
 
-/* Hero heading */
+.hero-left {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 46%;
+  animation: fadeLeft 1s cubic-bezier(0.4,0,0.2,1) 0.2s both;
+}
+
+.hero-eyebrow {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--gold);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.hero-eyebrow::before {
+  content: '';
+  display: block;
+  width: 30px;
+  height: 1px;
+  background: var(--gold);
+  opacity: 0.7;
+}
+
 .hero-content h1 {
-  font-family: "DM Serif Display", serif;
-  color: #fff;
-  font-size: 3.8rem;
-  font-weight: 500;
-  text-shadow: 2px 2px 20px rgba(0,0,0,0.9);
-  max-width: 40%;
-  line-height: 1.2;
-  margin-top: 200px;
+  font-family: 'Cormorant Garamond', serif;
+  color: var(--text-primary);
+  font-size: clamp(2.8rem, 5.5vw, 5rem);
+  font-weight: 600;
+  line-height: 1.12;
+  letter-spacing: 0.01em;
+  text-shadow: 0 4px 40px rgba(0,0,0,0.8);
 }
 
 .hero-content h1 span {
-  background: linear-gradient(90deg, #d4af37, #b9972e);
+  background: linear-gradient(120deg, var(--gold-light) 0%, var(--gold) 55%, #9c7428 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  font-weight: 600;
+  background-clip: text;
+  font-style: italic;
 }
 
-/* Porsche details card */
+.hero-tagline {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  opacity: 0.75;
+}
+
+/* ── Hero Info Card ────────────────────────────── */
 .Porschedetails {
-  width: 380px;
-  background: rgba(15, 15, 15, 0.65);
-  backdrop-filter: blur(8px) saturate(160%);
-  padding: 25px 22px;
-  border-radius: 15px;
-  color: #ffffffd9;
+  width: 360px;
+  background: var(--surface-1);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  padding: 32px 28px;
+  border-radius: var(--radius-lg);
+  color: var(--text-primary);
   display: flex;
   flex-direction: column;
-  gap: 15px;
-  box-shadow: 0 6px 25px rgba(0,0,0,0.6);
-  margin-top: 200px;
-  animation: fadeInUp 1s ease;
+  gap: 16px;
+  border: 1px solid var(--border);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.7), 0 0 30px rgba(201,168,76,0.05);
+  animation: fadeRight 1s cubic-bezier(0.4,0,0.2,1) 0.35s both;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Corner accent */
+.Porschedetails::before {
+  content: '';
+  position: absolute;
+  top: 14px; right: 14px;
+  width: 40px; height: 40px;
+  border-top: 1px solid var(--gold);
+  border-right: 1px solid var(--gold);
+  border-radius: 0 6px 0 0;
+  opacity: 0.3;
 }
 
 .Porschedetails h3 {
-  font-size: 22px;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.25rem;
   font-weight: 600;
-  color: #f5f5f5;
-  margin-bottom: 8px;
+  color: var(--gold-light);
+  letter-spacing: 0.04em;
 }
 
 .Porschedetails p {
-  font-size: 15px;
-  line-height: 1.6;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 0.92rem;
+  line-height: 1.75;
+  color: var(--text-secondary);
+  letter-spacing: 0.02em;
 }
 
-/* Premium button */
 .product-btn {
-  padding: 10px 22px;
-  background: linear-gradient(135deg, #8b0000, #c62828);
-  color: #fff;
-  font-weight: 600;
-  font-size: 16px;
+  padding: 13px 28px;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #0b0b0d;
+  background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold) 55%, #a07830 100%);
   border: none;
-  border-radius: 10px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
-  margin-top: 12px;
-  transition: all 0.3s ease;
+  width: fit-content;
+  position: relative;
+  overflow: hidden;
+  transition: transform var(--transition), box-shadow var(--transition), filter var(--transition);
+  box-shadow: 0 4px 20px rgba(201,168,76,0.3);
+}
+
+.product-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.22), transparent 55%);
+  opacity: 0;
+  transition: opacity var(--transition);
 }
 
 .product-btn:hover {
-  background: linear-gradient(135deg, #a00000, #d63030);
-  box-shadow: 0 0 12px rgba(220, 20, 60, 0.6);
-  transform: translateY(-3px);
-}
-
-/* Subtle fade animation */
-@keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(40px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.price-btn{
-    padding: 8px 18px;
-  background:#4980b7;
-  color: #fff;
-  font-weight: 600;
-  font-size: 16px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  margin-left: -15px;
-  margin-top: 10px;
-  transition: all 0.2s ease;
-}
-.price-btn:hover{
-    background:#4680ba;
-  box-shadow: 0 0 2px#4980b7, 0 0 2px #4980b7;
   transform: translateY(-2px);
+  box-shadow: 0 10px 35px rgba(201,168,76,0.4);
+  filter: brightness(1.06);
+}
+.product-btn:hover::before { opacity: 1; }
+
+@keyframes fadeLeft {
+  from { opacity: 0; transform: translateX(-40px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes fadeRight {
+  from { opacity: 0; transform: translateX(40px); }
+  to   { opacity: 1; transform: translateX(0); }
 }
 
-/* Product Card */
-.productcard {
-  overflow: hidden;           /* keeps zoomed image inside */
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 400px;
-  height: 530px;
-  background-color: #212529;
-  border-radius: 20px;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-
-  /* Glass effect code . delete it  if doesnt needed */
-    background: rgba(33, 37, 41, 0.35); /* transparent version of #212529 */
-  backdrop-filter: blur(12px) saturate(160%);
-  -webkit-backdrop-filter: blur(12px) saturate(160%);
-  border-radius: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-
-  /* Shadow + hover transition */
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+/* ═══════════════════════════════════════════════
+   PRODUCTS SECTION
+═══════════════════════════════════════════════ */
+.showproduct {
+  background-color: var(--bg-dark);
 }
 
-/* Slight lift on card hover */
-.productcard:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-}
-
-/* Product Image */
-.productimg {
-  margin-top: 9px;
-  width: 380px;
-  height: 260px;
-  border-radius: 20px;
-  object-fit: cover;
-  transition: transform 0.2s ease;
-}
-.productimg-div{
-  width: 380px;
-  height: 260px;
-  border-radius: 20px;
-  overflow: hidden;
-  box-sizing: border-box;
-}
-
-/* Zoom effect on hover */
-.productcard:hover .productimg {
-  transform: scale(1.03);
-}
-
-/* Product Card Details */
-.productcard-details {
-  width: 80%;
-}
-
-.btnsecion {
+/* ── Section Title ─────────────────────────────── */
+.tittleofcars {
   width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.btnsecion h5 {
-  margin-right: -8px;
-  font-size: 22px;
-  color: #ffffffc7;
-}
-
-.cardetails {
-  margin-top: -10px;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-}
-
-.dt-container {
-  margin-top: -20px;
-  width: 350px;
-  height: 90px;
-  border-radius: 14px;
-  display: flex;
-  justify-content: space-between;
-  border: 2px solid #ffffff71;
-}
-
-.detailsections {
-  width: 30%;
-  height: 100%;
+  padding: 70px 0 40px;
   display: flex;
   flex-direction: column;
-  row-gap: 3px;
   align-items: center;
-  color: #ffffff99;
+  gap: 12px;
+  background-color: var(--bg-dark);
 }
 
-.detailsections p {
-  font-size: 10px;
+.tittleofcars h2 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2rem, 4vw, 3rem);
   font-weight: 600;
-  margin: 5px;
+  letter-spacing: 0.04em;
+  background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold) 55%, #9c7428 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
-.detailsections h6 {
-  font-size: 18px;
+.section-rule {
+  width: 80px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  opacity: 0.5;
 }
 
-.Add-btn {
-  padding: 12px 28px;
-  width: 40%;
- background: linear-gradient(135deg, #8b0000, #b22222);
-color: #fff;
-
-
-  font-weight: 600;
-  font-size: 16px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  margin-left: -15px;
-  margin-top: 14px;
-  transition: all 0.2s ease;
-  box-shadow: 0 0 6px linear-gradient(135deg, #8b0000, #b22222);
-}
-
-.Add-btn:hover {
-  background: linear-gradient(135deg, #8b0000da, #b22222db);
-  box-shadow: 0 0 7px linear-gradient(135deg, #8b0000, #b22222), 0 0 7px linear-gradient(135deg, #8b0000, #b22222);
-  transform: translateY(-2px);
-}
-.carsections{
+/* ── Car Grid ──────────────────────────────────── */
+.carsections {
   width: 100%;
   min-height: 600px;
-  background-color: #000;
-
+  background-color: var(--bg-dark);
   display: flex;
-  column-gap: 40px;
+  column-gap: 32px;
   align-items: center;
   justify-content: center;
+  padding: 20px 40px 80px;
+  flex-wrap: wrap;
+  row-gap: 32px;
 }
-.tittleofcars{
-  width: 100%;
-  height: 100px;
-  color: rgba(255, 255, 255, 0.795);
-   background-color: #000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.tittleofcars h2{
-   font-family: "Merriweather", serif;
-  font-optical-sizing: auto;
-  font-style: normal;
-  font-weight: 500;
-  font-size: 40px;
-}
-.carmodeltext{
-  display: flex;
-  justify-content: center;
-  margin-top: 5px;
-  margin-bottom: 10px;
 
-}
-.carmodeltext span{
-  font-size: 18px;
-  font-weight: 500;
-  margin-left: 10px;
-  color: rgba(255, 255, 255, 0.723);
-
-}
-.abt {
-  width: 100%;
-  padding: 80px 50px;
+/* ── Product Card ──────────────────────────────── */
+.prd-cards {
+  width: 320px;
   display: flex;
   flex-direction: column;
-  gap: 80px;
-  background: linear-gradient(180deg, #000000, #111111);
+  background: var(--surface-2);
+  backdrop-filter: blur(16px) saturate(170%);
+  -webkit-backdrop-filter: blur(16px) saturate(170%);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  overflow: hidden;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+  transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
+  animation: fadeUp 0.6s cubic-bezier(0.4,0,0.2,1) both;
+  position: relative;
 }
 
+.prd-cards::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(201,168,76,0.04) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.prd-cards:hover {
+  transform: translateY(-6px);
+  border-color: var(--border-hover);
+  box-shadow: 0 20px 55px rgba(0,0,0,0.55), 0 0 28px var(--gold-glow);
+}
+
+/* Image */
+.prdimg-div {
+  width: 100%;
+  height: 210px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.prdimg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: brightness(0.9) contrast(1.05) saturate(0.95);
+  transition: transform var(--transition), filter var(--transition);
+  display: block;
+}
+
+.prd-cards:hover .prdimg {
+  transform: scale(1.06);
+  filter: brightness(1) contrast(1.08) saturate(1);
+}
+
+/* Card body */
+.prdcard-details {
+  padding: 20px 20px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+  position: relative;
+  z-index: 2;
+}
+
+/* Brand + price row */
+.btn--secion {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.btn--secion h5 {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.prd-btn {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--gold-light);
+  background: none;
+  border: none;
+  cursor: default;
+  padding: 0;
+  letter-spacing: -0.01em;
+}
+
+/* Model name */
+.car-model-text {
+  margin: -2px 0 4px;
+}
+
+.car-model-text span {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: 0.02em;
+}
+
+/* Spec strip */
+.car-details {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.dt-cntr {
+  display: flex;
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  background: rgba(0,0,0,0.2);
+}
+
+.detail-sections {
+  flex: 1;
+  padding: 10px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  border-right: 1px solid rgba(255,255,255,0.06);
+  transition: background var(--transition);
+}
+
+.detail-sections:last-child { border-right: none; }
+.detail-sections:hover { background: rgba(201,168,76,0.05); }
+
+.detail-sections p {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  line-height: 1.2;
+  text-align: center;
+}
+
+.detail-sections h6 {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: 0.04em;
+}
+
+/* Add button */
+.AddBtn {
+  width: 100%;
+  height: 46px;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #0b0b0d;
+  background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold) 55%, #a07830 100%);
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: transform var(--transition), box-shadow var(--transition), filter var(--transition);
+  box-shadow: 0 4px 18px rgba(201,168,76,0.22);
+}
+
+.AddBtn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.22), transparent 55%);
+  opacity: 0;
+  transition: opacity var(--transition);
+}
+
+.AddBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(201,168,76,0.4);
+  filter: brightness(1.06);
+}
+.AddBtn:hover::before { opacity: 1; }
+.AddBtn:active { transform: translateY(0); }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ═══════════════════════════════════════════════
+   ABOUT SECTION
+═══════════════════════════════════════════════ */
+.abt {
+  width: 100%;
+  padding: 100px 60px;
+  display: flex;
+  flex-direction: column;
+  gap: 90px;
+  background:
+    linear-gradient(180deg, var(--bg-dark) 0%, #0d0d10 50%, var(--bg-dark) 100%);
+  position: relative;
+}
+
+/* Decorative center line */
+.abt::before {
+  content: '';
+  position: absolute;
+  top: 0; bottom: 0;
+  left: 50%;
+  width: 1px;
+  background: linear-gradient(180deg, transparent, rgba(201,168,76,0.12), transparent);
+  transform: translateX(-50%);
+  pointer-events: none;
+}
 
 .abt-bx {
   display: flex;
@@ -344,142 +529,250 @@ color: #fff;
   justify-content: center;
 }
 
-
-
 .abt-img {
   flex: 1 1 400px;
-  max-width: 600px;
-  height: 400px;
+  max-width: 560px;
+  height: 380px;
   overflow: hidden;
-  border-radius: 20px;
-  box-shadow: 0 10px 40px rgba(0,0,0,0.7);
-  transition: transform 0.3s ease;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  box-shadow: 0 16px 50px rgba(0,0,0,0.65), 0 0 0 1px rgba(0,0,0,0.5);
+  transition: border-color var(--transition), box-shadow var(--transition);
+  position: relative;
 }
 
+.abt-img::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(201,168,76,0.06) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.abt-img:hover {
+  border-color: var(--border-hover);
+  box-shadow: 0 24px 70px rgba(0,0,0,0.7), 0 0 30px var(--gold-glow);
+}
 
 .abt-img img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.5s ease;
+  filter: brightness(0.88) saturate(0.85) contrast(1.05);
+  transition: transform 0.6s ease, filter var(--transition);
 }
 
 .abt-img:hover img {
-  transform: scale(1.05);
+  transform: scale(1.06);
+  filter: brightness(0.95) saturate(0.95) contrast(1.05);
 }
-
-
 
 .abt-ptag {
   flex: 1 1 400px;
-  max-width: 600px;
-  color: #cccaca;
-  font-size: 17px;
-  line-height: 1.8;
+  max-width: 560px;
+  color: var(--text-secondary);
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 1rem;
+  line-height: 1.85;
   font-weight: 400;
-  text-align: justify;
-  background: rgba(255, 255, 255, 0.03);
-  padding: 30px;
-  border-radius: 15px;
-  box-shadow: 0 8px 30px rgba(0,0,0,0.5);
-  transition: transform 0.3s ease;
+  letter-spacing: 0.02em;
+  background: var(--surface-2);
+  padding: 36px 32px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+  transition: transform var(--transition), border-color var(--transition), box-shadow var(--transition);
+  position: relative;
+}
+
+/* corner accent */
+.abt-ptag::before {
+  content: '';
+  position: absolute;
+  top: 14px; left: 14px;
+  width: 40px; height: 40px;
+  border-top: 1px solid var(--gold);
+  border-left: 1px solid var(--gold);
+  border-radius: 4px 0 0 0;
+  opacity: 0.25;
 }
 
 .abt-ptag:hover {
   transform: translateY(-5px);
+  border-color: var(--border-hover);
+  box-shadow: 0 18px 55px rgba(0,0,0,0.5), 0 0 20px var(--gold-glow);
 }
-
-
-.abt-ptag h3 {
-  font-size: 28px;
-  color: #beae79;
-  margin-bottom: 15px;
-  font-family: "DM Serif Display", serif;
-}
-
 
 @media screen and (max-width: 1024px) {
-  .abt-bx {
-    flex-direction: column;
-    gap: 30px;
-  }
-  .abt-img, .abt-ptag {
-    max-width: 100%;
-    height: auto;
-  }
-  .abt-ptag {
-    padding: 20px;
-  }
+  .abt-bx { flex-direction: column; gap: 30px; }
+  .abt-img, .abt-ptag { max-width: 100%; height: auto; }
 }
 
-
+/* ═══════════════════════════════════════════════
+   FOOTER
+═══════════════════════════════════════════════ */
 .footer {
-  background-color: #0b0b0b;
-  color: #fff;
-  padding: 60px 20px 20px 20px;
-  font-family: "Poppins", sans-serif;
+  background-color: #06060a;
+  color: var(--text-primary);
+  padding: 70px 40px 24px;
+  font-family: 'Rajdhani', sans-serif;
+  border-top: 1px solid var(--border);
+  position: relative;
+}
+
+/* Gold top rule */
+.footer::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  opacity: 0.35;
 }
 
 .footer-container {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
-  gap: 30px;
+  gap: 40px;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
-.footer-section {
+.footer-section { flex: 1; min-width: 220px; }
+
+/* Brand name */
+.footer-section.about h3 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  background: linear-gradient(135deg, var(--gold-light), var(--gold));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 14px;
+}
+
+.footer-section h4 {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 18px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.footer-section h4::after {
+  content: '';
   flex: 1;
-  min-width: 250px;
+  height: 1px;
+  background: var(--gold);
+  opacity: 0.2;
 }
 
-.footer-section h3, .footer-section h4 {
-  font-family: "Merriweather", serif;
-  color: #beae79;
-  margin-bottom: 15px;
+.footer-section p,
+.footer-section ul,
+.footer-section li {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.7;
+  letter-spacing: 0.02em;
 }
 
-.footer-section p, .footer-section ul, .footer-section li {
-  color: #ffffffb3;
-  font-size: 14px;
-  line-height: 1.6;
+.footer-section.about p {
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  line-height: 1.8;
+  max-width: 280px;
 }
 
-.footer-section ul {
-  list-style: none;
-  padding: 0;
-}
+.footer-section ul { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 8px; }
 
 .footer-section ul li {
-  margin-bottom: 10px;
   cursor: pointer;
-  transition: color 0.3s ease;
+  transition: color var(--transition), padding-left var(--transition);
+  position: relative;
+  padding-left: 0;
+}
+
+.footer-section ul li::before {
+  content: '—';
+  color: var(--gold);
+  opacity: 0;
+  margin-right: 8px;
+  transition: opacity var(--transition);
 }
 
 .footer-section ul li:hover {
-  color: #beae79;
+  color: var(--gold-light);
+  padding-left: 6px;
 }
 
+.footer-section ul li:hover::before { opacity: 0.6; }
+
+/* Contact */
+.footer-section.contact p {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+
+/* Social icons */
 .social-icons {
   display: flex;
-  gap: 15px;
-  margin-top: 10px;
+  gap: 14px;
+  margin-top: 16px;
 }
+
 .social-icons img {
-  width: 25px;
-  height: 25px;
-  transition: transform 0.2s ease, opacity 0.2s ease;
+  width: 24px;
+  height: 24px;
+  filter: brightness(0.6) sepia(0.3);
+  transition: filter var(--transition), transform var(--transition);
+  cursor: pointer;
 }
 
 .social-icons img:hover {
-  transform: scale(1.15);
-  opacity: 0.8; 
+  filter: brightness(1.1) sepia(0.7) hue-rotate(-10deg) saturate(3);
+  transform: translateY(-3px) scale(1.12);
 }
 
+/* Footer bottom */
 .footer-bottom {
-  margin-top: 40px;
+  margin-top: 50px;
   text-align: center;
-  font-size: 13px;
-  color: #ffffff7a;
-  border-top: 1px solid #ffffff1f;
-  padding-top: 15px;
+  font-size: 0.78rem;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  border-top: 1px solid rgba(255,255,255,0.05);
+  padding-top: 20px;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ═══════════════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  .hero-content {
+    flex-direction: column;
+    left: 24px; right: 24px;
+    gap: 30px;
+    top: 55%;
+  }
+  .hero-left { max-width: 100%; }
+  .Porschedetails { width: 100%; }
+  .hero-content h1 { font-size: 2.5rem; }
+  .abt { padding: 60px 24px; }
+  .carsections { padding: 20px 24px 60px; }
+  .footer { padding: 50px 24px 20px; }
 }

@@ -1,176 +1,159 @@
 import React, { useEffect, useState } from 'react'
 import './Order.css'
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import api from "../../api/api";
 
 function Order() {
-  const [address, setAddress] = useState("");
-  const [Phone, setPhone] = useState("");
-  const [name, setName] = useState("");
-  const [city, setCity] = useState("");
-  const [pincode, setPincode] = useState("");
-  const [email, setEmail] = useState("");
-  const [userData, setUserData] = useState({});
+  const [address, setAddress]     = useState("");
+  const [Phone, setPhone]         = useState("");
+  const [name, setName]           = useState("");
+  const [city, setCity]           = useState("");
+  const [pincode, setPincode]     = useState("");
+  const [email, setEmail]         = useState("");
   const [cartProducts, setCartProducts] = useState([]);
 
   const nav = useNavigate();
 
   useEffect(() => {
-    async function fetchCart() {
-      let storeduser = JSON.parse(localStorage.getItem("loggedInUser"));
-      if (!storeduser) return;
-
+    async function fetchReservedCars() {
       try {
-
-        let userRes = await axios.get(`http://localhost:4000/Users/${storeduser.id}`);
-        let user = userRes.data;
-        setUserData(user);
-
-        if (!user.cart || user.cart.length === 0) {
-          setCartProducts([]);
-          return;
-        }
-
-
-        let productsRes = await axios.get("http://localhost:4000/Products");
-        let products = productsRes.data;
-
-
-        let cartWithDetails = user.cart
-          .map(item => {
-            let product = products.find(p => p.id === item.productId);
-            return product ? { ...product, quantity: item.quantity } : null;
-          })
-          .filter(Boolean);
-
-        setCartProducts(cartWithDetails);
-
+        const res  = await api.get("products/my-reservations/");
+        const cars = res.data.map(r => r.product);
+        setCartProducts(cars);
       } catch (err) {
-        console.error("Error fetching cart:", err);
+        if (err.response?.status === 401) nav("/login");
       }
     }
-
-    fetchCart();
+    fetchReservedCars();
   }, []);
 
-  const totalPrice = cartProducts.reduce(
-    (acc, item) => acc + parseInt(item.price.replace("$", "")) * item.quantity, 0
-  );
+  const totalPrice = cartProducts.reduce((acc, item) => acc + item.price, 0);
 
   async function handlePlaceOrder() {
-    let storeduser = JSON.parse(localStorage.getItem("loggedInUser"));
-
-
     if (!name || !Phone || !email || !address || !city || !pincode) {
       toast.error("Please fill all details");
       return;
     }
-
-    const neworder = {
-      id: Date.now(), 
-      items: cartProducts,
-      total: totalPrice,
-      customer: {
-        name,
-        phone: Phone,
-        email,
-        address,
-        city,
-        pincode
-      },
-      date: new Date().toISOString(),
-      status: "Placed"
-    };
-
     try {
-      await axios.patch(`http://localhost:4000/Users/${storeduser.id}`, {
-        orders: [...(userData.orders || []), neworder],
-        cart: []
+      await api.post("products/create-order/", {
+        name, phone: Phone, email, address, city, pincode
       });
-
-     
-
-     
+      toast.success("Order placed successfully");
       nav("/orderplaced");
-    } catch (err) {
-      console.error("Error placing order:", err);
-      toast.error("Failed to place order. Try again.");
+    } catch {
+      toast.error("Failed to place order");
     }
   }
 
   return (
-    <div className='order-container'>
-      <div className='ordr-body'>
-        <h1>Check out</h1>
-        <h2>Total : ${totalPrice}</h2>
+    <div className="order-container">
+      <div className="ordr-body">
 
-        <h4>Your Cart</h4>
-        {
-          cartProducts.map(prd => (
-            <div className="card-prds" key={prd.id}>
-              <div className="prds-img">
-                <img src={prd.imgSource} alt={prd.model} />
+        {/* ── Header ── */}
+        <h1>Complete Your Reservation</h1>
+        <p className="order-sub">Your vehicle has been reserved — confirm details to proceed</p>
+        <div className="gold-divider" />
+
+        {/* ── Reserved Vehicles ── */}
+        {cartProducts.map((prd, i) => (
+          <div className="reservation-card" key={prd.id} style={{ animationDelay: `${i * 0.08}s` }}>
+            <img src={prd.image} alt={`${prd.brand} ${prd.model}`} />
+            <div className="reservation-info">
+              <h2>{prd.brand} {prd.model}</h2>
+              <div className="res-details">
+                <span>Year: {prd.year}</span>
+                <span>Fuel: {prd.fuel}</span>
+                <span>{prd.kmCover?.toLocaleString()} km</span>
               </div>
-              <div className="cart-detls">
-                <h3>{prd.brand} - {prd.model}</h3>
-                <p>Price: {prd.price}</p>
-                <p>Year: {prd.year}</p>
-                <p>Fuel: {prd.fuel}</p>
-                <p>KMs: {prd.kmCover}</p>
-                <p>Quantity: {prd.quantity}</p>
-              </div>
+              <h3 className="price">${Number(prd.price).toLocaleString()}</h3>
             </div>
-          ))
-        }
+          </div>
+        ))}
 
-       <div className='inp-bx'>
-        <div>Enter your details</div>
-         <input
-          type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          placeholder='Full name'
-        />
-        <div className='phnem-box'>
-          <input
-            type="text"
-            value={Phone}
-            onChange={(e) => setPhone(e.target.value)}
-            placeholder='Phone'
-          />
-          <input
-            type="text"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder='Email'
-          />
-        </div>
-        <input
-          type="text"
-          value={address}
-          onChange={(e) => setAddress(e.target.value)}
-          placeholder='Street Address'
-        />
-        <input
-          type="text"
-          value={city}
-          onChange={(e) => setCity(e.target.value)}
-          placeholder='City'
-        />
-        <input
-          type="text"
-          value={pincode}
-          onChange={(e) => setPincode(e.target.value)}
-          placeholder='Pincode'
-        />
-       </div>
+        {/* ── Total ── */}
+        {cartProducts.length > 1 && (
+          <div className="total-row">
+            <span className="total-label">Total</span>
+            <span className="total-price">${totalPrice.toLocaleString()}</span>
+          </div>
+        )}
 
-        <div>
-          <button className='order-btn' onClick={handlePlaceOrder}>
-            Place order
+        <div className="gold-divider" />
+
+        {/* ── Delivery Details ── */}
+        <div className="delivery-section">
+          <h3>Delivery Details</h3>
+
+          <div className="input-grid">
+
+            <div className="field-wrap">
+              <label>Full Name</label>
+              <input
+                placeholder="John Doe"
+                value={name}
+                onChange={e => setName(e.target.value)}
+              />
+            </div>
+
+            <div className="field-wrap">
+              <label>Phone</label>
+              <input
+                placeholder="+1 (555) 000-0000"
+                value={Phone}
+                onChange={e => setPhone(e.target.value)}
+              />
+            </div>
+
+            <div className="field-wrap input-full">
+              <label>Email</label>
+              <input
+                type="email"
+                placeholder="your@email.com"
+                value={email}
+                onChange={e => setEmail(e.target.value)}
+              />
+            </div>
+
+            <div className="field-wrap input-full">
+              <label>Street Address</label>
+              <input
+                placeholder="123 Main Street"
+                value={address}
+                onChange={e => setAddress(e.target.value)}
+              />
+            </div>
+
+            <div className="field-wrap">
+              <label>City</label>
+              <input
+                placeholder="New York"
+                value={city}
+                onChange={e => setCity(e.target.value)}
+              />
+            </div>
+
+            <div className="field-wrap">
+              <label>Pincode</label>
+              <input
+                placeholder="10001"
+                value={pincode}
+                onChange={e => setPincode(e.target.value)}
+              />
+            </div>
+
+            <div className="field-wrap input-full">
+              <label>Preferred Delivery Date</label>
+              <input type="date" />
+            </div>
+
+          </div>
+
+          <button className="order-btn" onClick={handlePlaceOrder}>
+            Confirm Purchase
           </button>
         </div>
+
       </div>
     </div>
   );

@@ -1,159 +1,124 @@
 import { useEffect, useState } from "react";
 import "./CartPage.css";
-import NavBar from '../../component/NavBar.jsx';
-import axios from "axios";
+import NavBar from "../../component/NavBar.jsx";
 import { useNavigate } from "react-router-dom";
-import inc from "../../assets/increase.png";
-import dec from "../../assets/decrease.png";
 import { toast } from "react-toastify";
+import api from "../../api/api";
 
 function CartPage() {
-  const [cartProducts, setCartProducts] = useState([]);
-  const [userData, setUserData] = useState(null);
-  const [total,setTotal]=useState(0)
+  const [reservedCars, setReservedCars] = useState([]);
   const nav = useNavigate();
 
   useEffect(() => {
-    async function fetchCart() {
-      let storeduser = JSON.parse(localStorage.getItem("loggedInUser"));
-
-      if (!storeduser) {
-        toast.error("Please login to view your cart ❌");
-        nav("/login");
-        return;
-      }
-
+    async function fetchReservedCars() {
       try {
-
-        let userRes = await axios.get(`http://localhost:4000/Users/${storeduser.id}`);
-        let user = userRes.data;
-        setUserData(user);
-
-        if (!user.cart || user.cart.length === 0) {
-          setCartProducts([]);
-          return;
-        }
-
-
-        let productsRes = await axios.get("http://localhost:4000/Products");
-        let products = productsRes.data;
-
-
-        let cartWithDetails = user.cart.map(item => {
-          let product = products.find(p => p.id === item.productId);
-          return product ? { ...product, quantity: item.quantity } : null;
-        }).filter(Boolean);
-
-        setCartProducts(cartWithDetails);
-
+        const res  = await api.get("products/my-reservations/");
+        const cars = res.data.map(r => r.product);
+        setReservedCars(cars);
       } catch (err) {
-        console.error("Error fetching cart:", err);
+        if (err.response?.status === 401) nav("/login");
       }
     }
-
-    fetchCart();
+    fetchReservedCars();
   }, [nav]);
 
+  async function handleUnreserve(id) {
+    try {
+      await api.delete(`products/unreserve/${id}/`);
+      toast.success("Reservation removed");
+      setReservedCars(prev => prev.filter(p => p.id !== id));
+    } catch {
+      toast.error("Failed to unreserve");
+    }
+  }
 
-  const handleInc = (id) => {
-    if (!userData) return;
-    let updatedCart = userData.cart.map(item =>
-      item.productId === id ? { ...item, quantity: item.quantity + 1 } : item
-    );
-    updateCart(updatedCart);
-    window.dispatchEvent(new Event("cartUpdated"));
+  const totalPrice = reservedCars.reduce((acc, item) => acc + item.price, 0);
 
-  };
-
-
-  const handleDec = (id) => {
-    if (!userData) return;
-    let updatedCart = userData.cart.map(item =>
-      item.productId === id
-        ? { ...item, quantity: item.quantity > 1 ? item.quantity - 1 : 1 }
-        : item
-    );
-    updateCart(updatedCart);
-    window.dispatchEvent(new Event("cartUpdated"));
-
-  };
-
-
-  const handleRemove = (id) => {
-    if (!userData) return;
-    let updatedCart = userData.cart.filter(item => item.productId !== id);
-     window.dispatchEvent(new Event("cartUpdated"));
-    updateCart(updatedCart);
-   
-
-  };
-
-
-  const updateCart = (updatedCart) => {
-    axios.patch(`http://localhost:4000/Users/${userData.id}`, { cart: updatedCart })
-      .then(() => {
-        let updatedUser = { ...userData, cart: updatedCart };
-        setUserData(updatedUser);
-        localStorage.setItem("loggedInUser", JSON.stringify(updatedUser));
-
-        
-        setCartProducts(prev =>
-          prev.map(p => {
-            let item = updatedCart.find(i => i.productId === p.id);
-            return item ? { ...p, quantity: item.quantity } : null;
-          }).filter(Boolean)
-        );
-      })
-      .catch(err => console.error(err));
-  };
-  const totalPrice=cartProducts.reduce(
-    (acc,item)=>acc+parseInt(item.price.replace("$",""))*item.quantity,0
-  )
   return (
     <>
       <NavBar color={false} />
+
       <div className="Cartbody">
         <div className="cart-cont">
-          {cartProducts.length === 0 ? (
-            <h2>Your cart is empty 🛒</h2>
+
+          {/* ── Header ── */}
+          <h2>Reserved Vehicles</h2>
+          <div className="gold-divider" />
+
+          {/* ── Empty State ── */}
+          {reservedCars.length === 0 ? (
+            <h3>No reserved vehicles</h3>
           ) : (
-            cartProducts.map(prd => (
-              
-              <div className="card-prd" key={prd.id}>
+            reservedCars.map((prd, i) => (
+              <div
+                className="card-prd"
+                key={prd.id}
+                style={{ animationDelay: `${i * 0.08}s` }}
+              >
+                {/* Image */}
                 <div className="prd-img">
-                  <img src={prd.imgSource} alt={prd.model} />
+                  <img src={prd.image} alt={`${prd.brand} ${prd.model}`} />
                 </div>
+
+                {/* Details */}
                 <div className="cart-detls">
-                  <h3>{prd.brand} - {prd.model}</h3>
-                  <p>Price: {prd.price}</p>
-                  <p>Year: {prd.year}</p>
-                  <p>Fuel: {prd.fuel}</p>
-                  <p>KMs: {prd.kmCover}</p>
-                  <p>Quantity: {prd.quantity}</p>
-                </div>
-                <div className="fnct-cart">
-                  <button className="remove-btn" onClick={() => handleRemove(prd.id)}>Remove</button>
-                  <div className="quantity-btns">
-                    <div className="ct-inc-btn" onClick={() => handleInc(prd.id)}>
-                      <img src={inc} alt="increase" />
-                    </div>
-                    <div className="ct-dec-btn" onClick={() => handleDec(prd.id)}>
-                      <img src={dec} alt="decrease" />
-                    </div>
+                  <h3>{prd.brand} — {prd.model}</h3>
+
+                  <div className="spec-row">
+                    <span>Year: {prd.year}</span>
+                    <span>Fuel: {prd.fuel}</span>
+                    <span>{prd.kmCover?.toLocaleString()} km</span>
+                  </div>
+
+                  <div className="cart-price">
+                    ${Number(prd.price).toLocaleString()}
+                  </div>
+
+                  <span className="reservation-status">
+                    ✦ Reservation Confirmed
+                  </span>
+
+                  <div className="delivery-section">
+                    <label>Preferred Delivery Date</label>
+                    <input
+                      type="date"
+                      onChange={e => (prd.deliveryDate = e.target.value)}
+                    />
+                  </div>
+
+                  <div className="reservation-info">
+                    <p>📌 Reservation valid for a limited time</p>
+                    <p>📌 Complete payment to confirm booking</p>
+                    <p>📌 Bring valid ID during delivery</p>
                   </div>
                 </div>
+
+                {/* Actions */}
+                <div className="fnct-cart">
+                  <button
+                    className="payment-btn"
+                    onClick={() => nav("/order", { state: { product: prd } })}
+                  >
+                    Make Payment
+                  </button>
+                  <button
+                    className="remove-btn1"
+                    onClick={() => handleUnreserve(prd.id)}
+                  >
+                    Cancel Reservation
+                  </button>
+                </div>
               </div>
-             
-             
             ))
-            
           )}
-        <div className="ord-section">
-          <button onClick={()=>nav("/order")} className="plc-ord-btn">Order</button>
-          <h2>
-           Total :${totalPrice}
-          </h2>
-          </div>  
+
+          {/* ── Total ── */}
+          {reservedCars.length > 0 && (
+            <div className="ord-section">
+              <h2>Total Reserved Value — ${totalPrice.toLocaleString()}</h2>
+            </div>
+          )}
+
         </div>
       </div>
     </>

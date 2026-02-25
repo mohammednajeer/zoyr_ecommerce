@@ -5,6 +5,9 @@ import NavBar from '../component/NavBar';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { FaHeart, FaRegHeart } from "react-icons/fa";
+import { reserveProduct } from "../api/api";
+import api from "../api/api";
+
 
 function ProductPage() {
   const [data, setData] = useState([]);
@@ -19,38 +22,33 @@ function ProductPage() {
   const nav = useNavigate();
 
 
-  useEffect(() => {
-    axios.get("http://localhost:4000/Products")
-      .then(res => {
-        setOriginalData(res.data);
-        setMaxPrice(getMaxPrice(res.data));
-      })
-      .catch(err => console.error("Error fetching products:", err));
+ useEffect(() => {
 
+  api.get("products/")
+    .then(res => {
+      setOriginalData(res.data);
+      setMaxPrice(getMaxPrice(res.data));
+    })
+    .catch(err => console.error("Error fetching products:", err));
 
-    const user = JSON.parse(localStorage.getItem("loggedInUser"));
-    if (user) {
-      axios.get(`http://localhost:4000/Users/${user.id}`)
-        .then(res => {
-          setWishlist(res.data.wishlist || []);
-        })
-        .catch(() => setWishlist([]));
-    }
-  }, []);
+}, []);
 
 
   function getMaxPrice(products = originalData) {
     if (!products.length) return 1000000;
-    return Math.max(...products.map(item => parseInt(item.price.replace(/[^0-9]/g, ''))));
+    return Math.max(...products.map(item => item.price));
   }
 
 
   useEffect(() => {
     let filtered = [...originalData];
 
-    if (currentBrand !== "all") filtered = filtered.filter(item => item.brand === currentBrand);
-
-    filtered = filtered.filter(item => parseInt(item.price.replace(/[^0-9]/g, '')) <= maxPrice);
+   if (currentBrand !== "all") {
+  filtered = filtered.filter(item =>
+    item.brand?.trim().toLowerCase() === currentBrand.toLowerCase()
+  );
+}
+    filtered = filtered.filter(item => item.price <= maxPrice);
 
     if (searchTerm.trim() !== "") {
       const term = searchTerm.toLowerCase();
@@ -61,9 +59,9 @@ function ProductPage() {
     }
 
     if (sort === "priceLH") {
-      filtered.sort((a, b) => parseInt(a.price.replace(/[^0-9]/g, '')) - parseInt(b.price.replace(/[^0-9]/g, '')));
+      filtered.sort((a, b) => a.price - b.price);
     } else if (sort === "priceHL") {
-      filtered.sort((a, b) => parseInt(b.price.replace(/[^0-9]/g, '')) - parseInt(a.price.replace(/[^0-9]/g, '')));
+      filtered.sort((a, b) => b.price - a.price);
     } else if (sort === "nameAZ") {
       filtered.sort((a, b) => a.brand.localeCompare(b.brand));
     } else if (sort === "nameZA") {
@@ -74,36 +72,36 @@ function ProductPage() {
   }, [originalData, maxPrice, currentBrand, sort, searchTerm]);
 
   // Add item to cart
-  async function handleAdd(id) {
-    let user = localStorage.getItem("loggedInUser");
-    if (!user) {
-      toast.error("Please login first");
-      nav("/login");
-      return;
-    }
+  // async function handleAdd(id) {
+  //   let user = localStorage.getItem("loggedInUser");
+  //   if (!user) {
+  //     toast.error("Please login first");
+  //     nav("/login");
+  //     return;
+  //   }
 
-    user = JSON.parse(user);
+  //   user = JSON.parse(user);
 
-    try {
-      const res = await axios.get(`http://localhost:4000/Users/${user.id}`);
-      let userData = res.data;
+  //   try {
+  //     const res = await axios.get(`http://localhost:4000/Users/${user.id}`);
+  //     let userData = res.data;
 
-      let updateCart = userData.cart ? [...userData.cart] : [];
-      const currItem = updateCart.find(item => item.productId === id);
-      if (currItem) currItem.quantity += 1;
-      else updateCart.push({ productId: id, quantity: 1 });
+  //     let updateCart = userData.cart ? [...userData.cart] : [];
+  //     const currItem = updateCart.find(item => item.productId === id);
+  //     if (currItem) currItem.quantity += 1;
+  //     else updateCart.push({ productId: id, quantity: 1 });
 
-      await axios.patch(`http://localhost:4000/Users/${user.id}`, { cart: updateCart });
-      const updatedUser = { ...user, cart: updateCart };
-      localStorage.setItem("loggedInUser", JSON.stringify(updatedUser));
+  //     await axios.patch(`http://localhost:4000/Users/${user.id}`, { cart: updateCart });
+  //     const updatedUser = { ...user, cart: updateCart };
+  //     localStorage.setItem("loggedInUser", JSON.stringify(updatedUser));
 
-      toast.dark("Item added to cart 🛒");
-      window.dispatchEvent(new Event("cartUpdated"));
-    } catch (err) {
-      console.error("Add to cart error:", err);
-      toast.error("Error adding item ❌");
-    }
-  }
+  //     toast.dark("Item added to cart 🛒");
+  //     window.dispatchEvent(new Event("cartUpdated"));
+  //   } catch (err) {
+  //     console.error("Add to cart error:", err);
+  //     toast.error("Error adding item ");
+  //   }
+  // }
 
 
   function handleSortChange(op) {
@@ -121,39 +119,68 @@ function ProductPage() {
   }
 
 
-  async function handleWishlist(productId) {
-    let user = localStorage.getItem("loggedInUser");
-    if (!user) {
-      toast.error("Please login first");
-      nav("/login");
+  // async function handleWishlist(productId) {
+  //   let user = localStorage.getItem("loggedInUser");
+  //   if (!user) {
+  //     toast.error("Please login first");
+  //     nav("/login");
+  //     return;
+  //   }
+
+  //   user = JSON.parse(user);
+
+  //   try {
+  //     const res = await axios.get(`http://localhost:4000/Users/${user.id}`);
+  //     let userData = res.data;
+  //     let updatedWishlist = userData.wishlist ? [...userData.wishlist] : [];
+
+  //     if (updatedWishlist.includes(productId)) {
+  //       updatedWishlist = updatedWishlist.filter(id => id !== productId);
+  //       toast.dark("Removed from wishlist ");
+  //     } else {
+  //       updatedWishlist.push(productId);
+  //       toast.dark("Added to wishlist ");
+  //     }
+
+  //     await axios.patch(`http://localhost:4000/Users/${user.id}`, { wishlist: updatedWishlist });
+  //     setWishlist(updatedWishlist);
+
+  //     const updatedUser = { ...user, wishlist: updatedWishlist };
+  //     localStorage.setItem("loggedInUser", JSON.stringify(updatedUser));
+  //   } catch (err) {
+  //     console.error("Wishlist error:", err);
+  //     toast.error("Error updating wishlist ❌");
+  //   }
+  // }
+
+  async function handleReserve(id) {
+
+  try {
+
+    await reserveProduct(id);
+
+    toast.success("Car reserved successfully");
+
+    // update UI instantly
+    setData(prev =>
+      prev.map(p =>
+        p.id === id ? { ...p, availability: "reserved" } : p
+      )
+    );
+
+  } catch(err) {
+
+    if(err.response?.data?.error === "You already have an active reservation"){
+      toast.warning("Finish your current reservation first 🚗");
+      nav("/cart");
       return;
-    }
-
-    user = JSON.parse(user);
-
-    try {
-      const res = await axios.get(`http://localhost:4000/Users/${user.id}`);
-      let userData = res.data;
-      let updatedWishlist = userData.wishlist ? [...userData.wishlist] : [];
-
-      if (updatedWishlist.includes(productId)) {
-        updatedWishlist = updatedWishlist.filter(id => id !== productId);
-        toast.dark("Removed from wishlist ");
-      } else {
-        updatedWishlist.push(productId);
-        toast.dark("Added to wishlist ");
-      }
-
-      await axios.patch(`http://localhost:4000/Users/${user.id}`, { wishlist: updatedWishlist });
-      setWishlist(updatedWishlist);
-
-      const updatedUser = { ...user, wishlist: updatedWishlist };
-      localStorage.setItem("loggedInUser", JSON.stringify(updatedUser));
-    } catch (err) {
-      console.error("Wishlist error:", err);
-      toast.error("Error updating wishlist ❌");
-    }
   }
+
+    toast.error(err.response?.data?.error || "Reserve failed");
+
+  }
+
+}
 
   return (
     <>
@@ -206,13 +233,13 @@ function ProductPage() {
         {data.filter(dt => dt.status === "active").map(dt => (
           <div key={dt.id} className='prd-cards'>
             <div className='prdimg-div'>
-              <img className='prdimg' src={dt.imgSource} alt={dt.model} />
-              <button
+              <img className='prdimg' src={dt.image?.url || dt.image} alt={dt.model} />
+              {/* <button
                 className="wishlist-btn"
                 onClick={() => handleWishlist(dt.id)}
               >
                 {wishlist.includes(dt.id) ? <FaHeart className="heart-icon filled" /> : <FaRegHeart className="heart-icon" />}
-              </button>
+              </button> */}
             </div>
 
             <div className='prdcard-details'>
@@ -252,7 +279,19 @@ function ProductPage() {
                   </div>
                 </div>
 
-                <button onClick={() => handleAdd(dt.id)} className='AddBtn'>Add</button>
+                {dt.availability === "available" ? (
+                    <button
+                        className="AddBtn"
+                        onClick={() => handleReserve(dt.id)}
+                      >
+                      Reserve
+                    </button>
+                    ) : (
+                      <button className="AddBtn" disabled>
+                        Reserved
+                      </button>
+
+                )}
               </div>
             </div>
           </div>

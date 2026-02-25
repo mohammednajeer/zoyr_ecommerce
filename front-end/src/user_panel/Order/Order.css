@@ -1,115 +1,445 @@
-.order-container{
-    background-color: black;
-    width: 100%;
-    height: auto;
-    padding:  70px 0px ;
-    color: white;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Rajdhani:wght@400;500;600;700&display=swap');
 
+/* ── CSS Variables ─────────────────────────────── */
+:root {
+  --gold: #c9a84c;
+  --gold-light: #e8cc7a;
+  --gold-glow: rgba(201, 168, 76, 0.25);
+  --surface-1: rgba(18, 18, 20, 0.95);
+  --surface-2: rgba(28, 28, 32, 0.85);
+  --surface-3: rgba(40, 40, 46, 0.6);
+  --border: rgba(201, 168, 76, 0.18);
+  --border-hover: rgba(201, 168, 76, 0.5);
+  --text-primary: #f0ece4;
+  --text-secondary: #9e9a91;
+  --text-muted: #5e5a53;
+  --danger: #e05a5a;
+  --radius-lg: 18px;
+  --radius-md: 12px;
+  --radius-sm: 8px;
+  --transition: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
-.ordr-body{
-   width: 60%;
-  max-width: 1000px;
-  padding: 30px;
+
+/* ── Base ──────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+
+/* ── Page Container ────────────────────────────── */
+.order-container {
+  min-height: 100vh;
+  width: 100%;
+  padding: 80px 20px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  font-family: 'Rajdhani', sans-serif;
+  color: var(--text-primary);
+  background-color: #0b0b0d;
+  background-image:
+    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(201,168,76,0.08) 0%, transparent 70%),
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 79px,
+      rgba(255,255,255,0.015) 79px,
+      rgba(255,255,255,0.015) 80px
+    ),
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 79px,
+      rgba(255,255,255,0.015) 79px,
+      rgba(255,255,255,0.015) 80px
+    );
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Animated top beam */
+.order-container::before {
+  content: '';
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  animation: beam 4s ease-in-out infinite;
+  z-index: 10;
+}
+
+@keyframes beam {
+  0%, 100% { opacity: 0.4; transform: scaleX(0.6); }
+  50%       { opacity: 1;   transform: scaleX(1); }
+}
+
+/* ── Main Body ─────────────────────────────────── */
+.ordr-body {
+  width: 100%;
+  max-width: 860px;
+  padding: 50px 50px 60px;
   display: flex;
   flex-direction: column;
-  row-gap: 20px;
+  row-gap: 28px;
   align-items: center;
-  background: rgba(33, 37, 41, 0.4);
-  backdrop-filter: blur(12px) saturate(160%);
-  -webkit-backdrop-filter: blur(12px) saturate(160%);
-  border-radius: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
-}
-.inp-bx input {
-  width: 72.5%;
-  height: 45px;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  outline: none;
-  color: #fff;
-  font-size: 16px;
-  padding: 0 12px;
-  border-radius: 10px;
-  backdrop-filter: blur(8px) saturate(150%);
-  -webkit-backdrop-filter: blur(8px) saturate(150%);
-  transition: transform 0.3s ease, background 0.3s ease, border 0.3s ease;
+  background: var(--surface-1);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  box-shadow:
+    0 0 0 1px rgba(0,0,0,0.5),
+    0 30px 80px rgba(0,0,0,0.7),
+    0 0 60px rgba(201,168,76,0.04) inset;
+  animation: fadeUp 0.7s cubic-bezier(0.4,0,0.2,1) both;
+  position: relative;
+  overflow: hidden;
 }
 
-
-.inp-bx input:hover {
-  transform: scale(1.03);
-  background: rgba(255, 255, 255, 0.15);
-  border: 1px solid rgba(255, 255, 255, 0.4);
+/* Corner accents */
+.ordr-body::before,
+.ordr-body::after {
+  content: '';
+  position: absolute;
+  width: 60px; height: 60px;
+  border-color: var(--gold);
+  border-style: solid;
+  opacity: 0.4;
+}
+.ordr-body::before {
+  top: 18px; left: 18px;
+  border-width: 1px 0 0 1px;
+  border-radius: 6px 0 0 0;
+}
+.ordr-body::after {
+  bottom: 18px; right: 18px;
+  border-width: 0 1px 1px 0;
+  border-radius: 0 0 6px 0;
 }
 
-.order-btn {
-  padding: 12px 28px;
-  font-size: 16px;
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(32px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Page Title ────────────────────────────────── */
+.ordr-body > h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
   font-weight: 600;
-  color: #fff;
-  background: linear-gradient(135deg, #0d47a1, #1976d2); 
-  border: none;
-  border-radius: 12px;
-  cursor: pointer;
-  transition: transform 0.3s ease, background 0.3s ease;
+  letter-spacing: 0.04em;
+  text-align: center;
+  background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold) 50%, #a07830 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1.2;
+  margin: 0;
 }
 
+/* ── Subtitle ──────────────────────────────────── */
+.order-sub {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-align: center;
+  margin: -10px 0 4px;
+  opacity: 0.8;
+}
+
+/* ── Gold Divider ──────────────────────────────── */
+.gold-divider {
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  opacity: 0.35;
+  margin: 4px 0;
+}
+
+/* ── Reservation Card ──────────────────────────── */
+.reservation-card {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  width: 100%;
+  background: var(--surface-2);
+  padding: 20px 24px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  transition: border-color var(--transition), box-shadow var(--transition), transform var(--transition);
+  position: relative;
+  overflow: hidden;
+  animation: fadeUp 0.6s cubic-bezier(0.4,0,0.2,1) both;
+}
+
+.reservation-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(201,168,76,0.04) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.reservation-card:hover {
+  border-color: var(--border-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.4), 0 0 20px var(--gold-glow);
+}
+
+.reservation-card img {
+  width: 200px;
+  height: 130px;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+  flex-shrink: 0;
+  filter: brightness(0.92) contrast(1.05);
+  transition: filter var(--transition), transform var(--transition);
+}
+
+.reservation-card:hover img {
+  filter: brightness(1) contrast(1.08);
+  transform: scale(1.02);
+}
+
+.reservation-info {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+}
+
+.reservation-info h2 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.55rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: 0.02em;
+  margin: 0;
+}
+
+.res-details {
+  display: flex;
+  gap: 0;
+  flex-wrap: wrap;
+}
+
+.res-details span {
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  padding: 4px 12px;
+  border-right: 1px solid rgba(255,255,255,0.08);
+}
+
+.res-details span:first-child { padding-left: 0; }
+.res-details span:last-child  { border-right: none; }
+
+.price {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.9rem;
+  font-weight: 700;
+  color: var(--gold-light);
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+
+.price::before {
+  content: '';
+  display: inline-block;
+  width: 24px;
+  height: 1px;
+  background: var(--gold);
+  margin-right: 8px;
+  vertical-align: middle;
+  opacity: 0.6;
+}
+
+/* ── Total Row ─────────────────────────────────── */
+.total-row {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 20px;
+  border-top: 1px solid var(--border);
+  background: rgba(201,168,76,0.04);
+  border-radius: var(--radius-sm);
+}
+
+.total-label {
+  font-size: 0.8rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.total-price {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--gold-light);
+}
+
+/* ── Delivery Section ──────────────────────────── */
+.delivery-section {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  animation: fadeUp 0.8s cubic-bezier(0.4,0,0.2,1) 0.1s both;
+}
+
+.delivery-section h3 {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin: 0 0 22px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.delivery-section h3::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, var(--gold), transparent);
+  opacity: 0.3;
+}
+
+/* ── Input Grid ────────────────────────────────── */
+.input-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  width: 100%;
+}
+
+.input-grid .input-full {
+  grid-column: 1 / -1;
+}
+
+/* ── Input Field ───────────────────────────────── */
+.field-wrap {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.field-wrap label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 7px;
+  padding-left: 2px;
+  transition: color var(--transition);
+}
+
+.field-wrap:focus-within label {
+  color: var(--gold);
+}
+
+.field-wrap input {
+  width: 100%;
+  height: 48px;
+  background: var(--surface-3);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-bottom: 2px solid rgba(255,255,255,0.08);
+  outline: none;
+  color: var(--text-primary);
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  padding: 0 16px;
+  border-radius: var(--radius-sm);
+  transition: border-color var(--transition), background var(--transition), box-shadow var(--transition);
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.field-wrap input::placeholder {
+  color: var(--text-muted);
+  font-size: 13px;
+  letter-spacing: 0.05em;
+}
+
+.field-wrap input:hover {
+  background: rgba(255,255,255,0.06);
+  border-color: rgba(201,168,76,0.2);
+}
+
+.field-wrap input:focus {
+  background: rgba(201,168,76,0.04);
+  border-color: rgba(201,168,76,0.15);
+  border-bottom-color: var(--gold);
+  box-shadow: 0 4px 20px rgba(201,168,76,0.08);
+}
+
+/* date input text color fix */
+.field-wrap input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(0.6) sepia(1) hue-rotate(5deg) saturate(2);
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity var(--transition);
+}
+.field-wrap input[type="date"]::-webkit-calendar-picker-indicator:hover {
+  opacity: 1;
+}
+
+/* ── CTA Button ────────────────────────────────── */
+.order-btn {
+  margin-top: 30px;
+  width: 100%;
+  height: 58px;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #0b0b0d;
+  background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold) 50%, #a07830 100%);
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: transform var(--transition), box-shadow var(--transition), filter var(--transition);
+  box-shadow: 0 4px 24px rgba(201,168,76,0.25);
+}
+
+.order-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.25), transparent 60%);
+  opacity: 0;
+  transition: opacity var(--transition);
+}
 
 .order-btn:hover {
-  transform: scale(1.05);
-}
-.card-prds{
-      height: 170px;
-      width: 95%;
-  background-color: rgba(255, 255, 255, 0.05);
-  display: flex;
-  align-items: center;
-  padding: 15px;
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 40px rgba(201,168,76,0.4), 0 0 0 1px rgba(201,168,76,0.3);
+  filter: brightness(1.05);
 }
 
-.card-prds:hover {
-  transform: scale(1.02);
-  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.35);
-}
-.prds-img {
-  width: 200px;
-  height: 120px;
-  border-radius: 10px;
-  overflow: hidden;
-  flex-shrink: 0;
-  background-color: #212529;
+.order-btn:hover::before { opacity: 1; }
+
+.order-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 16px rgba(201,168,76,0.2);
 }
 
-.prds-img img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-.inp-bx{
-     width: 80%;
-  max-width: 1000px;
-  padding: 30px 0px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  row-gap: 20px;
-
-  background: rgba(33, 37, 41, 0.4);
-  backdrop-filter: blur(12px) saturate(160%);
-  -webkit-backdrop-filter: blur(12px) saturate(160%);
-  border-radius: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
-}
-.phnem-box{
-    display: flex;
-    justify-content: center;
-    column-gap: 20px;
+/* ── Responsive ────────────────────────────────── */
+@media (max-width: 680px) {
+  .ordr-body { padding: 36px 24px 48px; }
+  .reservation-card { flex-direction: column; gap: 16px; }
+  .reservation-card img { width: 100%; height: 180px; }
+  .input-grid { grid-template-columns: 1fr; }
+  .input-grid .input-full { grid-column: 1; }
 }

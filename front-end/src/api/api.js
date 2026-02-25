@@ -6,3 +6,7 @@ const api = axios.create({
 });
 
 export default api;
+
+export const reserveProduct = (id) =>{
+    return api.post(`products/reserve/${id}/`)
+}
