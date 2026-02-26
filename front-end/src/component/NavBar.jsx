@@ -7,18 +7,36 @@ import './NavBar.css';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import axios from 'axios';
-
+import api from '../api/api'
 function NavBar(props) {
   let nav = useNavigate();
   const [loggedUser, setLoggedUser] = useState(null);
   const [cartdata, setcartdata] = useState(0);
 
-  
   useEffect(() => {
-    const storedUser = localStorage.getItem("user");
-    if (storedUser) {
-      setLoggedUser(JSON.parse(storedUser));
+
+    async function checkAuth(){
+
+      try{
+
+        // CALL BACKEND PROFILE ENDPOINT
+        const res = await api.get("profile/", {
+          withCredentials: true
+        });
+
+        setLoggedUser(res.data);
+
+      }catch(err){
+
+        // token expired OR not logged
+        setLoggedUser(null);
+
+      }
+
     }
+
+    checkAuth();
+
   }, []);
 
   
@@ -45,13 +63,18 @@ function NavBar(props) {
     return () => window.removeEventListener("cartUpdated", handleCartUpdate);
   }, [loggedUser]);
 
-  const handleLogout = () => {
-    localStorage.removeItem("access");
-    localStorage.removeItem("refresh");
-    localStorage.removeItem("user");
-    setLoggedUser(null);
-    toast.dark("Logged out");
-  };
+const handleLogout = async () => {
+
+  await axios.post("http://localhost:8000/api/logout/", {}, {
+    withCredentials:true
+  });
+
+  setLoggedUser(null);
+  setcartdata(0)
+  nav("/login")
+  toast.dark("Logged out");
+};
+
 
   const handleUserOption = (e) => {
     const value = e.target.value;

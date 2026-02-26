@@ -58,5 +58,46 @@ class profileView(APIView):
         serializer = UserSerializer(request.user)
         return Response(serializer.data)
     
+    
 
 
+class LogoutView(APIView):
+
+    def post(self, request):
+
+        response = Response({"message": "Logged out successfully"})
+
+        # DELETE COOKIES
+        response.delete_cookie("access_token")
+        response.delete_cookie("refresh_token")
+
+        return response
+    
+
+class RefreshTokenView(APIView):
+
+    def post(self, request):
+
+        refresh_token = request.COOKIES.get("refresh_token")
+
+        if not refresh_token:
+            return Response({"error": "No refresh token"}, status=401)
+
+        try:
+            refresh = RefreshToken(refresh_token)
+            new_access = str(refresh.access_token)
+
+            response = Response({"message": "Token refreshed"})
+
+            response.set_cookie(
+                key="access_token",
+                value=new_access,
+                httponly=True,
+                secure=False,
+                samesite="Lax"
+            )
+
+            return response
+
+        except Exception:
+            return Response({"error": "Invalid refresh token"}, status=401)

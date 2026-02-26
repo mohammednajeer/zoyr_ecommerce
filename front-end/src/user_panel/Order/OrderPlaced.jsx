@@ -1,49 +1,109 @@
 import React, { useEffect, useState } from 'react';
 import './OrderPlaced.css';
-import orderVideo from '../../assets/tickvideoedited.mp4'; 
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 function OrderPlaced() {
-    const [orderId, setOrderId] = useState(null);
-    const nav = useNavigate();
+  const [orderId, setOrderId] = useState(null);
+  const nav = useNavigate();
 
-    useEffect(() => {
-        async function gettingOrderId() {
-            try {
-                const storedUser = JSON.parse(localStorage.getItem("loggedInUser"));
-                if (!storedUser) return;
+  useEffect(() => {
+    async function gettingOrderId() {
+      try {
+        const storedUser = JSON.parse(localStorage.getItem("loggedInUser"));
+        if (!storedUser) return;
 
-                const res = await axios.get(`http://localhost:4000/Users/${storedUser.id}`);
-                const dt = res.data;
-                const ord = dt.orders || [];
+        const res = await axios.get(`http://localhost:4000/Users/${storedUser.id}`);
+        const ord = res.data.orders || [];
+        if (ord.length > 0) setOrderId(ord[ord.length - 1].id);
+      } catch (er) {
+        console.log(er);
+      }
+    }
+    gettingOrderId();
+  }, []);
 
-                if (ord.length > 0) {
-                    const lastOrder = ord[ord.length - 1];
-                    setOrderId(lastOrder.id);
-                }
-            } catch (er) {
-                console.log(er);
-            }
-        }
-        gettingOrderId();
-    }, []);
+  return (
+    <div className="oplcont">
+      <div className="opl-card">
 
-    return (
-        <div className='oplcont'>
-            <video className="opl-video" autoPlay loop muted>
-                <source src={orderVideo} type="video/mp4" />
-                Your browser does not support the video
-            </video>
-
-            <div className="opl-body">
-                <h1>Order Placed Successfully!</h1>
-                 <h3>Order ID: #{orderId}</h3>
-                <p>Thank you for your purchase.</p>
-                <button className='hm-btn' onClick={() => nav('/')}>Home</button>
-            </div>
+        {/* ── Success Icon ── */}
+        <div className="success-ring">
+          <span className="success-checkmark">✦</span>
         </div>
-    );
+
+        {/* ── Title ── */}
+        <h1>Reservation Confirmed</h1>
+
+        {/* ── Order ID Badge ── */}
+        <div className="order-id-badge">
+          <span className="label">Order Reference</span>
+          <span className="value">#{orderId ?? '—'}</span>
+        </div>
+
+        <div className="gold-divider" />
+
+        {/* ── Confirm Message ── */}
+        <p className="confirm-text">
+          Your vehicle has been successfully reserved and your purchase request
+          has been submitted. Our team will contact you shortly to confirm
+          delivery logistics and payment details.
+        </p>
+
+        {/* ── Timeline ── */}
+        <div className="next-steps">
+          <p className="next-steps-title">What Happens Next</p>
+
+          <div className="step-item">
+            <div className="step-num active">✓</div>
+            <div className="step-content">
+              <span className="step-label">Reservation Placed</span>
+              <span className="step-sublabel">Your vehicle is now held exclusively for you</span>
+              <span className="step-status done">Completed</span>
+            </div>
+          </div>
+
+          <div className="step-item">
+            <div className="step-num">02</div>
+            <div className="step-content">
+              <span className="step-label">Dealer Verification</span>
+              <span className="step-sublabel">Our team is reviewing your request</span>
+              <span className="step-status pending">In Progress</span>
+            </div>
+          </div>
+
+          <div className="step-item">
+            <div className="step-num">03</div>
+            <div className="step-content">
+              <span className="step-label">Payment Confirmation</span>
+              <span className="step-sublabel">Secure payment processing & receipt</span>
+              <span className="step-status pending">Pending</span>
+            </div>
+          </div>
+
+          <div className="step-item">
+            <div className="step-num">04</div>
+            <div className="step-content">
+              <span className="step-label">Delivery Scheduling</span>
+              <span className="step-sublabel">Coordinate delivery date — bring valid ID</span>
+              <span className="step-status pending">Pending</span>
+            </div>
+          </div>
+        </div>
+
+        {/* ── Actions ── */}
+        <div className="opl-actions">
+          <button className="opl-btn secondary" onClick={() => nav("/")}>
+            Browse More Vehicles
+          </button>
+          <button className="opl-btn primary" onClick={() => nav("/reserved")}>
+            View My Reservations
+          </button>
+        </div>
+
+      </div>
+    </div>
+  );
 }
 
 export default OrderPlaced;

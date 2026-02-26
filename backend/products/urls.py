@@ -1,6 +1,6 @@
 from django.urls import path
 from .views import ProductListCreateView, ProductDetailView,ReserveProductView,UserReservationListView,unreserve_product
-from .views import UnreserveProductView,CreateOrderView
+from .views import UnreserveProductView,CreateOrderView,toggle_wishlist,MyWishlistView
 
 
 urlpatterns = [
@@ -11,4 +11,6 @@ urlpatterns = [
     path("unreserve/<int:pk>/", unreserve_product),
     path("unreserve/<int:pk>/", UnreserveProductView.as_view()),
     path("create-order/", CreateOrderView.as_view()),
+    path("wishlist/toggle/<int:pk>/", toggle_wishlist),
+    path("my-wishlist/", MyWishlistView.as_view()),
 ]

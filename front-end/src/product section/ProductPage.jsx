@@ -5,7 +5,7 @@ import NavBar from '../component/NavBar';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { FaHeart, FaRegHeart } from "react-icons/fa";
-import { reserveProduct } from "../api/api";
+import { reserveProduct ,toggleWishlist} from "../api/api";
 import api from "../api/api";
 
 
@@ -18,9 +18,9 @@ function ProductPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [searchInput, setSearchInput] = useState("");
   const [wishlist, setWishlist] = useState([]); 
-
+  const [availabilityFilter, setAvailabilityFilter] = useState("all");
   const nav = useNavigate();
-
+  const [myWishlist, setMyWishlist] = useState([]);
 
  useEffect(() => {
 
@@ -33,6 +33,15 @@ function ProductPage() {
 
 }, []);
 
+  useEffect(() => {
+    async function fetchWishlist(){
+      try{
+        const res = await api.get("products/my-wishlist/");
+        setMyWishlist(res.data.map(p => p.id));
+      }catch{}
+    }
+    fetchWishlist();
+  }, []);
 
   function getMaxPrice(products = originalData) {
     if (!products.length) return 1000000;
@@ -48,6 +57,13 @@ function ProductPage() {
     item.brand?.trim().toLowerCase() === currentBrand.toLowerCase()
   );
 }
+    if (availabilityFilter !== "all") {
+      filtered = filtered.filter(
+        item => item.availability === availabilityFilter
+      );
+    }
+
+
     filtered = filtered.filter(item => item.price <= maxPrice);
 
     if (searchTerm.trim() !== "") {
@@ -57,6 +73,7 @@ function ProductPage() {
         item.model.toLowerCase().includes(term)
       );
     }
+
 
     if (sort === "priceLH") {
       filtered.sort((a, b) => a.price - b.price);
@@ -69,8 +86,26 @@ function ProductPage() {
     }
 
     setData(filtered);
-  }, [originalData, maxPrice, currentBrand, sort, searchTerm]);
+  }, [originalData, maxPrice, currentBrand, sort, searchTerm,availabilityFilter]);
 
+
+  async function handleWishlist(id){
+
+  try{
+
+    await toggleWishlist(id);
+
+    setMyWishlist(prev =>
+        prev.includes(id)
+          ? prev.filter(x => x !== id)
+          : [...prev, id]
+    );
+
+  }catch(err){
+    toast.error("Wishlist failed");
+  }
+
+}
   // Add item to cart
   // async function handleAdd(id) {
   //   let user = localStorage.getItem("loggedInUser");
@@ -102,7 +137,16 @@ function ProductPage() {
   //     toast.error("Error adding item ");
   //   }
   // }
+const [myReservations, setMyReservations] = useState([]);
 
+useEffect(() => {
+  api.get("products/my-reservations/")
+    .then(res => {
+      const ids = res.data.map(r => r.product.id);
+      setMyReservations(ids);
+    })
+    .catch(() => {});
+}, []);
 
   function handleSortChange(op) {
     setSort(op);
@@ -176,7 +220,7 @@ function ProductPage() {
       return;
   }
 
-    toast.error(err.response?.data?.error || "Reserve failed");
+    toast.dark(err.response?.data?.error || "Reserve failed");
 
   }
 
@@ -197,6 +241,15 @@ function ProductPage() {
             <option value="nameZA">Name: Z - A</option>
           </select>
 
+          <select
+            value={availabilityFilter}
+            onChange={(e) => setAvailabilityFilter(e.target.value)}
+          >
+            <option value="all">All Cars</option>
+            <option value="available">Available Only</option>
+            <option value="reserved">Reserved Only</option>
+            <option value="sold">Sold Only</option>
+          </select>
           <input
             type="text"
             placeholder="Search by brand or model..."
@@ -234,12 +287,15 @@ function ProductPage() {
           <div key={dt.id} className='prd-cards'>
             <div className='prdimg-div'>
               <img className='prdimg' src={dt.image?.url || dt.image} alt={dt.model} />
-              {/* <button
+              <button
                 className="wishlist-btn"
                 onClick={() => handleWishlist(dt.id)}
               >
-                {wishlist.includes(dt.id) ? <FaHeart className="heart-icon filled" /> : <FaRegHeart className="heart-icon" />}
-              </button> */}
+                {myWishlist.includes(dt.id)
+                    ? <FaHeart className="heart-icon filled"/>
+                    : <FaRegHeart className="heart-icon"/>
+                }
+              </button>
             </div>
 
             <div className='prdcard-details'>
@@ -279,18 +335,28 @@ function ProductPage() {
                   </div>
                 </div>
 
-                {dt.availability === "available" ? (
-                    <button
-                        className="AddBtn"
-                        onClick={() => handleReserve(dt.id)}
-                      >
-                      Reserve
+                {myReservations.includes(dt.id) ? (
+                    <button className="AddBtn1" disabled>
+                        Reserved By You
                     </button>
-                    ) : (
-                      <button className="AddBtn" disabled>
-                        Reserved
-                      </button>
 
+                ) : dt.availability === "sold" ? (
+                    <button className="AddBtn1" disabled>
+                        Sold
+                    </button>
+
+                ) : dt.availability === "reserved" ? (
+                    <button className="AddBtn1" disabled>
+                        Reserved
+                    </button>
+
+                ) : (
+                    <button
+                        className="AddBtn1"
+                        onClick={() => handleReserve(dt.id)}
+                    >
+                        Reserve
+                    </button>
                 )}
               </div>
             </div>

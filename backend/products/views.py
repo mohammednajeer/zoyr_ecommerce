@@ -1,7 +1,7 @@
 from django.shortcuts import render
 
 from rest_framework import generics
-from .models import Product
+from .models import Product,Wishlist
 from .serializers import ProductSerializer
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.views import APIView
@@ -52,6 +52,12 @@ class ReserveProductView(APIView):
         if product.availability != "available":
             return Response({"error":"Already reserved or sold"},status=400)
         
+        if Reservation.objects.filter(product=product).exists():
+            return Response(
+                {"error": "This car is already reserved"},
+                status=400
+            )
+
         Reservation.objects.create(
             user = request.user,
             product = product
@@ -135,3 +141,40 @@ class CreateOrderView(APIView):
         reservations.delete()
 
         return Response({"message":"Order placed successfully"})
+    
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def toggle_wishlist(request, pk):
+
+    try:
+        product = Product.objects.get(id=pk)
+    except Product.DoesNotExist:
+        return Response({"error": "Product not found"}, status=404)
+
+    wishlist_item = Wishlist.objects.filter(
+        user=request.user,
+        product=product
+    ).first()
+
+    if wishlist_item:
+        wishlist_item.delete()
+        return Response({"message": "removed from wishlist"})
+
+    Wishlist.objects.create(
+        user=request.user,
+        product=product
+    )
+
+    return Response({"message": "added to wishlist"})
+
+
+
+class MyWishlistView(ListAPIView):
+
+    permission_classes = [IsAuthenticated]
+    serializer_class = ProductSerializer
+
+    def get_queryset(self):
+        return Product.objects.filter(
+            wishlist_items__user=self.request.user
+        )

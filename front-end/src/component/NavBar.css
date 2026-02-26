@@ -1,9 +1,10 @@
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&display=swap');
 
-body{
-  margin: 0%;
-}
+body { margin: 0; }
+
+/* ── Navbar ────────────────────────────────────── */
 .navbar {
-
+  width: 100%;
   height: 100px;
   position: fixed;
   top: 0;
@@ -11,139 +12,221 @@ body{
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 40px;
+  padding: 0 60px;
 
+  /* Natural deep glass — no harsh gradient, just pure blur */
+  background: rgba(8, 8, 10, 0.45);
+  backdrop-filter: blur(28px) saturate(160%);
+  -webkit-backdrop-filter: blur(28px) saturate(160%);
 
-  
-  background: rgba(255, 255, 255, 0.1); 
-  backdrop-filter: blur(12px) saturate(150%); 
-  -webkit-backdrop-filter: blur(12px) saturate(150%);
-  box-shadow: 0 4px 20px rgba(0,0,0,0.15); 
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2); 
+  /* Soft bottom glow line */
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
 }
 
+/* Subtle gold shimmer at very bottom */
+.navbar::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 15%; right: 15%;
+  height: 1px;
+  background: linear-gradient(90deg,
+    transparent,
+    rgba(201,168,76,0.45) 40%,
+    rgba(232,204,122,0.85) 50%,
+    rgba(201,168,76,0.45) 60%,
+    transparent
+  );
+  animation: shimmer 5s ease-in-out infinite;
+}
 
-.leftside  {
-    width: 40%;
-    height: 100%;
+@keyframes shimmer {
+  0%, 100% { opacity: 0.4; }
+  50%       { opacity: 1; }
+}
+
+/* ── Left / Right ──────────────────────────────── */
+.leftside {
+  width: 35%;
+  height: 100%;
   display: flex;
   align-items: center;
-  justify-content: space-evenly;
 }
-.leftside ul li{
-  color: #ffffffb8;
-}
-.leftside ul li:hover{
-   color: #ffffffd7;
-}
-.rightside{
-  width: 40%;
 
+.rightside {
+  width: 35%;
+  height: 100%;
+  display: flex;
   align-items: center;
-  
+  justify-content: flex-end;
 }
 
-
+/* ── Logo ──────────────────────────────────────── */
 .logocont {
+  flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  flex: 1;
-  width: 20%;
+  cursor: pointer;
 }
 
 .logocont img {
   height: 100px;
   width: 300px;
-
+  object-fit: contain;
+  transition: filter 0.35s ease, transform 0.35s ease;
 }
 
+.logocont:hover img {
+  filter: drop-shadow(0 0 12px rgba(201,168,76,0.35));
+  transform: scale(1.02);
+}
 
-ul {
+/* ── Nav lists ─────────────────────────────────── */
+.navbar ul {
   list-style: none;
   display: flex;
-  gap: 30px;
+  align-items: center;
+  gap: 2px;
   margin: 0;
   padding: 0;
-  width: 60%;
-  justify-content: space-between;
+  width: 100%;
 }
 
-ul li {
+.navbar ul li {
   cursor: pointer;
-  font-weight: 500;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.52);
+  padding: 9px 18px;
+  position: relative;
+  white-space: nowrap;
   transition: color 0.3s ease;
 }
 
-ul li:hover {
-  color: #a9a3b0; 
+/* Clean underline reveal — no box, no pill */
+.navbar ul li::after {
+  content: '';
+  position: absolute;
+  bottom: 4px;
+  left: 18px;
+  right: 18px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(201,168,76,0.8), transparent);
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
 }
 
+.navbar ul li:hover {
+  color: rgba(232, 204, 122, 0.95);
+}
+
+.navbar ul li:hover::after {
+  transform: scaleX(1);
+}
+
+/* Right ul */
+.rightside ul {
+  justify-content: flex-end;
+  gap: 6px;
+}
 
 .rightside ul li {
-  
-  font-weight: 500;
-  color: #ffffffb8;
+  padding: 8px 12px;
+  color: rgba(255,255,255,0.55);
 }
-.rightside ul li:hover{
-  color: #ffffffd7;
+
+/* ── Nav icons ─────────────────────────────────── */
+.navimgs {
+  width: 22px;
+  height: 22px;
+  opacity: 0.6;
+  filter: brightness(0) invert(1);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  display: block;
 }
-.rightside ul{
-  width: 100%;
+
+.rightside ul li:hover .navimgs {
+  opacity: 1;
+  transform: scale(1.12);
+  filter: brightness(0) invert(0.85) sepia(1) hue-rotate(3deg) saturate(2);
+}
+
+/* ── Cart badge ────────────────────────────────── */
+.cartdiv {
   display: flex;
-  justify-content: center;
-  margin-left: 20px;
-  column-gap: 40px;
-
-}
-.navimgs{
-  width: 25px;
-  height: 25px;
-  opacity: 0.8;
-}
-.navimgs:hover{
-  opacity: 0.9;
-}
-.user-select {
-  background: transparent;
-  border: none;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.6);
-  color: white;
-  font-size: 15px;
-  font-weight: 500;
-  padding: 5px 10px;
-  cursor: pointer;
-  outline: none;
-  transition: border-color 0.3s ease;
+  position: relative;
 }
 
-.user-select:hover {
-  border-bottom: 1px solid white;
-}
-
-.user-select:focus {
-  border-bottom: 1px solid #00bcd4;
-}
-
-.user-select option {
-  background: rgba(0, 0, 0, 0.9); 
-  color: white;
-  font-size: 14px;
-}
 .cart-count {
-  background: rgb(107, 107, 107);
-  color: white;
+  position: absolute;
+  top: -7px;
+  right: -9px;
+  background: linear-gradient(135deg, #e8cc7a, #c9a84c);
+  color: #0b0b0d;
   border-radius: 50%;
   width: 16px;
   height: 16px;
-  font-size: 12px;
-  text-align: center;
+  font-size: 10px;
+  font-weight: 800;
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: -6px;
+  box-shadow: 0 0 10px rgba(201,168,76,0.6);
 }
-.cartdiv{
-  display: flex;
-  
+
+/* ── User select ───────────────────────────────── */
+.user-select {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+  color: rgba(255, 255, 255, 0.65);
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  padding: 5px 8px;
+  cursor: pointer;
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+  transition: all 0.28s ease;
+}
+
+.user-select:hover {
+  border-bottom-color: rgba(201,168,76,0.7);
+  color: rgba(232,204,122,0.9);
+}
+
+.user-select:focus {
+  border-bottom-color: rgba(201,168,76,1);
+}
+
+.user-select option {
+  background: #111113;
+  color: white;
+  font-size: 14px;
+}
+
+/* ── Login / Signup ────────────────────────────── */
+.rightside ul li span {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(232,204,122,0.7);
+  border-bottom: 1px solid rgba(201,168,76,0.3);
+  padding-bottom: 2px;
+  transition: all 0.28s ease;
+  white-space: nowrap;
+  display: inline-block;
+}
+
+.rightside ul li span:hover {
+  color: rgba(232,204,122,1);
+  border-bottom-color: rgba(201,168,76,0.8);
 }

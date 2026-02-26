@@ -164,7 +164,7 @@
 
 /* ── Car Image ─────────────────────────────────── */
 .prd-img {
-  width: 220px;
+  width: 463px;
   flex-shrink: 0;
   overflow: hidden;
   background: #111;
@@ -390,13 +390,13 @@
   transition: background var(--transition), border-color var(--transition), transform var(--transition), box-shadow var(--transition);
 }
 
-.remove-btn:hover {
+.remove-btn1:hover {
   background: rgba(192,57,43,0.22);
   border-color: rgba(192,57,43,0.6);
   transform: translateY(-1px);
   box-shadow: 0 6px 20px rgba(192,57,43,0.2);
 }
-.remove-btn:active { transform: translateY(0); }
+.remove-btn1:active { transform: translateY(0); }
 
 /* ── Total Section ─────────────────────────────── */
 .ord-section {
