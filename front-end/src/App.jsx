@@ -19,7 +19,7 @@ import AdminProtected from './protected/AdminProtected.jsx'
 import VehicleAddEdit from './Admin_Panel/Pages/Vehicle_listing/VehicleAddEdit.jsx'
 import Wishlist from './user_panel/wishlist/Wishlist.jsx'
 import UserProfile from './Admin_Panel/Pages/Users-directory/UserProfile.jsx'
-
+import Profile from './user_panel/profile/Profile.jsx'
 
 
 function App() {
@@ -46,6 +46,7 @@ function App() {
     <Route path="/vehicleUpdate/:id" element={<AdminProtected><VehicleAddEdit/></AdminProtected>}/>
      <Route path="/userprofile" element={<AdminProtected><UserProfile/></AdminProtected>}/>
     <Route path="/wishlist" element={<Wishlist/>}/>
+    <Route path="/profile" element={<Profile />} />
     </Routes>
     <ToastContainer position="bottom-right" autoClose={1000}/>
     </BrowserRouter>

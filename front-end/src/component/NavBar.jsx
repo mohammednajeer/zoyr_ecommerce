@@ -80,6 +80,7 @@ const handleLogout = async () => {
     const value = e.target.value;
     if (value === "orders") nav("/previousOrder");
     if (value === "logout") handleLogout();
+    if (value == "profile") nav("/profile");
   };
 
   const scrollToAbout = (inp) => {
