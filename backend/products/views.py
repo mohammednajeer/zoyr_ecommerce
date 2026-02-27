@@ -9,7 +9,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.generics import ListAPIView
-from .serializers import ReservationSerializer
+from .serializers import ReservationSerializer,OrderSerializer
 from .models import Product, Reservation,Order
 from rest_framework.decorators import api_view, permission_classes
 
@@ -178,3 +178,10 @@ class MyWishlistView(ListAPIView):
         return Product.objects.filter(
             wishlist_items__user=self.request.user
         )
+    
+class MyOrdersView(ListAPIView):
+    permission_classes=[IsAuthenticated]
+    serializer_class = OrderSerializer
+
+    def get_queryset(self):
+        return Order.objects.filter(user=self.request.user)

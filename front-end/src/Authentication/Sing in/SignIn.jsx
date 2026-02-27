@@ -71,9 +71,15 @@ function SignIn() {
       // }
 
     } catch (err) {
-      console.error("Login error:", err);
-      toast.error("Server error, try again later");
-    }
+  if (err.response?.data?.error === "Email not verified") {
+    toast.warning("Please verify your email first")
+    const email = err.response.data.email
+    const username = err.response.data.username  // ✅ grab username
+    nav("/verify-otp", { state: { email, username } })  // ✅ pass it along
+    return
+}
+  toast.error(err.response?.data?.error || "Server error")
+}
   }
 
   setError(newError);

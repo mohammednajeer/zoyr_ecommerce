@@ -7,6 +7,9 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import { toast } from 'react-toastify';
+import api from "../../api/api"
+
+
 function SignUp() {
   let nav = useNavigate()
   const [user, setuser] = useState("")
@@ -31,18 +34,16 @@ function SignUp() {
     if (Object.keys(newError).length === 0) {
       try {
 
-        await axios.post("http://127.0.0.1:8000/api/register/",
-          {
-            username:trimmedUser,
-            email : trimmedEmail,
-            password:trimmedPassword
-          })
-
-        toast.dark("Signup successful ")
-        nav("/login") 
+        await api.post("register/",{
+          username: trimmedUser,
+          email: trimmedEmail,
+          password: trimmedPassword
+        })
+        const username = res.data.username || trimmedUser
+        nav("/verify-otp", { state: { email: trimmedEmail, username: username } })
       } catch (err) {
-        console.error("Error while signing up:", err)
-        toast.error("Something went wrong ")
+        console.log("FULL ERROR:", err.response?.data);
+        toast.error(err.response?.data?.error || "Something went wrong");
       }
     }
 

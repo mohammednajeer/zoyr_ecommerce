@@ -6,37 +6,28 @@ const api = axios.create({
 });
 
 
-// 🔥 AUTO REFRESH INTERCEPTOR
 api.interceptors.response.use(
   response => response,
-
   async error => {
-
     const originalRequest = error.config;
 
-    // If access token expired
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    // Don't retry if it's already the refresh request, or already retried
+    const isRefreshRequest = originalRequest.url?.includes("refresh/");
 
+    if (error.response?.status === 401 && !originalRequest._retry && !isRefreshRequest) {
       originalRequest._retry = true;
-
       try {
-
-        // Call refresh endpoint
         await api.post("refresh/");
-
-        // Retry original request
         return api(originalRequest);
-
       } catch (err) {
-
-        // Refresh failed → force logout
-        window.location.href = "/login";
+       
       }
     }
 
     return Promise.reject(error);
   }
 );
+
 
 export default api;
 

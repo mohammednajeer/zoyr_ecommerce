@@ -78,7 +78,7 @@ const handleLogout = async () => {
 
   const handleUserOption = (e) => {
     const value = e.target.value;
-    if (value === "orders") nav("/previousOrder");
+    // if (value === "orders") nav("/previousOrder");
     if (value === "logout") handleLogout();
     if (value == "profile") nav("/profile");
   };
@@ -120,7 +120,7 @@ const handleLogout = async () => {
               <select className="user-select" onChange={handleUserOption} defaultValue="username">
                 <option value="username" disabled>{loggedUser.username}</option>
                 <option value="profile">Profile</option>
-                <option value="orders">Previous Orders</option>
+                {/* <option value="orders">Previous Orders</option> */}
                 <option value="logout">Logout</option>
               </select>
             ) : (

@@ -1,7 +1,7 @@
 from django.db import models
 from cloudinary.models import CloudinaryField
 from django.conf import settings
-
+from django.utils import timezone
 class Product(models.Model):
 
     AVAILABILITY_CHOICES = [
@@ -40,7 +40,7 @@ class Order(models.Model):
     user = models.ForeignKey(User,on_delete=models.CASCADE)
     product = models.ForeignKey(Product,on_delete=models.CASCADE)
     status = models.CharField(max_length=100,default="placed")
-
+    created_at = models.DateTimeField(auto_now_add=True)
 
 class Wishlist(models.Model):
     user  = models.ForeignKey(
