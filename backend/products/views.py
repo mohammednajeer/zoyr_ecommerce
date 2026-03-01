@@ -15,10 +15,23 @@ from rest_framework.decorators import api_view, permission_classes
 
 
 class ProductListCreateView(generics.ListCreateAPIView):
-    queryset = Product.objects.all()
     serializer_class = ProductSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
 
+    def get_queryset(self):
+        queryset = Product.objects.all()
+
+        # 🔥 ordering support
+        ordering = self.request.query_params.get("ordering")
+        if ordering:
+            queryset = queryset.order_by(ordering)
+
+        # 🔥 limit support
+        limit = self.request.query_params.get("limit")
+        if limit:
+            queryset = queryset[:int(limit)]
+
+        return queryset
 
 class ProductDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Product.objects.all()

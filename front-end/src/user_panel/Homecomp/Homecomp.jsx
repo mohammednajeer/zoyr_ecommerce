@@ -11,6 +11,9 @@ import Facebook     from '../../assets/facebook.png';
 import Instagram    from '../../assets/instagram (1).png';
 import LinkedinIn   from '../../assets/linkedin (1).png';
 import Twitter      from '../../assets/twitter.png';
+import api from '../../api/api.js';
+import { reserveProduct } from '../../api/api.js';
+
 
 const MARQUEE_ITEMS = [
   'Luxury','✦','Performance','✦','Prestige','✦',
@@ -23,42 +26,65 @@ function Home() {
   const [data, setdata] = useState([]);
   const nav = useNavigate();
 
-  const vuser = localStorage.getItem('loggedInUser');
-  const conv  = vuser ? JSON.parse(vuser) : null;
-  const role  = conv?.role;
+useEffect(() => {
+  api.get("profile/")
+     .then(res => {
+        if (res.data.role === "admin") {
+           nav("/dashboard");
+        }
+     })
+     .catch(() => {});
+}, []);
 
-  useEffect(() => { if (role === 'admin') nav('/dashboard'); }, []);
+  
 
   useEffect(() => {
-    axios.get('http://localhost:4000/Products').then(res => setdata(res.data));
-  }, []);
+  api.get("products/?limit=3&ordering=-year")
+     .then(res => setdata(res.data))
+     .catch(err => console.error(err));
+}, []);
 
+  // async function handleAdd(id) {
+  //   let user = localStorage.getItem('loggedInUser');
+  //   if (!user) { alert('Please login first'); nav('/login'); return; }
+  //   user = JSON.parse(user);
+  //   try {
+  //     const res  = await axios.get(`http://localhost:4000/Users/${user.id}`);
+  //     const cart = res.data.cart ? [...res.data.cart] : [];
+  //     const ex   = cart.find(i => i.productId === id);
+  //     if (ex) ex.quantity += 1;
+  //     else cart.push({ productId: id, quantity: 1 });
+  //     await axios.patch(`http://localhost:4000/Users/${user.id}`, { cart });
+  //     localStorage.setItem('loggedInUser', JSON.stringify({ ...user, cart }));
+  //     window.dispatchEvent(new Event('cartUpdated'));
+  //     toast.dark('Vehicle added to reservations');
+  //   } catch (err) {
+  //     console.error(err);
+  //     toast.error('Error adding vehicle');
+  //   }
+  // }
   async function handleAdd(id) {
-    let user = localStorage.getItem('loggedInUser');
-    if (!user) { alert('Please login first'); nav('/login'); return; }
-    user = JSON.parse(user);
-    try {
-      const res  = await axios.get(`http://localhost:4000/Users/${user.id}`);
-      const cart = res.data.cart ? [...res.data.cart] : [];
-      const ex   = cart.find(i => i.productId === id);
-      if (ex) ex.quantity += 1;
-      else cart.push({ productId: id, quantity: 1 });
-      await axios.patch(`http://localhost:4000/Users/${user.id}`, { cart });
-      localStorage.setItem('loggedInUser', JSON.stringify({ ...user, cart }));
-      window.dispatchEvent(new Event('cartUpdated'));
-      toast.dark('Vehicle added to reservations');
-    } catch (err) {
-      console.error(err);
-      toast.error('Error adding vehicle');
+  try {
+    await reserveProduct(id);
+    toast.success("Vehicle reserved successfully");
+  } catch (err) {
+    if (err.response?.status === 401) {
+      toast.warning("Please login first");
+      nav("/login");
+    } else {
+      toast.error("Failed to reserve vehicle");
     }
   }
-
+}
   return (
     <>
       <NavBar color={true} />
 
       {/* ══ HERO ══════════════════════════════════════ */}
       <div className="carousel">
+        {/* Auth-matched grid overlay */}
+        <div className="home-grid" style={{ zIndex: 2 }} />
+
         <img className="carimg" src={picture1} alt="Luxury vehicle" />
 
         <div className="hero-content">
@@ -152,6 +178,13 @@ function Home() {
 
       {/* ══ PRODUCTS ══════════════════════════════════ */}
       <section className="showproduct">
+        {/* Auth-matched atmospheric background layers */}
+        <div className="home-orb-layer">
+          <div className="home-orb home-orb-a" />
+          <div className="home-orb home-orb-b" />
+          <div className="home-orb home-orb-c" />
+        </div>
+        <div className="home-grid" />
 
         <div className="tittleofcars">
           <div />
@@ -163,13 +196,10 @@ function Home() {
         </div>
 
         <div className="carsections">
-          {data
-            .sort((a, b) => Number(b.price) - Number(a.price))
-            .slice(0, 3)
-            .map((dt, i) => (
+          {data.map((dt) => (
               <div key={dt.id} className="prd-cards">
                 <div className="prdimg-div">
-                  <img className="prdimg" src={dt.imgSource} alt={dt.model} />
+                  <img className="prdimg" src={dt.image?.url || dt.image} alt={dt.model} />
                 </div>
                 <div className="prdcard-details">
                   <div className="btn--secion">
@@ -195,7 +225,7 @@ function Home() {
                       </div>
                     </div>
                     <button className="AddBtn1" onClick={() => handleAdd(dt.id)}>
-                      Reserve Vehicle
+                      Reserve
                     </button>
                   </div>
                 </div>
@@ -205,6 +235,12 @@ function Home() {
 
         {/* ══ ABOUT ══════════════════════════════════ */}
         <div id="about" className="abt">
+          {/* Orb layers inside about too */}
+          <div className="home-orb-layer">
+            <div className="home-orb home-orb-b" style={{ opacity: 0.07 }} />
+            <div className="home-orb home-orb-c" />
+          </div>
+          <div className="home-grid" />
 
           <div className="abt-bx">
             <div className="abt-img"><img src={aboutimg2} alt="ZOYR showroom" /></div>
