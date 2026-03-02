@@ -129,7 +129,7 @@ class LogoutView(APIView):
 
         response = Response({"message": "Logged out successfully"})
 
-        # DELETE COOKIES
+        
         response.delete_cookie("access_token")
         response.delete_cookie("refresh_token")
 
@@ -169,10 +169,10 @@ class VerifyOTPView(APIView):
     def post(self, request):
         email = request.data.get("email")
         otp = request.data.get("otp")
-        username = request.data.get("username")  # ✅ get username
+        username = request.data.get("username")  
 
         try:
-            # ✅ look up by username if provided (unique), fallback to email
+            
             if username:
                 user = User.objects.filter(username=username).first()
             else:
