@@ -3,6 +3,7 @@ import logo from '../assets/logoblack.png';
 import logowhite from '../assets/Screenshot 2025-09-21 153022.png';
 import heart from "../assets/heart (1).png";
 import cartimg from "../assets/online-shopping.png";
+import car1 from '../assets/dollar.png'
 import './NavBar.css';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -101,7 +102,7 @@ const handleLogout = async () => {
       </div>
 
       <div onClick={() => nav("/")} className='logocont'>
-        <img src={props.color ? logo : logowhite} alt="Logo" />
+        <img src={props.color ? logowhite : logowhite} alt="Logo" />
       </div>
 
       <div className='rightside'>
@@ -111,7 +112,7 @@ const handleLogout = async () => {
           </li>
           <li>
             <div className='cartdiv'>
-              <img className='navimgs' onClick={() => nav("/cart")} src={cartimg} alt="" />
+              <img className='navimgs' style={{height:"26px", width:"26px",}} onClick={() => nav("/cart")} src={car1} alt="" />
               {cartdata > 0 && <span className="cart-count">{cartdata}</span>}
             </div>
           </li>

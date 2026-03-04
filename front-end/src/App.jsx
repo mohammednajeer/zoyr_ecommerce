@@ -21,7 +21,7 @@ import Wishlist from './user_panel/wishlist/Wishlist.jsx'
 import UserProfile from './Admin_Panel/Pages/Users-directory/UserProfile.jsx'
 import Profile from './user_panel/profile/Profile.jsx'
 import VerifyOTP from './Authentication/verifyOTP/verify-otp.jsx'
-
+import ProductDetails from './product section/ProductDetails.jsx'
 function App() {
 
 
@@ -48,6 +48,7 @@ function App() {
     <Route path="/wishlist" element={<Wishlist/>}/>
     <Route path="/profile" element={<Profile />} />
     <Route path="/verify-otp" element={<VerifyOTP />} />
+    <Route path="/product-details/:id" element={<ProductDetails />} />
     </Routes>
     <ToastContainer position="bottom-right" autoClose={1000}/>
     </BrowserRouter>

@@ -21,12 +21,12 @@ class ProductListCreateView(generics.ListCreateAPIView):
     def get_queryset(self):
         queryset = Product.objects.all()
 
-        # 🔥 ordering support
+       
         ordering = self.request.query_params.get("ordering")
         if ordering:
             queryset = queryset.order_by(ordering)
 
-        # 🔥 limit support
+       
         limit = self.request.query_params.get("limit")
         if limit:
             queryset = queryset[:int(limit)]
@@ -161,6 +161,7 @@ def toggle_wishlist(request, pk):
 
     try:
         product = Product.objects.get(id=pk)
+
     except Product.DoesNotExist:
         return Response({"error": "Product not found"}, status=404)
 

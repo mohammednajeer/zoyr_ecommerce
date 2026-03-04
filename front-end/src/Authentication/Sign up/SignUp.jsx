@@ -23,7 +23,11 @@ function SignUp() {
     const trimmedEmail = email.trim()
     const trimmedPassword = password.trim()
 
-    if (trimmedUser === "") newError.name = "Username is required"
+    if (trimmedUser === "") {
+      newError.name = "Username is required"
+    } else if (!/^[a-zA-Z0-9@.+-_]+$/.test(trimmedUser)) {
+      newError.name = "Username cannot contain spaces or special characters"
+    }
     if (trimmedEmail === "") newError.email = "Email is required"
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail))
       newError.email = "Enter a valid email address"
@@ -41,7 +45,7 @@ function SignUp() {
         const username = res.data.username || trimmedUser
         nav("/verify-otp", { state: { email: trimmedEmail, username } })
       } catch (err) {
-        toast.error(err.response?.data?.error || "Something went wrong");
+        toast.error(JSON.stringify(err.response?.data) || "Something went wrong");
       } finally {
         setLoading(false)
       }

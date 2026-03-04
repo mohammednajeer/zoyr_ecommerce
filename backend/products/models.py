@@ -42,6 +42,7 @@ class Order(models.Model):
     status = models.CharField(max_length=100,default="placed")
     created_at = models.DateTimeField(auto_now_add=True)
 
+
 class Wishlist(models.Model):
     user  = models.ForeignKey(
         User,
