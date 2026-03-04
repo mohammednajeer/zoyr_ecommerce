@@ -154,7 +154,7 @@ function VehicleListing() {
                     onClick={() => handleStatus(vehicle.id)}
                     className='Status-Btn'
                   >
-                    {vehicle.status === "active" ? "Active" : "Inactive"}
+                    {vehicle.status === "active" ? "Deactivate" : "Activate"}
                   </button>
 
                 </div>

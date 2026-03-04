@@ -15,15 +15,18 @@ from rest_framework.decorators import api_view, permission_classes
 from accounts.models import User
 from .models import Product, Order
 from rest_framework.views import APIView
-from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.parsers import MultiPartParser, FormParser,JSONParser
 
 
 class ProductListCreateView(generics.ListCreateAPIView):
     serializer_class = ProductSerializer
-    parser_classes = [MultiPartParser, FormParser]
+    parser_classes = [MultiPartParser, FormParser,JSONParser]
 
     def get_queryset(self):
-        queryset = Product.objects.all()
+        if self.request.user.is_staff:
+            queryset = Product.objects.all()
+        else:
+            queryset = Product.objects.filter(status="active")
 
         ordering = self.request.query_params.get("ordering")
         if ordering:
@@ -45,16 +48,17 @@ class ProductListCreateView(generics.ListCreateAPIView):
 class ProductDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
-    parser_classes = [MultiPartParser, FormParser]
+    parser_classes = [MultiPartParser, FormParser, JSONParser]
 
     def get_permissions(self):
-
         if self.request.method in ["PUT", "PATCH", "DELETE"]:
             return [IsAdminUser()]
-
         return [IsAuthenticatedOrReadOnly()]
-    
-    
+
+    def patch(self, request, *args, **kwargs):
+        kwargs["partial"] = True
+        return self.update(request, *args, **kwargs)
+
 class ReserveProductView(APIView):
 
     permission_classes = [IsAuthenticated]
