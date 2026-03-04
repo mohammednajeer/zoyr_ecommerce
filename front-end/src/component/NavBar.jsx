@@ -12,7 +12,6 @@ import api from '../api/api'
 function NavBar(props) {
   let nav = useNavigate();
   const [loggedUser, setLoggedUser] = useState(null);
-  const [cartdata, setcartdata] = useState(0);
 
   useEffect(() => {
 
@@ -70,8 +69,8 @@ const handleLogout = async () => {
     withCredentials:true
   });
 
-  setLoggedUser(null);
-  setcartdata(0)
+  
+  
   nav("/login")
   toast.dark("Logged out");
 };
@@ -113,7 +112,7 @@ const handleLogout = async () => {
           <li>
             <div className='cartdiv'>
               <img className='navimgs' style={{height:"26px", width:"26px",}} onClick={() => nav("/cart")} src={car1} alt="" />
-              {cartdata > 0 && <span className="cart-count">{cartdata}</span>}
+              
             </div>
           </li>
           <li>

@@ -19,13 +19,29 @@ const redirectTo = location.state?.from || "/";
 
   let nav = useNavigate()
 
-  useEffect(() => {
-  api.get("profile/")
-     .then(() => {
-        nav("/", { replace: true });
-     })
-     .catch(() => {});
-}, []);
+ useEffect(() => {
+
+  async function checkLogin(){
+
+    try{
+
+      const res = await api.get("profile/")
+
+      if(res.data.role === "admin"){
+          nav("/dashboard",{replace:true})
+      }else{
+          nav("/",{replace:true})
+      }
+
+    }catch(err){
+      // user not logged in
+    }
+
+  }
+
+  checkLogin()
+
+},[])
 
   async function handleSubmit() {
     let newError = {}
@@ -41,7 +57,6 @@ const redirectTo = location.state?.from || "/";
         });
 
         let profile = await api.get("profile/");
-        localStorage.setItem("user", JSON.stringify(profile.data))
         if (profile.data.role === "admin") {
           nav("/dashboard", { replace: true });
         } else {
