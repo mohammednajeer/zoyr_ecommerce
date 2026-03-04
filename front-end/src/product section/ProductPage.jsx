@@ -6,7 +6,7 @@ import { toast } from 'react-toastify';
 import { FaHeart, FaRegHeart } from "react-icons/fa";
 import { reserveProduct, toggleWishlist } from "../api/api";
 import api from "../api/api";
-
+import { useLocation } from 'react-router-dom';
 
 function ProductPage() {
   const [data, setData] = useState([]);
@@ -20,7 +20,7 @@ function ProductPage() {
   const [myWishlist, setMyWishlist] = useState([]);
   const [myReservations, setMyReservations] = useState([]);
   const nav = useNavigate();
-
+const location = useLocation()
   // ── Fetch products ──────────────────────────────────────
   useEffect(() => {
     api.get("products/")

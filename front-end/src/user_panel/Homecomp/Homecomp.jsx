@@ -12,7 +12,7 @@ import LinkedinIn from '../../assets/linkedin (1).png';
 import Twitter    from '../../assets/twitter.png';
 import api        from '../../api/api.js';
 import { reserveProduct } from '../../api/api.js';
-
+import { useLocation } from 'react-router-dom';
 const MARQUEE_ITEMS = [
   'Luxury','✦','Performance','✦','Prestige','✦',
   'Speed', '✦','Excellence', '✦','Precision','✦',
@@ -29,7 +29,7 @@ const STATS = [
 function Home() {
   const [data, setdata] = useState([]);
   const nav = useNavigate();
-
+const location = useLocation()
   useEffect(() => {
     api.get("profile/")
        .then(res => { if (res.data.role === "admin") nav("/dashboard"); })
@@ -49,7 +49,7 @@ function Home() {
     } catch (err) {
       if (err.response?.status === 401) {
         toast.warning("Please login first");
-        nav("/login");
+        nav("/login", { state: { from: location.pathname } });
       } else {
         toast.error("Failed to reserve vehicle");
       }

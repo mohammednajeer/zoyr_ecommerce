@@ -6,13 +6,26 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify';
 import api from "../../api/api"
+import { useLocation } from 'react-router-dom'
+import { useEffect } from 'react'
 
 function SignIn() {
   const [user, setuser] = useState("")
   const [password, setpassword] = useState("")
   const [error, setError] = useState({})
   const [loading, setLoading] = useState(false)
+const location = useLocation();
+const redirectTo = location.state?.from || "/";
+
   let nav = useNavigate()
+
+  useEffect(() => {
+  api.get("profile/")
+     .then(() => {
+        nav("/", { replace: true });
+     })
+     .catch(() => {});
+}, []);
 
   async function handleSubmit() {
     let newError = {}
@@ -29,11 +42,11 @@ function SignIn() {
 
         let profile = await api.get("profile/");
         localStorage.setItem("user", JSON.stringify(profile.data))
-        if (profile.data.role == "admin") {
-          nav("/dashboard");
+        if (profile.data.role === "admin") {
+          nav("/dashboard", { replace: true });
         } else {
-          toast.dark("Login success");
-          nav("/");
+          toast.dark("login success");
+          nav(redirectTo, { replace: true });
         }
       } catch (err) {
         if (err.response?.data?.error === "Email not verified") {
