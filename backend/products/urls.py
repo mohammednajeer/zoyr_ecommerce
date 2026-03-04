@@ -1,7 +1,17 @@
 from django.urls import path
-from .views import ProductListCreateView, ProductDetailView,ReserveProductView,UserReservationListView,unreserve_product
-from .views import UnreserveProductView,CreateOrderView,toggle_wishlist,MyWishlistView,MyOrdersView
-
+from .views import (
+    ProductListCreateView,
+    ProductDetailView,
+    ReserveProductView,
+    UserReservationListView,
+    unreserve_product,
+    UnreserveProductView,
+    CreateOrderView,
+    toggle_wishlist,
+    MyWishlistView,
+    MyOrdersView,
+    AdminDashboardView
+)
 
 urlpatterns = [
     path("", ProductListCreateView.as_view()),
@@ -14,6 +24,6 @@ urlpatterns = [
     path("wishlist/toggle/<int:pk>/", toggle_wishlist),
     path("my-wishlist/", MyWishlistView.as_view()),
     path("my-orders/",MyOrdersView.as_view()),
-    
+    path("admin/dashboard/", AdminDashboardView.as_view()),
 
 ]

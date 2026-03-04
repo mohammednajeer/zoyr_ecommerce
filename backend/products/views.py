@@ -5,13 +5,17 @@ from .models import Product,Wishlist
 from .serializers import ProductSerializer
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated,IsAdminUser
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.generics import ListAPIView
 from .serializers import ReservationSerializer,OrderSerializer
 from .models import Product, Reservation,Order
 from rest_framework.decorators import api_view, permission_classes
+from accounts.models import User
+from .models import Product, Order
+from rest_framework.views import APIView
+
 
 
 class ProductListCreateView(generics.ListCreateAPIView):
@@ -199,3 +203,41 @@ class MyOrdersView(ListAPIView):
 
     def get_queryset(self):
         return Order.objects.filter(user=self.request.user)
+    
+
+class AdminDashboardView(APIView):
+
+    permission_classes = [IsAdminUser]
+
+    def get(self, request):
+
+        users = User.objects.count()
+        products = Product.objects.count()
+        orders = Order.objects.count()
+
+        revenue = sum(
+            order.product.price for order in Order.objects.select_related("product")
+        )
+
+        recent_orders = Order.objects.select_related(
+            "user","product"
+        ).order_by("-created_at")[:10]
+
+        data = [
+            {
+                "id": o.id,
+                "user": o.user.username,
+                "product": o.product.model,
+                "price": o.product.price,
+                "date": o.created_at
+            }
+            for o in recent_orders
+        ]
+
+        return Response({
+            "users": users,
+            "products": products,
+            "orders": orders,
+            "revenue": revenue,
+            "recent_orders": data
+        })
