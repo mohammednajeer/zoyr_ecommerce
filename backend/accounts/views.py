@@ -201,3 +201,97 @@ class VerifyOTPView(APIView):
         except Exception as e:
             return Response({"error": "Something went wrong"}, status=500)   
 
+
+from rest_framework.permissions import IsAdminUser
+from products.models import Order
+from products.serializers import OrderSerializer
+from django.shortcuts import get_object_or_404
+
+
+class AdminUsersListView(APIView):
+
+    permission_classes = [IsAdminUser]
+
+    def get(self, request):
+
+        users = User.objects.filter(role="user")
+
+        data = [
+            {
+                "id": u.id,
+                "username": u.username,
+                "email": u.email,
+                "status": getattr(u, "status", "active")
+            }
+            for u in users
+        ]
+
+        return Response(data)
+
+
+class AdminUserDetailView(APIView):
+
+    permission_classes = [IsAdminUser]
+
+    def get(self, request, pk):
+
+        user = get_object_or_404(User, id=pk)
+
+        orders = Order.objects.filter(user=user).select_related("product")
+
+        order_data = [
+            {
+                "id": o.id,
+                "status": o.status,
+                "created_at": o.created_at,
+                "product": {
+                    "brand": o.product.brand,
+                    "model": o.product.model,
+                    "price": o.product.price,
+                    "year": o.product.year,
+                    "fuel": o.product.fuel,
+                    "kmCover": o.product.kmCover,
+                    "image": o.product.image.url if o.product.image else None
+                }
+            }
+            for o in orders
+        ]
+
+        return Response({
+            "user": {
+                "id": user.id,
+                "username": user.username,
+                "email": user.email,
+                "status": getattr(user, "status", "active")
+            },
+            "orders": order_data
+        })
+
+
+class AdminDeleteUserView(APIView):
+
+    permission_classes = [IsAdminUser]
+
+    def delete(self, request, pk):
+
+        user = get_object_or_404(User, id=pk)
+
+        user.delete()
+
+        return Response({"message": "User deleted"})
+    
+
+class AdminToggleUserStatusView(APIView):
+
+    permission_classes = [IsAdminUser]
+
+    def patch(self, request, pk):
+
+        user = get_object_or_404(User, id=pk)
+
+        new_status = "block" if getattr(user,"status","active") == "active" else "active"
+
+        user.status = new_status
+        user.save()
+
+        return Response({"status": new_status})

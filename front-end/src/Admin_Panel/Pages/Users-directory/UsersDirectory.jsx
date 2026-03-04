@@ -1,71 +1,127 @@
 import './UsersDirectory.css'
 import SideBar from '../../Sidebar/SideBar'
 import { useEffect, useState } from 'react'
-import axios from 'axios'
-import icn from '../../../assets/3736502.png'
 import { useNavigate } from 'react-router-dom'
+import icn from '../../../assets/3736502.png'
+import { getAdminUsers, deleteUser, toggleUserStatus } from '../../../AdminAPI/adminApi'
 
 function UsersDirectory() {
-  const [data,setdata]=useState([])
-  let nav = useNavigate()
-  useEffect(()=>{
-    axios.get('http://localhost:4000/Users?role=user')
 
-      .then(res => setdata(res.data))
-      .catch(err => console.log(err))
-  },[handledel])
+  const [users,setUsers] = useState([])
+  const nav = useNavigate()
+
+  useEffect(()=>{
+
+    async function loadUsers(){
+      try{
+        const res = await getAdminUsers()
+        setUsers(res.data)
+      }
+      catch(err){
+        console.error(err)
+      }
+    }
+
+    loadUsers()
+
+  },[])
 
   async function handleStatus(id){
-    let find = data.find((d) => d.id === id);
-    if (!find) return;
 
-    let newStatus = find.status === "active" ? "block" : "active";
-    await axios.patch(`http://localhost:4000/Users/${id}`, { status: newStatus });
-    
-    let change = data.map((d) => d.id !== id ? d : { ...d, status: newStatus });
-    setdata(change);
+    try{
+      const res = await toggleUserStatus(id)
+
+      setUsers(prev =>
+        prev.map(u =>
+          u.id === id ? { ...u, status: res.data.status } : u
+        )
+      )
+
+    }catch(err){
+      console.error(err)
+    }
+
   }
+
   async function handledel(id){
-    let find = data.find((d) => d.id === id);
-    if (!find) return;
-    axios.delete(`http://localhost:4000/Users/${id}`)
+
+    if(!window.confirm("Delete this user?")) return
+
+    try{
+
+      await deleteUser(id)
+
+      setUsers(prev => prev.filter(u => u.id !== id))
+
+    }
+    catch(err){
+      console.error(err)
+    }
+
   }
+
   function handlenavigate(id){
     nav('/userprofile',{state:id})
   }
 
   return (
+
     <div className='ud-cont'>
+
       <SideBar/>
+
       <div className='ud-body'>
-        <div className='titl'><h2>User Directory</h2></div>
+
+        <div className='titl'>
+          <h2>User Directory</h2>
+        </div>
+
         <div className='usrs-list'>
-          {data.map((dt) => (
-            <div  key={dt.id} className='usr'>
-              <div onClick={()=>handlenavigate(dt.id)} className='profile-section'>
-                <div onClick={()=>handlenavigate(dt.id)} className='cl-for-img' >
+
+          {users.map(user => (
+
+            <div key={user.id} className='usr'>
+
+              <div onClick={()=>handlenavigate(user.id)} className='profile-section'>
+                <div className='cl-for-img'>
                   <img src={icn} alt="" />
                 </div>
               </div>
-              <div onClick={()=>handlenavigate(dt.id)} className="usr-Dtl">
-                <h2>{dt.username}</h2>
-                <h3>{`ID #${dt.id}`}</h3>
-                <h4>{dt.email}</h4>
-                <p>Orders Placed: {dt.orders ? dt.orders.length : 0}</p>
+
+              <div onClick={()=>handlenavigate(user.id)} className="usr-Dtl">
+
+                <h2>{user.username}</h2>
+                <h3>ID #{user.id}</h3>
+                <h4>{user.email}</h4>
+
               </div>
+
               <div className="usr-mng">
-                <button 
-                  className={dt.status === "active" ? "active-btn" : "block-btn"} 
-                  onClick={() => handleStatus(dt.id)}
+
+                <button
+                  className={user.status === "active" ? "active-btn" : "block-btn"}
+                  onClick={() => handleStatus(user.id)}
                 >
-                  {dt.status === "active" ? "Active" : "Block"}
+                  {user.status === "active" ? "Active" : "Blocked"}
                 </button>
-                <button onClick={()=>handledel(dt.id)} className="delete-btn">Delete</button>
+
+                <button
+                  onClick={()=>handledel(user.id)}
+                  className="delete-btn"
+                >
+                  Delete
+                </button>
+
               </div>
+
             </div>
+
           ))}
+
         </div>
+
       </div>
+
     </div>
   )
 }
