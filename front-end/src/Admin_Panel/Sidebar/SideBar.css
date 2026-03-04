@@ -1,151 +1,234 @@
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  font-family: "Poppins", sans-serif;
-  font-weight: 400;
-  font-style: normal;
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --gold:    #c8a96e;
+  --gold-b:  #e8cc8a;
+  --white:   #ede8df;
+  --grey:    #8a8070;
+  --muted:   #4a4540;
+  --bg:      #050505;
+  --border:  rgba(200,169,110,0.14);
+  --t:       0.32s cubic-bezier(0.4,0,0.2,1);
 }
 
-/* Glass sidebar */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ── Shell ── */
 .DSB-body {
-  width: 20%;
+  width: 240px;
   height: 100vh;
-  position: fixed;  /* sidebar always fixed */
-  top: 0;
-  left: 0;
-
+  position: fixed;
+  top: 0; left: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
-  row-gap: 20px;
-
-  background: rgba(255, 255, 255, 0.06);
-  border-right: 1px solid rgba(255, 255, 255, 0.15);
-  backdrop-filter: blur(12px) saturate(150%);
-  -webkit-backdrop-filter: blur(12px) saturate(150%);
-  box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+  gap: 6px;
+  background: rgba(5,5,5,0.94);
+  border-right: 1px solid var(--border);
+  backdrop-filter: blur(24px) saturate(140%);
+  -webkit-backdrop-filter: blur(24px) saturate(140%);
+  overflow: hidden;
+  z-index: 100;
+  padding-bottom: 28px;
 }
 
-/* Admin box */
-.dsb-admin-name {
-  width: 90%;
-  height: 15%;
-  border-radius: 12px;
-  background: rgba(0, 123, 255, 0.15);
-  border: 1px solid rgba(255,255,255,0.1);
-  backdrop-filter: blur(8px);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  color: #f1f5ff;
-  font-weight: 600;
-  transition: background 0.3s ease, transform 0.2s ease;
-  cursor: pointer;
+/* Grid texture on sidebar */
+.DSB-body::before {
+  content: '';
+  position: absolute; inset: 0; pointer-events: none;
+  background-image:
+    linear-gradient(rgba(200,169,110,0.022) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(200,169,110,0.022) 1px, transparent 1px);
+  background-size: 40px 40px;
+  z-index: 0;
 }
 
-.dsb-admin-name:hover {
-  background: rgba(0, 123, 255, 0.226);
-  transform: translateY(-3px);
+/* Right edge gold gradient */
+.DSB-body::after {
+  content: '';
+  position: absolute; top: 0; right: 0; bottom: 0; width: 1px;
+  background: linear-gradient(to bottom, transparent 0%, var(--gold) 40%, var(--gold) 60%, transparent 100%);
+  opacity: 0.28;
+  pointer-events: none;
 }
 
-.dsb-admin-name img {
-  width: 20px;
-  height: 20px;
-  opacity: 0.8;
-  transition: opacity 0.3s ease, transform 0.2s ease;
-}
-
-.db-lgandname {
-  align-items: center;
-  display: flex;
-  column-gap: 10px;
-}
-
-.dsc-dtls {
-  width: 90%;
-  height: 10%;
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255,255,255,0.1);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: #e5e9f0;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background 0.3s ease, transform 0.2s ease;
-  column-gap: 10px;
-}
-
-.dsc-dtls img {
-  width: 25px;
-  height: 25px;
-}
-
-.dsc-dtls:hover {
-  background: rgba(255, 255, 255, 0.15);
-  transform: translateY(-3px);
-}
-
+/* ── Logo ── */
 .dsb-lg {
-  width: 90%;
-  height: 10%;
+  width: 100%;
+  padding: 20px 20px 0;
+  position: relative; z-index: 1;
   display: flex;
-  flex-direction: column;
   align-items: center;
-  color: #f1f5ff;
-  font-weight: 600;
+  justify-content: center;
 }
-
 .lgog-div {
-  width: 200px;
-  height: 150px;
-  box-sizing: border-box;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   overflow: hidden;
 }
 .lgog-div img {
   width: 100%;
-  height: 100%;
+  max-height: 72px;
+  object-fit: contain;
 }
 
+/* ── Gold rule ── */
+.sb-rule {
+  width: 76%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  opacity: 0.3;
+  flex-shrink: 0;
+  position: relative; z-index: 1;
+}
+
+/* ── Admin card ── */
+.dsb-admin-name {
+  width: calc(100% - 22px);
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: rgba(200,169,110,0.06);
+  border: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
+  transition: background var(--t), border-color var(--t), transform var(--t);
+  position: relative; z-index: 1;
+  overflow: hidden;
+}
+.dsb-admin-name::before {
+  content: '';
+  position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+  width: 50px; height: 1.5px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  border-radius: 0 0 4px 4px;
+}
+.dsb-admin-name:hover {
+  background: rgba(200,169,110,0.1);
+  border-color: rgba(200,169,110,0.3);
+  transform: translateY(-1px);
+}
+.dsb-admin-name h2 {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.88rem; font-weight: 600;
+  color: var(--white); letter-spacing: 0.04em;
+}
+.db-lgandname {
+  display: flex; align-items: center; gap: 7px;
+}
+.db-lgandname img {
+  width: 13px; height: 13px;
+  filter: invert(1) brightness(.45);
+}
+.db-lgandname h3 {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.6rem; font-weight: 700;
+  letter-spacing: 0.24em; text-transform: uppercase;
+  color: var(--gold);
+}
+
+/* ── Nav section label ── */
+.sb-nav-label {
+  width: calc(100% - 22px);
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.5rem; font-weight: 700;
+  letter-spacing: 0.3em; text-transform: uppercase;
+  color: var(--muted);
+  padding: 0 4px;
+  position: relative; z-index: 1;
+  margin-top: 4px;
+}
+
+/* ── Nav items ── */
+.dsc-dtls {
+  width: calc(100% - 22px);
+  height: 44px;
+  border-radius: 10px;
+  background: transparent;
+  border: 1px solid transparent;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 0 14px;
+  color: var(--grey);
+  cursor: pointer;
+  transition: background var(--t), border-color var(--t), color var(--t), transform var(--t);
+  position: relative; z-index: 1;
+  overflow: hidden;
+}
+/* Left accent bar */
+.dsc-dtls::before {
+  content: '';
+  position: absolute; left: 0; top: 22%; bottom: 22%;
+  width: 2px;
+  background: var(--gold);
+  transform: scaleY(0); transform-origin: center;
+  transition: transform 0.28s ease;
+  border-radius: 0 2px 2px 0;
+}
+.dsc-dtls:hover {
+  background: rgba(200,169,110,0.07);
+  border-color: var(--border);
+  color: var(--white);
+  transform: translateX(3px);
+}
+.dsc-dtls:hover::before { transform: scaleY(1); }
+.dsc-dtls.sb-active {
+  background: rgba(200,169,110,0.1);
+  border-color: var(--border);
+  color: var(--gold);
+}
+.dsc-dtls.sb-active::before { transform: scaleY(1); }
+
+.dsc-dtls img {
+  width: 17px; height: 17px; flex-shrink: 0;
+  filter: invert(1) brightness(.45);
+  transition: filter var(--t);
+}
+.dsc-dtls:hover img,
+.dsc-dtls.sb-active img {
+  filter: invert(76%) sepia(38%) saturate(400%) hue-rotate(0deg) brightness(.88);
+}
+.dsc-dtls p {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.8rem; font-weight: 500;
+  letter-spacing: 0.03em;
+}
+
+/* ── Logout ── */
 .logout-div {
   margin-top: auto;
+  width: calc(100% - 22px);
+  position: relative; z-index: 1;
+}
+.logout-btn {
   width: 100%;
-  height: 8%;
-  box-sizing: border-box;
+  height: 42px;
+  background: rgba(210,50,50,0.08);
+  border: 1px solid rgba(210,50,50,0.22);
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
-}
-
-.logout-btn {
-  width: 120px;
-  background: rgba(255, 77, 77, 0.2); 
-  border: 1px solid rgba(255, 77, 77, 0.4);
-  border-radius: 8px;
-  height: 35px;
-  display: flex;
-  justify-content: space-evenly;
-  align-items: center;
-  color: #ffffff; 
-  font-weight: 600;
+  gap: 9px;
+  color: #d97070;
   cursor: pointer;
-  transition: background 0.3s ease, transform 0.2s ease;
+  transition: background var(--t), border-color var(--t), transform var(--t);
 }
-
 .logout-btn:hover {
-  background: rgba(255, 77, 77, 0.35);
+  background: rgba(210,50,50,0.16);
+  border-color: rgba(210,50,50,0.4);
   transform: translateY(-2px);
 }
-
 .logout-btn img {
-  width: 30px;
-  height: 30px;
+  width: 15px; height: 15px;
+  filter: invert(1) sepia(1) saturate(4) hue-rotate(310deg) brightness(.75);
 }
-
 .logout-btn p {
-  font-weight: 400;
-  font-size: 14px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.68rem; font-weight: 700;
+  letter-spacing: 0.24em; text-transform: uppercase;
 }

@@ -1,84 +1,88 @@
 import React, { useEffect, useState } from 'react'
 import './SideBar.css'
-import logo from '../../assets/Screenshot 2025-09-21 153022.png'
-import DBlogo from '../../assets/dashboard.png'
-import vehicles from '../../assets/fleet-management.png'
-import users from '../../assets/group.png'
-import orderimg from '../../assets/acquisition.png'
-import logout from '../../assets/turn-off.png'
-import { useNavigate } from 'react-router-dom'
+import logo       from '../../assets/Screenshot 2025-09-21 153022.png'
+import DBlogo     from '../../assets/dashboard.png'
+import vehicles   from '../../assets/fleet-management.png'
+import users      from '../../assets/group.png'
+import orderimg   from '../../assets/acquisition.png'
+import logoutIcon from '../../assets/turn-off.png'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import api from '../../api/api'
 
 function SideBar() {
-
   const nav = useNavigate()
-  const [admin,setAdmin] = useState(null)
+  const loc = useLocation()
+  const [admin, setAdmin] = useState(null)
 
-  useEffect(()=>{
-
-    async function loadAdmin(){
-
-      try{
-        const res = await api.get("profile/")
+  useEffect(() => {
+    async function loadAdmin() {
+      try {
+        const res = await api.get('profile/')
         setAdmin(res.data)
+      } catch {
+        nav('/login')
       }
-      catch(err){
-        nav("/login")
-      }
-
     }
-
     loadAdmin()
+  }, [])
 
-  },[])
-
-  async function handlelogout(){
-
-    await api.post("logout/")
-
-    toast.dark("logged out")
-
-    nav("/login")
+  async function handleLogout() {
+    await api.post('logout/')
+    toast.dark('Logged out')
+    nav('/login')
   }
 
+  const cls = (path) =>
+    loc.pathname === path ? 'dsc-dtls sb-active' : 'dsc-dtls'
+
   return (
-    <div className='DSB-body'>
+    <div className="DSB-body">
 
-      <div className='dsb-lg'>
-        <div className='lgog-div'>
-          <img src={logo} alt="logo" />
+      {/* Logo */}
+      <div className="dsb-lg">
+        <div className="lgog-div">
+          <img src={logo} alt="ZOYR" />
         </div>
       </div>
 
-      <div onClick={()=>nav("/dashboard")} className='dsb-admin-name'>
-        <h2>{admin ? `Hello ${admin.username}` : "Hello Admin"}</h2>
+      <div className="sb-rule" />
 
-        <div className='db-lgandname'>
-          <img src={DBlogo} alt="dashboard" />
-          <h3>Dashboard</h3>
+      {/* Admin card */}
+      <div className="dsb-admin-name" onClick={() => nav('/dashboard')}>
+        <h2>{admin ? admin.username : 'Admin'}</h2>
+        <div className="db-lgandname">
+          <img src={DBlogo} alt="" />
+          <h3>Administrator</h3>
         </div>
       </div>
 
-      <div onClick={()=>nav("/VehicleListing")} className='dsc-dtls'>
-        <img src={vehicles} alt="vehicles" />
+      <div className="sb-nav-label">Navigation</div>
+
+      <div className={cls('/dashboard')} onClick={() => nav('/dashboard')}>
+        <img src={DBlogo} alt="" />
+        <p>Dashboard</p>
+      </div>
+
+      <div className={cls('/VehicleListing')} onClick={() => nav('/VehicleListing')}>
+        <img src={vehicles} alt="" />
         <p>Vehicle Listings</p>
       </div>
 
-      <div onClick={()=>nav("/userdirectory")} className='dsc-dtls'>
-        <img src={users} alt="users" />
+      <div className={cls('/userdirectory')} onClick={() => nav('/userdirectory')}>
+        <img src={users} alt="" />
         <p>User Directory</p>
       </div>
 
-      <div onClick={()=>nav("/ordersList")} className='dsc-dtls'>
-        <img src={orderimg} alt="orders" />
+      <div className={cls('/ordersList')} onClick={() => nav('/ordersList')}>
+        <img src={orderimg} alt="" />
         <p>Orders</p>
       </div>
 
-      <div className='logout-div'>
-        <div onClick={handlelogout} className="logout-btn">
-          <img src={logout} alt="logout" />
-          <p>LOGOUT</p>
+      <div className="logout-div">
+        <div className="logout-btn" onClick={handleLogout}>
+          <img src={logoutIcon} alt="" />
+          <p>Logout</p>
         </div>
       </div>
 

@@ -23,3 +23,15 @@ export const toggleUserStatus = (id) => {
 export const getUserProfile = (id) => {
   return api.get(`admin/users/${id}/`);
 };
+
+export const createVehicle = (data) => {
+  return api.post("products/", data);
+};
+
+export const updateVehicle = (id, data) => {
+  return api.put(`products/${id}/`, data);
+};
+
+export const getVehicles = () => {
+  return api.get("products/");
+};

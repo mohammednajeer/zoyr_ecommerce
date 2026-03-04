@@ -21,7 +21,7 @@ class Product(models.Model):
                                     choices=AVAILABILITY_CHOICES,
                                     default="available")
     
-    image = CloudinaryField("image", blank=True, null=True)
+    image = CloudinaryField("image",folder = "cars", blank=True, null=True)
 
     def __str__(self):
         return f"{self.brand} {self.model}"

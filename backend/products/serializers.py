@@ -4,20 +4,12 @@ from cloudinary.utils import cloudinary_url
 
 
 class ProductSerializer(serializers.ModelSerializer):
-    
-    image = serializers.SerializerMethodField()
+
+    image = serializers.ImageField(required=False ,allow_null = True)
 
     class Meta:
         model = Product
         fields = "__all__"
-
-    def get_image(self, obj):
-        if obj.image:
-            url, _ = cloudinary_url(obj.image.public_id)
-            return url
-        return None
-
-
 
 class ReservationSerializer(serializers.ModelSerializer):
 
