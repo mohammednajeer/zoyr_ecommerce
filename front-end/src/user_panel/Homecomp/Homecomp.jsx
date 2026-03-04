@@ -206,7 +206,7 @@ const location = useLocation()
                     </div>
                   </div>
                   <button className="AddBtn1" onClick={() => handleAdd(dt.id)}>
-                    Reserve Vehicle
+                    Reserve 
                   </button>
                 </div>
               </div>
