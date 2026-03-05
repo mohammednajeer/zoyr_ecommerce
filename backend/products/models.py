@@ -48,12 +48,26 @@ class Reservation(models.Model):
         return f"{self.user} reserved {self.product}"
     
 class Order(models.Model):
-    user = models.ForeignKey(User,on_delete=models.CASCADE)
-    product = models.ForeignKey(Product,on_delete=models.CASCADE)
-    status = models.CharField(max_length=100,default="placed")
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+
+    name = models.CharField(max_length=200, null=True, blank=True)
+    phone = models.CharField(max_length=20, null=True, blank=True)
+    email = models.EmailField(null=True, blank=True)
+
+    address = models.TextField(null=True, blank=True)
+    city = models.CharField(max_length=100, null=True, blank=True)
+    pincode = models.CharField(max_length=20, null=True, blank=True)
+
+    delivery_date = models.DateField(null=True, blank=True)
+
+    payment_id = models.CharField(max_length=255, null=True, blank=True)
+
+    status = models.CharField(max_length=100, default="pending")
     created_at = models.DateTimeField(auto_now_add=True)
 
-
+    
 class Wishlist(models.Model):
     user  = models.ForeignKey(
         User,
@@ -74,3 +88,5 @@ class Wishlist(models.Model):
 
     def __str__(self):
         return f"{self.user} ❤️ {self.product}"
+    
+

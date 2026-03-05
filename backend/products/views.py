@@ -159,21 +159,47 @@ class CreateOrderView(APIView):
 
         if not reservations.exists():
             return Response({"error":"No reservation found"}, status=400)
+        
+        existing = Order.objects.filter(user=request.user, status="pending")
+
+        if existing.exists():
+            return Response(
+                {"error": "You already have a pending order"},
+                status=400
+            )
+
+        name = request.data.get("name")
+        phone = request.data.get("phone")
+        email = request.data.get("email")
+        address = request.data.get("address")
+        city = request.data.get("city")
+        pincode = request.data.get("pincode")
+        delivery_date = request.data.get("delivery_date")
+        created_orders = []
 
         for r in reservations:
 
-            Order.objects.create(
+            order = Order.objects.create(
                 user=request.user,
                 product=r.product,
-                status="placed"
+                name=name,
+                phone=phone,
+                email=email,
+                address=address,
+                city=city,
+                pincode=pincode,
+                delivery_date=delivery_date,
+                status="pending"
             )
 
-            r.product.availability = "sold"
-            r.product.save()
+            created_orders.append(order)
 
-        reservations.delete()
+        return Response({
+            "message": "Order created",
+            "order_ids": [o.id for o in created_orders]
+        })
+    
 
-        return Response({"message":"Order placed successfully"})
     
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
@@ -257,3 +283,27 @@ class AdminDashboardView(APIView):
             "revenue": revenue,
             "recent_orders": data
         })
+    
+
+
+class ConfirmPayment(APIView):
+
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+
+        orders = Order.objects.filter(user=request.user, status="pending")
+
+        for order in orders:
+
+            order.status = "paid"
+            order.payment_id = "stripe_test_payment"
+            order.save()
+
+            product = order.product
+            product.availability = "sold"
+            product.save()
+
+        Reservation.objects.filter(user=request.user).delete()
+
+        return Response({"message": "Payment confirmed"})

@@ -4,29 +4,24 @@ import SideBar from '../../Sidebar/SideBar';
 import Chart from 'chart.js/auto';
 import { getAdminDashboard } from '../../../AdminAPI/adminApi';
 
-/* ── Chart colour tokens matching ZOYR user side ── */
-const GOLD   = '#c8a96e';
-const GOLD_B = '#e8cc8a';
-const GOLD3  = 'rgba(200,169,110,0.3)';
-const GOLD1  = 'rgba(200,169,110,0.08)';
-const DARK   = '#0d0d0d';
+/* ── Colour palette ── */
+const GOLD  = '#c8a96e';
+const TEAL  = '#4aaa92';
+const BLUE  = '#5b9bc8';
+const DARK  = '#0a0a0d';
 
-Chart.defaults.color          = '#8a8070';
-Chart.defaults.borderColor    = 'rgba(200,169,110,0.1)';
-Chart.defaults.font.family    = "'Outfit', sans-serif";
-Chart.defaults.font.size      = 11;
+Chart.defaults.color       = '#8a8070';
+Chart.defaults.borderColor = 'rgba(255,255,255,0.05)';
+Chart.defaults.font.family = "'Outfit', sans-serif";
+Chart.defaults.font.size   = 11;
 
 const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-
-/* Fake monthly data — replace with API when available */
 const mockRevenue = [14000,19500,15800,23000,21200,30000,25800,34000,28600,37000,31500,42000];
 const mockOrders  = [5,8,6,11,9,13,11,15,12,16,13,18];
 
-/* Status → CSS class */
 const S_MAP = { pending:'s-pending', confirmed:'s-confirmed', delivered:'s-delivered', cancelled:'s-cancelled' };
 
 export default function DashBoard() {
-
   const donutRef = useRef(null);
   const lineRef  = useRef(null);
   const barRef   = useRef(null);
@@ -37,7 +32,6 @@ export default function DashBoard() {
   const [orders,   setOrders]   = useState([]);
   const [revenue,  setRevenue]  = useState(0);
 
-  /* ── Fetch data ── */
   useEffect(() => {
     async function load() {
       try {
@@ -51,18 +45,19 @@ export default function DashBoard() {
     load();
   }, []);
 
-  /* ── Helper: create linear gradient fill ── */
-  function goldGrad(ctx, top = 0.22, bot = 0) {
-    const g = ctx.createLinearGradient(0, 0, 0, 280);
-    g.addColorStop(0, `rgba(200,169,110,${top})`);
-    g.addColorStop(1, `rgba(200,169,110,${bot})`);
-    return g;
+  /* Gradient fill helper */
+  function mkGrad(ctx, r, g, b, top = 0.2, bot = 0) {
+    const gr = ctx.createLinearGradient(0, 0, 0, 270);
+    gr.addColorStop(0, `rgba(${r},${g},${b},${top})`);
+    gr.addColorStop(1, `rgba(${r},${g},${b},${bot})`);
+    return gr;
   }
 
-  /* ── 1. Donut — platform overview ── */
+  /* 1. Donut */
   useEffect(() => {
     if (!users && !products && !orders.length) return;
     const c = donutRef.current;
+    if (!c) return;
     if (c._ch) c._ch.destroy();
     c._ch = new Chart(c.getContext('2d'), {
       type: 'doughnut',
@@ -70,23 +65,22 @@ export default function DashBoard() {
         labels: ['Users', 'Vehicles', 'Orders'],
         datasets: [{
           data: [users || 1, products || 1, orders.length || 1],
-          backgroundColor: [GOLD, 'rgba(237,232,223,0.55)', 'rgba(138,96,48,0.75)'],
-          borderColor:     [DARK, DARK, DARK],
-          borderWidth: 3,
-          hoverOffset: 10,
+          backgroundColor: [BLUE, GOLD, TEAL],
+          borderColor: [DARK, DARK, DARK],
+          borderWidth: 3, hoverOffset: 8,
         }],
       },
       options: {
-        cutout: '68%',
+        cutout: '70%',
         plugins: {
-          legend: { position: 'bottom', labels: { padding: 16, boxWidth: 10, usePointStyle: true, pointStyle: 'circle' } },
+          legend: { position: 'bottom', labels: { padding: 16, boxWidth: 9, usePointStyle: true, pointStyle: 'circle' } },
         },
         animation: { animateRotate: true, duration: 1000 },
       },
     });
   }, [users, products, orders]);
 
-  /* ── 2. Line — monthly revenue ── */
+  /* 2. Line — revenue */
   useEffect(() => {
     const c = lineRef.current;
     if (!c) return;
@@ -97,17 +91,14 @@ export default function DashBoard() {
       data: {
         labels: MONTHS,
         datasets: [{
-          label: 'Revenue ($)',
+          label: 'Revenue',
           data: mockRevenue,
-          borderColor: GOLD,
-          backgroundColor: goldGrad(ctx, 0.2, 0),
-          fill: true,
-          tension: 0.46,
-          pointBackgroundColor: GOLD,
+          borderColor: BLUE,
+          backgroundColor: mkGrad(ctx, 91, 155, 200, 0.16, 0),
+          fill: true, tension: 0.44,
+          pointBackgroundColor: BLUE,
           pointBorderColor: DARK,
-          pointBorderWidth: 2,
-          pointRadius: 4,
-          pointHoverRadius: 7,
+          pointBorderWidth: 2, pointRadius: 3, pointHoverRadius: 6,
           borderWidth: 2.5,
         }],
       },
@@ -115,10 +106,10 @@ export default function DashBoard() {
         responsive: true,
         plugins: { legend: { display: false } },
         scales: {
-          x: { grid: { color: 'rgba(200,169,110,0.07)' }, ticks: { font: { size: 10 } } },
+          x: { grid: { color: 'rgba(91,155,200,0.06)' }, ticks: { font: { size: 10 }, color: '#6a6060' } },
           y: {
-            grid: { color: 'rgba(200,169,110,0.07)' },
-            ticks: { font: { size: 10 }, callback: v => '$' + (v/1000).toFixed(0) + 'k' },
+            grid: { color: 'rgba(91,155,200,0.06)' },
+            ticks: { font: { size: 10 }, color: BLUE, callback: v => '$' + (v/1000).toFixed(0) + 'k' },
           },
         },
         animation: { duration: 1100 },
@@ -126,7 +117,7 @@ export default function DashBoard() {
     });
   }, []);
 
-  /* ── 3. Bar — monthly orders ── */
+  /* 3. Bar — orders */
   useEffect(() => {
     const c = barRef.current;
     if (!c) return;
@@ -139,21 +130,20 @@ export default function DashBoard() {
           label: 'Orders',
           data: mockOrders,
           backgroundColor: mockOrders.map((_, i) =>
-            i === mockOrders.length - 1 ? GOLD : 'rgba(200,169,110,0.28)'),
+            i === mockOrders.length - 1 ? TEAL : 'rgba(74,170,146,0.24)'),
           borderColor: 'transparent',
-          borderRadius: 7,
-          borderSkipped: false,
-          hoverBackgroundColor: GOLD_B,
+          borderRadius: 6, borderSkipped: false,
+          hoverBackgroundColor: '#6dc9b4',
         }],
       },
       options: {
         responsive: true,
         plugins: { legend: { display: false } },
         scales: {
-          x: { grid: { display: false }, ticks: { font: { size: 10 } } },
+          x: { grid: { display: false }, ticks: { font: { size: 10 }, color: '#6a6060' } },
           y: {
-            grid: { color: 'rgba(200,169,110,0.07)' },
-            ticks: { font: { size: 10 }, stepSize: 3 },
+            grid: { color: 'rgba(74,170,146,0.07)' },
+            ticks: { font: { size: 10 }, color: TEAL, stepSize: 3 },
           },
         },
         animation: { duration: 1000 },
@@ -161,7 +151,7 @@ export default function DashBoard() {
     });
   }, []);
 
-  /* ── 4. Polar area — order status breakdown ── */
+  /* 4. Polar — order status */
   useEffect(() => {
     const c = polarRef.current;
     if (!c || !orders.length) return;
@@ -169,7 +159,12 @@ export default function DashBoard() {
     const counts = orders.reduce((a, o) => { a[o.status] = (a[o.status] || 0) + 1; return a; }, {});
     const labels = Object.keys(counts);
     const vals   = Object.values(counts);
-    const cols   = ['rgba(200,169,110,0.6)','rgba(59,130,246,0.6)','rgba(72,199,142,0.6)','rgba(210,50,50,0.6)'];
+    const cols = [
+      'rgba(200,169,110,0.5)',
+      'rgba(91,155,200,0.5)',
+      'rgba(74,170,146,0.5)',
+      'rgba(200,80,80,0.5)',
+    ];
     c._ch = new Chart(c.getContext('2d'), {
       type: 'polarArea',
       data: {
@@ -177,17 +172,16 @@ export default function DashBoard() {
         datasets: [{
           data: vals,
           backgroundColor: cols.slice(0, labels.length),
-          borderColor: DARK,
-          borderWidth: 2,
+          borderColor: DARK, borderWidth: 2,
         }],
       },
       options: {
         responsive: true,
         plugins: {
-          legend: { position: 'bottom', labels: { padding: 14, boxWidth: 10, usePointStyle: true, pointStyle: 'circle' } },
+          legend: { position: 'bottom', labels: { padding: 14, boxWidth: 9, usePointStyle: true, pointStyle: 'circle' } },
         },
         scales: {
-          r: { grid: { color: 'rgba(200,169,110,0.08)' }, ticks: { display: false } },
+          r: { grid: { color: 'rgba(91,155,200,0.08)' }, ticks: { display: false } },
         },
         animation: { duration: 900 },
       },
@@ -196,15 +190,12 @@ export default function DashBoard() {
 
   const totalItems = users + products + orders.length;
 
-  const statusClass = (s) => S_MAP[s] || 's-pending';
-
   return (
     <div className="d-cont">
       <SideBar />
-
       <div className="dashboar-body">
 
-        {/* ── Header ── */}
+        {/* Header */}
         <div className="db-page-header">
           <div className="db-title-group">
             <span className="db-eyebrow">Admin Panel</span>
@@ -215,13 +206,13 @@ export default function DashBoard() {
           </span>
         </div>
 
-        {/* ── KPI cards ── */}
+        {/* KPI cards */}
         <div className="kpi-cards">
           {[
-            { icon:'👤', label:'Total Users',    value: users,                              sub:'Registered accounts' },
-            { icon:'📋', label:'Total Orders',   value: orders.length,                      sub:'All time' },
-            { icon:'🚗', label:'Total Vehicles', value: products,                           sub:'In inventory' },
-            { icon:'💰', label:'Total Revenue',  value:`$${Number(revenue).toLocaleString()}`, sub:'Gross earnings' },
+            { icon:'👤', label:'Total Users',    value: users,                                  sub:'Registered accounts' },
+            { icon:'📋', label:'Total Orders',   value: orders.length,                          sub:'All time' },
+            { icon:'🚗', label:'Total Vehicles', value: products,                               sub:'In inventory' },
+            { icon:'💰', label:'Total Revenue',  value: `$${Number(revenue).toLocaleString()}`, sub:'Gross earnings' },
           ].map(({ icon, label, value, sub }) => (
             <div className="kpi-card" key={label}>
               <div className="kpi-icon">{icon}</div>
@@ -232,9 +223,8 @@ export default function DashBoard() {
           ))}
         </div>
 
-        {/* ── Top charts row: Revenue line + Monthly orders bar ── */}
+        {/* Top charts */}
         <div className="charts-top">
-
           <div className="chart-card">
             <div className="chart-head">
               <div className="chart-title-wrap">
@@ -243,11 +233,10 @@ export default function DashBoard() {
               </div>
               <span className="chart-tag">2025</span>
             </div>
-            <div className="chart-wrap" style={{ height: 230 }}>
+            <div className="chart-wrap" style={{ height: 228 }}>
               <canvas ref={lineRef} />
             </div>
           </div>
-
           <div className="chart-card">
             <div className="chart-head">
               <div className="chart-title-wrap">
@@ -256,16 +245,14 @@ export default function DashBoard() {
               </div>
               <span className="chart-tag">2025</span>
             </div>
-            <div className="chart-wrap" style={{ height: 230 }}>
+            <div className="chart-wrap" style={{ height: 228 }}>
               <canvas ref={barRef} />
             </div>
           </div>
-
         </div>
 
-        {/* ── Bottom charts row: Order status polar + Platform donut ── */}
+        {/* Bottom charts */}
         <div className="charts-bottom">
-
           <div className="chart-card">
             <div className="chart-head">
               <div className="chart-title-wrap">
@@ -273,11 +260,10 @@ export default function DashBoard() {
                 <span className="chart-title">Order Status</span>
               </div>
             </div>
-            <div className="chart-wrap" style={{ height: 270 }}>
+            <div className="chart-wrap" style={{ height: 268 }}>
               <canvas ref={polarRef} />
             </div>
           </div>
-
           <div className="chart-card">
             <div className="chart-head">
               <div className="chart-title-wrap">
@@ -285,7 +271,7 @@ export default function DashBoard() {
                 <span className="chart-title">Overview</span>
               </div>
             </div>
-            <div className="chart-wrap" style={{ height: 270, position: 'relative' }}>
+            <div className="chart-wrap" style={{ height: 268, position: 'relative' }}>
               <canvas ref={donutRef} />
               <div className="donut-center">
                 <div className="donut-val">{totalItems}</div>
@@ -293,10 +279,9 @@ export default function DashBoard() {
               </div>
             </div>
           </div>
-
         </div>
 
-        {/* ── Recent orders table ── */}
+        {/* Recent orders */}
         <div className="section-head">
           <span className="section-eyebrow">Recent Orders</span>
           <div className="section-rule" />
@@ -306,12 +291,8 @@ export default function DashBoard() {
           <table className="recent-orders">
             <thead>
               <tr>
-                <th>Order ID</th>
-                <th>User</th>
-                <th>Product</th>
-                <th>Price</th>
-                <th>Status</th>
-                <th>Date</th>
+                <th>Order ID</th><th>User</th><th>Product</th>
+                <th>Price</th><th>Status</th><th>Date</th>
               </tr>
             </thead>
             <tbody>
@@ -322,7 +303,7 @@ export default function DashBoard() {
                   <td>{order.product}</td>
                   <td className="td-price">${order.price}</td>
                   <td>
-                    <span className={`status-pill ${statusClass(order.status)}`}>
+                    <span className={`status-pill ${S_MAP[order.status] || 's-pending'}`}>
                       {order.status}
                     </span>
                   </td>

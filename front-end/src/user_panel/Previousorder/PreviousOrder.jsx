@@ -27,6 +27,18 @@ function PreviousOrder() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+
+  async function confirm() {
+    try {
+      await api.post("payments/confirm-payment/");
+    } catch {}
+  }
+
+  confirm();
+
+}, []);
+
+  useEffect(() => {
     async function fetchOrders() {
       try {
         const res = await api.get("products/my-orders/");
@@ -78,7 +90,7 @@ function PreviousOrder() {
             {/* Top row: order meta */}
             <div className="po-card-top">
               <div className="po-order-meta">
-                <span className="po-order-id">Order #{order.id}</span>
+                <span className="po-order-id">Order #{i+1}</span>
                 <span className="po-order-date">{date}</span>
               </div>
               <StatusBadge status={order.status} />

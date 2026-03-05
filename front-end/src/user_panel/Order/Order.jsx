@@ -12,6 +12,9 @@ function Order() {
   const [pincode, setPincode]     = useState("");
   const [email, setEmail]         = useState("");
   const [cartProducts, setCartProducts] = useState([]);
+  const [deliveryDate, setDeliveryDate] = useState("");
+  const [loading, setLoading] = useState(false);
+
 
   const nav = useNavigate();
 
@@ -31,20 +34,34 @@ function Order() {
   const totalPrice = cartProducts.reduce((acc, item) => acc + item.price, 0);
 
   async function handlePlaceOrder() {
-    if (!name || !Phone || !email || !address || !city || !pincode) {
-      toast.error("Please fill all details");
-      return;
-    }
-    try {
-      await api.post("products/create-order/", {
-        name, phone: Phone, email, address, city, pincode
-      });
-      toast.success("Order placed successfully");
-      nav("/orderplaced");
-    } catch {
-      toast.error("Failed to place order");
-    }
+
+  if (!name || !Phone || !email || !address || !city || !pincode) {
+    toast.error("Please fill all details");
+    return;
   }
+
+  try {
+    setLoading(true)
+    const orderRes = await api.post("products/create-order/", {
+      name,
+      phone: Phone,
+      email,
+      address,
+      city,
+      pincode,
+      delivery_date : deliveryDate
+    });
+
+    const paymentRes = await api.post("payments/checkout/");
+
+    window.location.href = paymentRes.data.checkout_url;
+
+  } catch (err) {
+    toast.error("Checkout failed");
+    setLoading(false)
+  }
+
+}
 
   return (
     <div className="order-container">
@@ -83,7 +100,7 @@ function Order() {
 
         {/* ── Delivery Details ── */}
         <div className="delivery-section">
-          <h3>Delivery Details</h3>
+          <h3>Client Details</h3>
 
           <div className="input-grid">
 
@@ -144,12 +161,16 @@ function Order() {
 
             <div className="field-wrap input-full">
               <label>Preferred Delivery Date</label>
-              <input type="date" />
+              <input
+                type="date"
+                value={deliveryDate}
+                onChange={(e) => setDeliveryDate(e.target.value)}
+              />
             </div>
 
           </div>
 
-          <button className="order-btn" onClick={handlePlaceOrder}>
+          <button className="order-btn" onClick={handlePlaceOrder} disabled={loading}>
             Confirm Purchase
           </button>
         </div>

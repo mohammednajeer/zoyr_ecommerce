@@ -2,26 +2,26 @@ import React, { useEffect, useState } from 'react';
 import './OrderPlaced.css';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import api from '../../api/api';
+
 
 function OrderPlaced() {
   const [orderId, setOrderId] = useState(null);
   const nav = useNavigate();
 
   useEffect(() => {
-    async function gettingOrderId() {
-      try {
-        const storedUser = JSON.parse(localStorage.getItem("loggedInUser"));
-        if (!storedUser) return;
 
-        const res = await axios.get(`http://localhost:4000/Users/${storedUser.id}`);
-        const ord = res.data.orders || [];
-        if (ord.length > 0) setOrderId(ord[ord.length - 1].id);
-      } catch (er) {
-        console.log(er);
-      }
+  async function confirmPayment() {
+    try {
+      await api.post("products/confirm-payment/");
+    } catch (err) {
+      console.error(err);
     }
-    gettingOrderId();
-  }, []);
+  }
+
+  confirmPayment();
+
+}, []);
 
   return (
     <div className="oplcont">
@@ -96,7 +96,7 @@ function OrderPlaced() {
           <button className="opl-btn secondary" onClick={() => nav("/")}>
             Browse More Vehicles
           </button>
-          <button className="opl-btn primary" onClick={() => nav("/reserved")}>
+          <button className="opl-btn primary" onClick={() => nav("/profile")}>
             View My Reservations
           </button>
         </div>

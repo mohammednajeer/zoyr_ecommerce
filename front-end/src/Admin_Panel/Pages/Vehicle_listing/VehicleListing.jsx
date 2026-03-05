@@ -4,175 +4,120 @@ import SideBar from '../../Sidebar/SideBar';
 import { getVehicles } from '../../../AdminAPI/adminApi';
 import { useNavigate } from 'react-router-dom';
 import api from '../../../api/api';
-function VehicleListing() {
 
+function VehicleListing() {
   const [data, setData] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
-
-    async function loadProducts(){
-
-      try{
-
+    async function loadProducts() {
+      try {
         const res = await getVehicles();
-
         setData(res.data);
-
-      }catch(err){
-        console.error(err);
-      }
-
+      } catch (err) { console.error(err); }
     }
-
     loadProducts();
-
   }, []);
 
+  function handleEdit(id) { navigate(`/vehicleUpdate/${id}`); }
 
-  const handleEdit = (id) => {
-    navigate(`/vehicleUpdate/${id}`);
-  };
-
-
-  async function handleStatus(id){
-
-    const product = data.find(p => p.id === id);
-
-    const newStatus = product.status === "active" ? "inactive" : "active";
-
-    try{
-
+  async function handleStatus(id) {
+    const product   = data.find(p => p.id === id);
+    const newStatus = product.status === 'active' ? 'inactive' : 'active';
+    try {
       await api.patch(`products/${id}/`, { status: newStatus });
-
-      setData(prev =>
-        prev.map(p =>
-          p.id === id ? { ...p, status: newStatus } : p
-        )
-      );
-
-    }catch(err){
-      console.error(err);
-    }
-
+      setData(prev => prev.map(p => p.id === id ? { ...p, status: newStatus } : p));
+    } catch (err) { console.error(err); }
   }
 
-
   return (
-
-    <div className='vl-cont'>
-
+    <div className="vl-cont">
       <SideBar />
+      <div className="vl-body">
 
-      <div className='vl-body'>
-
-        <div className='vl-top-bar'>
-          <h2>Vehicle Listings</h2>
-
-          <button
-            className='Add-Btn'
-            onClick={() => navigate('/vehicleUpdate')}
-          >
+        {/* Header */}
+        <div className="vl-top-bar">
+          <div className="vl-title-group">
+            <span className="vl-eyebrow">Inventory</span>
+            <h1 className="vl-main-title">Vehicle Listings</h1>
+          </div>
+          <button className="Add-Btn" onClick={() => navigate('/vehicleUpdate')}>
             + Add Vehicle
           </button>
-
         </div>
 
-
-        {data.map(vehicle => (
-
-          <div key={vehicle.id} className='Prd-cards'>
-
-            <div className='Prdimg-div'>
-              <img
-                className='Prdimg'
-                src={vehicle.image}
-                alt={vehicle.model}
-              />
-            </div>
-
-
-            <div className='prdcards-details'>
-
-              <div className='Btn--secion'>
-                <button className='prd-btn'>
-                  ${vehicle.price}
-                </button>
-
-                <h5>{vehicle.brand}</h5>
-              </div>
-
-
-              <div className='Car-model-text'>
-                <span>{vehicle.model}</span>
-              </div>
-
-
-              <div className='Car-details'>
-
-                <div className='DT-cntr'>
-
-                  <div className='Detail-sections'>
-                    <div>
-                      <p>REG.</p>
-                      <p>YEAR</p>
-                    </div>
-                    <h6>{vehicle.year}</h6>
-                  </div>
-
-
-                  <div className='Detail-sections'>
-                    <div>
-                      <p>FUEL</p>
-                      <p>TYPE</p>
-                    </div>
-                    <h6>{vehicle.fuel}</h6>
-                  </div>
-
-
-                  <div className='Detail-sections'>
-                    <div>
-                      <p>KMS</p>
-                      <p>COVERED</p>
-                    </div>
-                    <h6>{vehicle.kmCover}</h6>
-                  </div>
-
-                </div>
-
-
-                <div className='Btn-wrapper'>
-
-                  <button
-                    onClick={() => handleEdit(vehicle.id)}
-                    className='Edit-Btn'
-                  >
-                    Edit
-                  </button>
-
-                  <button
-                    onClick={() => handleStatus(vehicle.id)}
-                    className='Status-Btn'
-                  >
-                    {vehicle.status === "active" ? "Deactivate" : "Activate"}
-                  </button>
-
-                </div>
-
-              </div>
-
-            </div>
-
+        {data.length === 0 ? (
+          <div className="vl-empty">
+            <div className="vl-empty-icon">🚗</div>
+            <p>No vehicles in inventory</p>
           </div>
+        ) : (
+          <div className="vl-list">
+            {data.map(vehicle => (
+              <div key={vehicle.id} className="vl-card">
 
-        ))}
+                {/* Image pane */}
+                <div className="vl-img-pane">
+                  <img src={vehicle.image} alt={vehicle.model} />
+                  <span className={`vl-badge ${vehicle.status}`}>{vehicle.status}</span>
+                </div>
+
+                {/* Content */}
+                <div className="vl-content">
+
+                  {/* Identity */}
+                  <div className="vl-identity">
+                    <span className="vl-brand">{vehicle.brand}</span>
+                    <span className="vl-model">{vehicle.model}</span>
+                    <span className="vl-id">ID #{vehicle.id}</span>
+                  </div>
+
+                  <div className="vl-divider" />
+
+                  {/* Specs */}
+                  <div className="vl-specs">
+                    <div className="vl-spec-item">
+                      <span className="vl-spec-lbl">Year</span>
+                      <span className="vl-spec-val">{vehicle.year}</span>
+                    </div>
+                    <div className="vl-spec-item">
+                      <span className="vl-spec-lbl">Fuel</span>
+                      <span className="vl-spec-val">{vehicle.fuel}</span>
+                    </div>
+                    <div className="vl-spec-item">
+                      <span className="vl-spec-lbl">KMs</span>
+                      <span className="vl-spec-val">{Number(vehicle.kmCover).toLocaleString()}</span>
+                    </div>
+                  </div>
+
+                  {/* Price */}
+                  <div className="vl-price-block">
+                    <span className="vl-price-lbl">Price</span>
+                    <span className="vl-price">${Number(vehicle.price).toLocaleString()}</span>
+                  </div>
+
+                  {/* Actions */}
+                  <div className="vl-actions">
+                    <button className="vl-btn Edit-Btn" onClick={() => handleEdit(vehicle.id)}>
+                      Edit
+                    </button>
+                    <button
+                      className={`vl-btn Status-Btn${vehicle.status === 'active' ? '' : ' inactive'}`}
+                      onClick={() => handleStatus(vehicle.id)}
+                    >
+                      {vehicle.status === 'active' ? 'Deactivate' : 'Activate'}
+                    </button>
+                  </div>
+
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
 
       </div>
-
     </div>
-
-  )
-
+  );
 }
 
 export default VehicleListing;
