@@ -39,7 +39,18 @@ class CreateCheckoutSession(APIView):
             line_items=line_items,
             mode="payment",
 
-            success_url="http://localhost:5173/orderplaced",
+            metadata={
+                "name": request.data.get("name"),
+                "phone": request.data.get("phone"),
+                "email": request.data.get("email"),
+                "address": request.data.get("address"),
+                "city": request.data.get("city"),
+                "pincode": request.data.get("pincode"),
+                "delivery_date": request.data.get("delivery_date"),
+            },
+
+
+            success_url="http://localhost:5173/orderplaced?session_id={CHECKOUT_SESSION_ID}",
             cancel_url="http://localhost:5173/cart",
         )
 

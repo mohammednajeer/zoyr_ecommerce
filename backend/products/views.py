@@ -16,6 +16,11 @@ from accounts.models import User
 from .models import Product, Order
 from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser, FormParser,JSONParser
+import stripe 
+from django.conf import settings
+from products.models import Reservation,Order
+
+
 
 
 class ProductListCreateView(generics.ListCreateAPIView):
@@ -149,55 +154,55 @@ class UnreserveProductView(APIView):
 
         return Response({"message":"Unreserved successfully"})
     
-class CreateOrderView(APIView):
+# class CreateOrderView(APIView):
 
-    permission_classes = [IsAuthenticated]
+#     permission_classes = [IsAuthenticated]
 
-    def post(self, request):
+#     def post(self, request):
 
-        reservations = Reservation.objects.filter(user=request.user)
+#         reservations = Reservation.objects.filter(user=request.user)
 
-        if not reservations.exists():
-            return Response({"error":"No reservation found"}, status=400)
+#         if not reservations.exists():
+#             return Response({"error":"No reservation found"}, status=400)
         
-        existing = Order.objects.filter(user=request.user, status="pending")
+#         existing = Order.objects.filter(user=request.user, status="pending")
 
-        if existing.exists():
-            return Response(
-                {"error": "You already have a pending order"},
-                status=400
-            )
+#         if existing.exists():
+#             return Response(
+#                 {"error": "You already have a pending order"},
+#                 status=400
+#             )
 
-        name = request.data.get("name")
-        phone = request.data.get("phone")
-        email = request.data.get("email")
-        address = request.data.get("address")
-        city = request.data.get("city")
-        pincode = request.data.get("pincode")
-        delivery_date = request.data.get("delivery_date")
-        created_orders = []
+#         name = request.data.get("name")
+#         phone = request.data.get("phone")
+#         email = request.data.get("email")
+#         address = request.data.get("address")
+#         city = request.data.get("city")
+#         pincode = request.data.get("pincode")
+#         delivery_date = request.data.get("delivery_date")
+#         created_orders = []
 
-        for r in reservations:
+#         for r in reservations:
 
-            order = Order.objects.create(
-                user=request.user,
-                product=r.product,
-                name=name,
-                phone=phone,
-                email=email,
-                address=address,
-                city=city,
-                pincode=pincode,
-                delivery_date=delivery_date,
-                status="pending"
-            )
+#             order = Order.objects.create(
+#                 user=request.user,
+#                 product=r.product,
+#                 name=name,
+#                 phone=phone,
+#                 email=email,
+#                 address=address,
+#                 city=city,
+#                 pincode=pincode,
+#                 delivery_date=delivery_date,
+#                 status="pending"
+#             )
 
-            created_orders.append(order)
+#             created_orders.append(order)
 
-        return Response({
-            "message": "Order created",
-            "order_ids": [o.id for o in created_orders]
-        })
+#         return Response({
+#             "message": "Order created",
+#             "order_ids": [o.id for o in created_orders]
+#         })
     
 
     
@@ -286,24 +291,55 @@ class AdminDashboardView(APIView):
     
 
 
+stripe.api_key = settings.STRIPE_SECRET_KEY
 class ConfirmPayment(APIView):
 
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
 
-        orders = Order.objects.filter(user=request.user, status="pending")
+        session_id = request.data.get("session_id")
 
-        for order in orders:
+        if not session_id:
+            return Response({"error": "Session ID missing"}, status=400)
 
-            order.status = "paid"
-            order.payment_id = "stripe_test_payment"
-            order.save()
+        session = stripe.checkout.Session.retrieve(session_id)
 
-            product = order.product
-            product.availability = "sold"
-            product.save()
+        if session.payment_status != "paid":
+            return Response({"error": "Payment not completed"}, status=400)
 
-        Reservation.objects.filter(user=request.user).delete()
+        metadata = session.metadata
 
-        return Response({"message": "Payment confirmed"})
+        reservations = Reservation.objects.filter(user=request.user)
+
+        created_orders = []
+
+        for r in reservations:
+
+            order = Order.objects.create(
+                user=request.user,
+                product=r.product,
+
+                name=metadata.get("name"),
+                phone=metadata.get("phone"),
+                email=metadata.get("email"),
+                address=metadata.get("address"),
+                city=metadata.get("city"),
+                pincode=metadata.get("pincode"),
+                delivery_date=metadata.get("delivery_date"),
+
+                payment_id=session.payment_intent,
+                status="paid"
+            )
+
+            r.product.availability = "sold"
+            r.product.save()
+
+            created_orders.append(order)
+
+        reservations.delete()
+
+        return Response({
+            "message": "Payment confirmed",
+            "orders": [o.id for o in created_orders]
+        })

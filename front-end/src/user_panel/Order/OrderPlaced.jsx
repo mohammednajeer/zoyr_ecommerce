@@ -3,25 +3,37 @@ import './OrderPlaced.css';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import api from '../../api/api';
-
+import { useParams } from 'react-router-dom';
+import { useSearchParams } from "react-router-dom";
 
 function OrderPlaced() {
   const [orderId, setOrderId] = useState(null);
   const nav = useNavigate();
 
-  useEffect(() => {
+
+const [searchParams] = useSearchParams();
+useEffect(() => {
 
   async function confirmPayment() {
+
+    const sessionId = searchParams.get("session_id");
+
+    if (!sessionId) return;
+
     try {
-      await api.post("products/confirm-payment/");
+      await api.post("products/confirm-payment/", {
+        session_id: sessionId
+      });
+
     } catch (err) {
       console.error(err);
     }
+
   }
 
   confirmPayment();
 
-}, []);
+}, [searchParams]);
 
   return (
     <div className="oplcont">

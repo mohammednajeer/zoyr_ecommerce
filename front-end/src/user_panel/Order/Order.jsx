@@ -35,30 +35,31 @@ function Order() {
 
   async function handlePlaceOrder() {
 
-  if (!name || !Phone || !email || !address || !city || !pincode) {
+  if (!name || !Phone || !email || !address || !city || !pincode || !deliveryDate) {
     toast.error("Please fill all details");
     return;
   }
 
   try {
-    setLoading(true)
-    const orderRes = await api.post("products/create-order/", {
+
+    if (loading) return;
+    setLoading(true);
+
+    const paymentRes = await api.post("payments/checkout/", {
       name,
       phone: Phone,
       email,
       address,
       city,
       pincode,
-      delivery_date : deliveryDate
+      delivery_date: deliveryDate
     });
-
-    const paymentRes = await api.post("payments/checkout/");
 
     window.location.href = paymentRes.data.checkout_url;
 
   } catch (err) {
     toast.error("Checkout failed");
-    setLoading(false)
+    setLoading(false);
   }
 
 }
@@ -171,7 +172,7 @@ function Order() {
           </div>
 
           <button className="order-btn" onClick={handlePlaceOrder} disabled={loading}>
-            Confirm Purchase
+            {loading ? "Processing..." : "Confirm Purchase"}
           </button>
         </div>
 
