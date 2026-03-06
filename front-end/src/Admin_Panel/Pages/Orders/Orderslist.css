@@ -172,11 +172,11 @@ body { background: var(--bg); }
 
 /* ── Order image ── */
 .order-img {
-  width: 240px;
-  height: 180px;
+  width: 350px;
+  height: 240px;
   flex-shrink: 0;
   object-fit: cover;
-  filter: brightness(0.8) saturate(0.82);
+  filter: brightness(0.9) saturate(0.82);
   transition: transform 0.7s ease, filter 0.5s ease;
   display: block;
 }
@@ -189,8 +189,8 @@ body { background: var(--bg); }
 .sdfg::after {
   content: '';
   position: absolute;
-  top: 0; left: 238px; bottom: 0;
-  width: 60px;
+  top: 0; left: 292px; bottom: 0;
+  width: 67px;
   background: linear-gradient(to right, transparent, var(--card));
   pointer-events: none;
   z-index: 1;
