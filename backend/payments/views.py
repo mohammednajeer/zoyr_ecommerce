@@ -7,7 +7,7 @@ from products.models import Reservation
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
-BOOKING_AMOUNT = 1000  # booking deposit
+
 
 class CreateCheckoutSession(APIView):
 
@@ -23,13 +23,16 @@ class CreateCheckoutSession(APIView):
         line_items = []
 
         for r in reservations:
+            
+            advance_amount = int(r.product.price * 0.40)
+
             line_items.append({
                 "price_data": {
                     "currency": "usd",
                     "product_data": {
                         "name": f"{r.product.brand} {r.product.model}",
                     },
-                    "unit_amount": BOOKING_AMOUNT * 100,
+                    "unit_amount": advance_amount * 100,
                 },
                 "quantity": 1,
             })

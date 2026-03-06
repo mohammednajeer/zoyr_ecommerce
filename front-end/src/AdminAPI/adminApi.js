@@ -9,7 +9,7 @@ export const getAdminUsers = () => {
 };
 
 export const getAdminOrders = () => {
-  return api.get("admin/orders/");
+  return api.get("products/admin/orders/");
 };
 
 export const deleteUser = (id) => {

@@ -23,7 +23,7 @@ class ReservationSerializer(serializers.ModelSerializer):
 class OrderSerializer(serializers.ModelSerializer):
 
     product = ProductSerializer(read_only=True)
-
+    user  = serializers.StringRelatedField()
     class Meta:
         model = Order
         fields = "__all__"

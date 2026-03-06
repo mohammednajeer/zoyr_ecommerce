@@ -11,7 +11,8 @@ from .views import (
     MyWishlistView,
     MyOrdersView,
     AdminDashboardView,
-    ConfirmPayment
+    ConfirmPayment,
+    AdminOrdersView
 )
 
 urlpatterns = [
@@ -26,6 +27,6 @@ urlpatterns = [
     path("my-wishlist/", MyWishlistView.as_view()),
     path("my-orders/",MyOrdersView.as_view()),
     path("admin/dashboard/", AdminDashboardView.as_view()),
-
+    path("admin/orders/", AdminOrdersView.as_view()),
     path("confirm-payment/", ConfirmPayment.as_view()),
 ]

@@ -343,3 +343,12 @@ class ConfirmPayment(APIView):
             "message": "Payment confirmed",
             "orders": [o.id for o in created_orders]
         })
+
+
+class AdminOrdersView(ListAPIView):
+
+    permission_classes = [IsAdminUser]
+    serializer_class = OrderSerializer
+
+    def get_queryset(self):
+        return Order.objects.select_related("user", "product").order_by("-created_at")
