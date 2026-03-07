@@ -8,7 +8,7 @@ from django.contrib.auth import authenticate
 from .utils import generate_otp
 from django.core.mail import send_mail
 from .models import EmailOTP,User
-
+from rest_framework.exceptions import AuthenticationFailed
 class RegisterView(APIView):
 
     def post(self , request):
@@ -53,6 +53,12 @@ class Loginview(APIView):
 
         if user is None:
             return Response({"error":"invalid credentials"},status= 401)
+        
+        if user.status == "block":
+            return Response(
+                {"error": "Access blocked. Contact admin."},
+                status=403
+            )
         
         if not user.is_verified:
             EmailOTP.objects.filter(user=user).delete()

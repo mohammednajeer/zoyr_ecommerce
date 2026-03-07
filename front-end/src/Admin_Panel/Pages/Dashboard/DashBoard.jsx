@@ -16,10 +16,8 @@ Chart.defaults.font.family = "'Outfit', sans-serif";
 Chart.defaults.font.size   = 11;
 
 const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-const mockRevenue = [14000,19500,15800,23000,21200,30000,25800,34000,28600,37000,31500,42000];
-const mockOrders  = [5,8,6,11,9,13,11,15,12,16,13,18];
 
-const S_MAP = { pending:'s-pending', confirmed:'s-confirmed', delivered:'s-delivered', cancelled:'s-cancelled' };
+const S_MAP = { pending:'s-pending', confirmed:'s-confirmed', delivered:'s-delivered', cancelled:'s-cancelled', paid:'s-confirmed' };
 
 export default function DashBoard() {
   const donutRef = useRef(null);
@@ -27,10 +25,14 @@ export default function DashBoard() {
   const barRef   = useRef(null);
   const polarRef = useRef(null);
 
-  const [users,    setUsers]    = useState(0);
-  const [products, setProducts] = useState(0);
-  const [orders,   setOrders]   = useState([]);
-  const [revenue,  setRevenue]  = useState(0);
+  // ✅ All useState hooks INSIDE the component
+  const [users,          setUsers]          = useState(0);
+  const [products,       setProducts]       = useState(0);
+  const [orders,         setOrders]         = useState([]);
+  const [revenue,        setRevenue]        = useState(0);
+  const [monthlyRevenue, setMonthlyRevenue] = useState(new Array(12).fill(0));
+  const [monthlyOrders,  setMonthlyOrders]  = useState(new Array(12).fill(0));
+  const [statusCounts,   setStatusCounts]   = useState({});
 
   useEffect(() => {
     async function load() {
@@ -40,6 +42,9 @@ export default function DashBoard() {
         setProducts(res.data.products);
         setOrders(res.data.recent_orders);
         setRevenue(res.data.revenue);
+        setMonthlyRevenue(res.data.monthly_revenue);
+        setMonthlyOrders(res.data.monthly_orders);
+        setStatusCounts(res.data.status_counts);
       } catch (err) { console.error(err); }
     }
     load();
@@ -80,7 +85,7 @@ export default function DashBoard() {
     });
   }, [users, products, orders]);
 
-  /* 2. Line — revenue */
+  /* 2. Line — revenue (real data) */
   useEffect(() => {
     const c = lineRef.current;
     if (!c) return;
@@ -92,7 +97,7 @@ export default function DashBoard() {
         labels: MONTHS,
         datasets: [{
           label: 'Revenue',
-          data: mockRevenue,
+          data: monthlyRevenue,   // ✅ only one data key, using real data
           borderColor: BLUE,
           backgroundColor: mkGrad(ctx, 91, 155, 200, 0.16, 0),
           fill: true, tension: 0.44,
@@ -115,9 +120,9 @@ export default function DashBoard() {
         animation: { duration: 1100 },
       },
     });
-  }, []);
+  }, [monthlyRevenue]);  // ✅ re-renders when real data arrives
 
-  /* 3. Bar — orders */
+  /* 3. Bar — orders (real data) */
   useEffect(() => {
     const c = barRef.current;
     if (!c) return;
@@ -128,9 +133,9 @@ export default function DashBoard() {
         labels: MONTHS,
         datasets: [{
           label: 'Orders',
-          data: mockOrders,
-          backgroundColor: mockOrders.map((_, i) =>
-            i === mockOrders.length - 1 ? TEAL : 'rgba(74,170,146,0.24)'),
+          data: monthlyOrders,   // ✅ only one data key, using real data
+          backgroundColor: monthlyOrders.map((_, i) =>   // ✅ no more mockOrders reference
+            i === monthlyOrders.length - 1 ? TEAL : 'rgba(74,170,146,0.24)'),
           borderColor: 'transparent',
           borderRadius: 6, borderSkipped: false,
           hoverBackgroundColor: '#6dc9b4',
@@ -149,16 +154,15 @@ export default function DashBoard() {
         animation: { duration: 1000 },
       },
     });
-  }, []);
+  }, [monthlyOrders]);  // ✅ re-renders when real data arrives
 
-  /* 4. Polar — order status */
+  /* 4. Polar — order status (real data) */
   useEffect(() => {
     const c = polarRef.current;
-    if (!c || !orders.length) return;
+    if (!c || !Object.keys(statusCounts).length) return;
     if (c._ch) c._ch.destroy();
-    const counts = orders.reduce((a, o) => { a[o.status] = (a[o.status] || 0) + 1; return a; }, {});
-    const labels = Object.keys(counts);
-    const vals   = Object.values(counts);
+    const labels = Object.keys(statusCounts);    // ✅ uses statusCounts directly, not the deleted `counts`
+    const vals   = Object.values(statusCounts);
     const cols = [
       'rgba(200,169,110,0.5)',
       'rgba(91,155,200,0.5)',
@@ -186,7 +190,7 @@ export default function DashBoard() {
         animation: { duration: 900 },
       },
     });
-  }, [orders]);
+  }, [statusCounts]);  // ✅ re-renders when real data arrives
 
   const totalItems = users + products + orders.length;
 

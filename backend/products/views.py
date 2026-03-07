@@ -19,7 +19,9 @@ from rest_framework.parsers import MultiPartParser, FormParser,JSONParser
 import stripe 
 from django.conf import settings
 from products.models import Reservation,Order
-
+from django.db.models.functions import TruncMonth
+from django.db.models import Sum, Count
+import datetime
 
 
 
@@ -256,19 +258,16 @@ class AdminDashboardView(APIView):
 
     permission_classes = [IsAdminUser]
 
+    
     def get(self, request):
-
         users = User.objects.count()
         products = Product.objects.count()
-        orders = Order.objects.count()
 
         revenue = sum(
             order.product.price for order in Order.objects.select_related("product")
         )
 
-        recent_orders = Order.objects.select_related(
-            "user","product"
-        ).order_by("-created_at")[:10]
+        recent_orders = Order.objects.select_related("user", "product").order_by("-created_at")[:10]
 
         data = [
             {
@@ -276,19 +275,45 @@ class AdminDashboardView(APIView):
                 "user": o.user.username,
                 "product": o.product.model,
                 "price": o.product.price,
+                "status": o.status,          # ← ADD THIS
                 "date": o.created_at
             }
             for o in recent_orders
         ]
 
+        # Monthly revenue & order counts for charts
+        current_year = datetime.date.today().year
+        monthly_orders_qs = (
+            Order.objects
+            .filter(created_at__year=current_year)
+            .annotate(month=TruncMonth("created_at"))
+            .values("month")
+            .annotate(count=Count("id"), revenue=Sum("product__price"))
+            .order_by("month")
+        )
+
+        monthly_revenue = [0] * 12
+        monthly_order_counts = [0] * 12
+        for row in monthly_orders_qs:
+            m = row["month"].month - 1
+            monthly_revenue[m] = float(row["revenue"] or 0)
+            monthly_order_counts[m] = row["count"]
+
+        # Status breakdown across ALL orders
+        status_counts = {}
+        for o in Order.objects.values("status").annotate(count=Count("id")):
+            status_counts[o["status"]] = o["count"]
+
         return Response({
             "users": users,
             "products": products,
-            "orders": orders,
+            "orders": Order.objects.count(),
             "revenue": revenue,
-            "recent_orders": data
+            "recent_orders": data,
+            "monthly_revenue": monthly_revenue,        # ← NEW
+            "monthly_orders": monthly_order_counts,    # ← NEW
+            "status_counts": status_counts,            # ← NEW
         })
-    
 
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
