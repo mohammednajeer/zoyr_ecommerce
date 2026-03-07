@@ -168,36 +168,43 @@ body { background: var(--bg); }
   display: flex;
   align-items: stretch;
   gap: 0;
+  position: relative;
 }
 
-/* ── Order image ── */
-.order-img {
-  width: 350px;
-  height: 240px;
+/* ── Image pane (self-contained, fade lives here) ── */
+.order-img-pane {
+  width: 260px;
   flex-shrink: 0;
-  object-fit: cover;
-  filter: brightness(0.9) saturate(0.82);
-  transition: transform 0.7s ease, filter 0.5s ease;
-  display: block;
+  position: relative;
+  overflow: hidden;
 }
-.ordl:hover .order-img {
-  transform: scale(1.05);
+
+.order-img-pane img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  filter: brightness(0.8) saturate(0.82);
+  transition: transform 0.7s ease, filter 0.5s ease;
+}
+.ordl:hover .order-img-pane img {
+  transform: scale(1.06);
   filter: brightness(0.96) saturate(1.05);
 }
 
-/* Right fade from image */
-.sdfg::after {
+/* Fade — right edge of image into card background */
+.order-img-pane::after {
   content: '';
   position: absolute;
-  top: 0; left: 292px; bottom: 0;
-  width: 67px;
+  top: 0; right: 0; bottom: 0;
+  width: 72px;
   background: linear-gradient(to right, transparent, var(--card));
   pointer-events: none;
   z-index: 1;
 }
 
 /* ── Order details ── */
-.sdfg > div:last-child {
+.ord-info {
   flex: 1;
   padding: 24px 28px 24px 32px;
   display: flex;
@@ -250,22 +257,29 @@ body { background: var(--bg); }
   margin-top: 10px;
 }
 
-/* Vehicle line — gold */
-.ordl p:last-child {
-  margin-top: 8px;
-  font-family: 'Cormorant Garamond', serif;
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: var(--gold-bright);
-  letter-spacing: 0.02em;
+/* Vehicle name line — gold */
+.ord-vehicle-name {
+  margin-top: 8px !important;
+  font-family: 'Cormorant Garamond', serif !important;
+  font-size: 1.1rem !important;
+  font-weight: 600 !important;
+  color: var(--gold-bright) !important;
+  letter-spacing: 0.02em !important;
 }
 
-/* ── Divider ── */
-.line {
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(200,169,110,0.15), transparent);
-  margin: 0;
-  display: none; /* hidden — using card border instead */
+/* ── Responsive ── */
+@media (max-width: 900px) {
+  .sdfg { flex-direction: column; }
+  .order-img-pane { width: 100%; height: 200px; }
+  .order-img-pane::after {
+    top: auto; left: 0; right: 0; bottom: 0;
+    width: 100%; height: 60px;
+    background: linear-gradient(to bottom, transparent, var(--card));
+  }
+  .ord-info { padding: 20px 22px; }
+}
+@media (max-width: 768px) {
+  .ord-body { margin-left: 0; width: 100%; padding: 22px; }
 }
 
 /* ── Status badges (if you add a status span) ── */
@@ -339,15 +353,4 @@ body { background: var(--bg); }
   font-size: 0.78rem;
   color: var(--muted);
   letter-spacing: 0.1em;
-}
-
-/* ── Responsive ── */
-@media (max-width: 900px) {
-  .sdfg { flex-direction: column; }
-  .order-img { width: 100%; height: 200px; }
-  .sdfg::after { display: none; }
-  .sdfg > div:last-child { padding: 20px 22px; }
-}
-@media (max-width: 768px) {
-  .ord-body { margin-left: 0; width: 100%; padding: 22px; }
 }

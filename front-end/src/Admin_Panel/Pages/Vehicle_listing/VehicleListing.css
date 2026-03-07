@@ -229,6 +229,36 @@ body { background: var(--bg); }
   border: 1px solid rgba(210,50,50,0.28);
 }
 
+/* Availability badge — inline under vehicle ID */
+.vl-avail-badge {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  margin-top: 2px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.46rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+.vl-avail-badge.available {
+  background: rgba(91,155,200,0.1);
+  color: #5b9bc8;
+  border: 1px solid rgba(91,155,200,0.28);
+}
+.vl-avail-badge.reserved {
+  background: rgba(200,169,110,0.1);
+  color: var(--gold);
+  border: 1px solid var(--gold-border);
+}
+.vl-avail-badge.sold {
+  background: rgba(210,50,50,0.1);
+  color: #d97070;
+  border: 1px solid rgba(210,50,50,0.28);
+}
+
 /* ── Card content ── */
 .vl-content {
   flex: 1;

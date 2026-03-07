@@ -6,8 +6,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { getUserProfile, deleteUser, toggleUserStatus } from '../../../AdminAPI/adminApi';
 import { toast } from 'react-toastify';
 
-
 const OS_MAP = {
+  paid:      'os-paid',
   pending:   'os-pending',
   confirmed: 'os-confirmed',
   delivered: 'os-delivered',
@@ -63,8 +63,6 @@ function UserProfile() {
 
         {/* ── Profile hero card ── */}
         <div className="up-profile-card">
-
-          {/* Avatar */}
           <div className="up-avatar-wrap">
             <div className="up-avatar-img">
               <img src={icn} alt="" />
@@ -73,7 +71,6 @@ function UserProfile() {
             <div className="up-ring-2" />
           </div>
 
-          {/* Info */}
           <div className="up-info">
             <div className="up-username">{user?.username || '—'}</div>
             <div className="up-meta">
@@ -95,7 +92,6 @@ function UserProfile() {
             </div>
           </div>
 
-          {/* Actions */}
           <div className="up-actions">
             <button
               className={`up-act-btn ${user?.status === 'active' ? 'up-toggle-active' : 'up-toggle-blocked'}`}
@@ -107,10 +103,9 @@ function UserProfile() {
               Delete User
             </button>
           </div>
-
         </div>
 
-        {/* ── Orders ── */}
+        {/* ── Orders header ── */}
         <div className="up-orders-header">
           <span className="up-orders-eyebrow">Order History</span>
           <div className="up-orders-rule" />
@@ -125,14 +120,21 @@ function UserProfile() {
         )}
 
         <div className="up-ordli">
-          {orders.map(order => (
-            <div className="up-order" key={order.id}>
+          {orders.map((order, i) => (
+            <div
+              className="up-order"
+              key={order.id}
+              style={{ animationDelay: `${i * 0.06}s`, cursor: 'pointer' }}
+              onClick={() => nav(`/orderDetail/${order.id}`)}
+            >
 
               {/* Order header bar */}
               <div className="up-order-head">
                 <span className="up-order-id">Order #{order.id}</span>
                 <span className="up-order-date">
-                  {new Date(order.created_at).toLocaleDateString('en-US', { year:'numeric', month:'short', day:'numeric' })}
+                  {new Date(order.created_at).toLocaleDateString('en-US', {
+                    year: 'numeric', month: 'short', day: 'numeric'
+                  })}
                 </span>
                 <span className={`up-order-status ${OS_MAP[order.status] || 'os-pending'}`}>
                   {order.status}
@@ -141,22 +143,55 @@ function UserProfile() {
 
               {/* Order body */}
               <div className="up-crds">
-                <div className="up-ords-img">
-                  <img src={order.product.image} alt="" />
+
+                {/* Vehicle image — click goes to vehicle detail */}
+                <div
+                  className="up-ords-img"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    nav(`/vehicleDetail/${order.product.id}`);
+                  }}
+                  title="View vehicle details"
+                >
+                  <img
+                    src={order.product.image?.url || order.product.image}
+                    alt={order.product.model}
+                  />
+                  <div className="up-img-hover-hint">View Vehicle →</div>
                 </div>
+
                 <div className="up-cart-detls">
-                  <div className="up-vehicle-name">
+                  {/* Vehicle name — also links to vehicle detail */}
+                  <div
+                    className="up-vehicle-name"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      nav(`/vehicleDetail/${order.product.id}`);
+                    }}
+                  >
                     {order.product.brand} — {order.product.model}
+                    <span className="up-vehicle-link-hint"> ↗</span>
                   </div>
+
                   <div className="up-spec-row">
                     <span className="up-spec-chip">{order.product.year}</span>
                     <span className="up-spec-chip">{order.product.fuel}</span>
-                    <span className="up-spec-chip">{order.product.kmCover} km</span>
+                    <span className="up-spec-chip">
+                      {Number(order.product.kmCover).toLocaleString()} km
+                    </span>
                   </div>
-                  <div className="up-price">${order.product.price}</div>
-                </div>
-              </div>
 
+                  <div className="up-price">
+                    ${Number(order.product.price).toLocaleString()}
+                  </div>
+
+                  <div className="up-order-cta">
+                    <span>View Order Details</span>
+                    <span className="up-cta-arr">→</span>
+                  </div>
+                </div>
+
+              </div>
             </div>
           ))}
         </div>

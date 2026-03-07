@@ -19,9 +19,13 @@ function VehicleListing() {
     loadProducts();
   }, []);
 
-  function handleEdit(id) { navigate(`/vehicleUpdate/${id}`); }
+  function handleEdit(e, id) {
+    e.stopPropagation();
+    navigate(`/vehicleUpdate/${id}`);
+  }
 
-  async function handleStatus(id) {
+  async function handleStatus(e, id) {
+    e.stopPropagation();
     const product   = data.find(p => p.id === id);
     const newStatus = product.status === 'active' ? 'inactive' : 'active';
     try {
@@ -54,7 +58,12 @@ function VehicleListing() {
         ) : (
           <div className="vl-list">
             {data.map(vehicle => (
-              <div key={vehicle.id} className="vl-card">
+              <div
+                key={vehicle.id}
+                className="vl-card"
+                onClick={() => navigate(`/vehicleDetail/${vehicle.id}`)}
+                style={{ cursor: 'pointer' }}
+              >
 
                 {/* Image pane */}
                 <div className="vl-img-pane">
@@ -70,6 +79,7 @@ function VehicleListing() {
                     <span className="vl-brand">{vehicle.brand}</span>
                     <span className="vl-model">{vehicle.model}</span>
                     <span className="vl-id">ID #{vehicle.id}</span>
+                    <span className={`vl-avail-badge ${vehicle.availability}`}>{vehicle.availability}</span>
                   </div>
 
                   <div className="vl-divider" />
@@ -96,14 +106,14 @@ function VehicleListing() {
                     <span className="vl-price">${Number(vehicle.price).toLocaleString()}</span>
                   </div>
 
-                  {/* Actions */}
+                  {/* Actions — stopPropagation so card click doesn't fire */}
                   <div className="vl-actions">
-                    <button className="vl-btn Edit-Btn" onClick={() => handleEdit(vehicle.id)}>
+                    <button className="vl-btn Edit-Btn" onClick={(e) => handleEdit(e, vehicle.id)}>
                       Edit
                     </button>
                     <button
                       className={`vl-btn Status-Btn${vehicle.status === 'active' ? '' : ' inactive'}`}
-                      onClick={() => handleStatus(vehicle.id)}
+                      onClick={(e) => handleStatus(e, vehicle.id)}
                     >
                       {vehicle.status === 'active' ? 'Deactivate' : 'Activate'}
                     </button>

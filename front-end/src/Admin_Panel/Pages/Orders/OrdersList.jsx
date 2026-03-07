@@ -2,8 +2,10 @@ import React, { useEffect, useState } from "react";
 import "./Orderslist.css";
 import SideBar from "../../Sidebar/SideBar";
 import { getAdminOrders } from "../../../AdminAPI/adminApi";
+import { useNavigate } from "react-router-dom";
 
 const STATUS_MAP = {
+  paid:      "paid",
   pending:   "pending",
   confirmed: "confirmed",
   delivered: "delivered",
@@ -12,10 +14,9 @@ const STATUS_MAP = {
 
 function OrdersList() {
   const [orders, setOrders] = useState([]);
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    fetchOrders();
-  }, []);
+  useEffect(() => { fetchOrders(); }, []);
 
   const fetchOrders = async () => {
     try {
@@ -43,19 +44,24 @@ function OrdersList() {
           )}
 
           {orders.map((order, i) => (
-            <div className="ordl" key={order.id} style={{ animationDelay: `${i * 0.05}s` }}>
-
+            <div
+              className="ordl"
+              key={order.id}
+              style={{ animationDelay: `${i * 0.05}s`, cursor: "pointer" }}
+              onClick={() => navigate(`/orderDetail/${order.id}`)}
+            >
               <div className="sdfg">
 
-                <img
-                  className="order-img"
-                  src={order.product.image?.url || order.product.image}
-                  alt={order.product.model}
-                />
+                {/* Image wrapped in pane for clean fade */}
+                <div className="order-img-pane">
+                  <img
+                    src={order.product.image?.url || order.product.image}
+                    alt={order.product.model}
+                  />
+                </div>
 
-                <div>
+                <div className="ord-info">
                   <h2>Order #{order.id}</h2>
-
                   <p><b>Customer</b>{order.name}</p>
                   <p><b>Email</b>{order.email}</p>
                   <p><b>Phone</b>{order.phone}</p>
@@ -66,13 +72,10 @@ function OrdersList() {
                     </span>
                   </p>
                   <p><b>Date</b>{new Date(order.created_at).toLocaleString()}</p>
-                  <p>{order.product.brand} {order.product.model}</p>
+                  <p className="ord-vehicle-name">{order.product.brand} {order.product.model}</p>
                 </div>
 
               </div>
-
-              <div className="line" />
-
             </div>
           ))}
 
