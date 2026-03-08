@@ -228,6 +228,7 @@ const location = useLocation()
                   </div>
                   <div className="detail-sections">
                     <div><p>FUEL</p><p>TYPE</p></div>
+                    
                     <h6>{dt.fuel}</h6>
                   </div>
                   <div className="detail-sections">

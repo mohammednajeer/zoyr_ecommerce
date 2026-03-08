@@ -1,0 +1,42 @@
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
+
+.ls-wrap {
+  position: fixed; inset: 0; z-index: 9999;
+  background: #050505;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 18px;
+  transition: opacity 0.5s ease;
+}
+
+.ls-out {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Brand name */
+.ls-word {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(4.5rem, 14vw, 10rem);
+  letter-spacing: 0.28em;
+  color: #ede8df;
+  opacity: 0;
+  animation: wordIn 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards;
+}
+
+@keyframes wordIn {
+  from { opacity: 0; letter-spacing: 0.55em; }
+  to   { opacity: 1; letter-spacing: 0.28em; }
+}
+
+/* Thin gold underline that draws itself */
+.ls-line {
+  width: 0;
+  height: 1px;
+  background: #c8a96e;
+  animation: lineIn 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.9s forwards;
+}
+
+@keyframes lineIn {
+  to { width: 60px; }
+}

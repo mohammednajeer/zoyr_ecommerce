@@ -13,6 +13,8 @@ import Twitter    from '../../assets/twitter.png';
 import api        from '../../api/api.js';
 import { reserveProduct } from '../../api/api.js';
 import { useLocation } from 'react-router-dom';
+import LoadingScreen from './LoadingScreen.jsx';
+
 const MARQUEE_ITEMS = [
   'Luxury','✦','Performance','✦','Prestige','✦',
   'Speed', '✦','Excellence', '✦','Precision','✦',
@@ -27,9 +29,11 @@ const STATS = [
 ];
 
 function Home() {
-  const [data, setdata] = useState([]);
-  const nav = useNavigate();
-const location = useLocation()
+  const [data,   setdata]   = useState([]);
+  const [loaded, setLoaded] = useState(false);
+  const nav      = useNavigate();
+  const location = useLocation();
+
   useEffect(() => {
     api.get("profile/")
        .then(res => { if (res.data.role === "admin") nav("/dashboard"); })
@@ -58,6 +62,9 @@ const location = useLocation()
 
   return (
     <>
+      {/* ══ LOADING SCREEN ════════════════════════════ */}
+      {!loaded && <LoadingScreen onDone={() => setLoaded(true)} />}
+
       <NavBar color={true} />
 
       {/* ══ HERO ══════════════════════════════════════ */}
