@@ -45,7 +45,16 @@ function SignUp() {
         const username = res.data.username || trimmedUser
         nav("/verify-otp", { state: { email: trimmedEmail, username } })
       } catch (err) {
-        toast.error(JSON.stringify(err.response?.data) || "Something went wrong");
+        const errors = err.response?.data;
+          if(errors?.username){
+            toast.error(errors.username[0])
+          }
+          else if(errors?.email){
+            toast.error(errors.email[0])
+          }
+          else{
+            toast.error("Something went wrong")
+          }
       } finally {
         setLoading(false)
       }

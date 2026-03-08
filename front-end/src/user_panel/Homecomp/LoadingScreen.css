@@ -1,12 +1,11 @@
-@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500&display=swap');
 
 .ls-wrap {
   position: fixed; inset: 0; z-index: 9999;
-  background: #050505;
-  display: flex; flex-direction: column;
+  background: #080808;
+  display: flex;
   align-items: center; justify-content: center;
-  gap: 18px;
-  transition: opacity 0.5s ease;
+  transition: opacity 0.55s ease;
 }
 
 .ls-out {
@@ -14,29 +13,58 @@
   pointer-events: none;
 }
 
-/* Brand name */
-.ls-word {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: clamp(4.5rem, 14vw, 10rem);
-  letter-spacing: 0.28em;
-  color: #ede8df;
+/* ── Emblem row ── */
+.ls-emblem {
+  display: flex;
+  align-items: center;
+  gap: 32px;
   opacity: 0;
-  animation: wordIn 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards;
+  animation: emblemIn 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.25s forwards;
 }
 
-@keyframes wordIn {
-  from { opacity: 0; letter-spacing: 0.55em; }
-  to   { opacity: 1; letter-spacing: 0.28em; }
+@keyframes emblemIn {
+  from { opacity: 0; transform: scale(0.97); }
+  to   { opacity: 1; transform: scale(1); }
 }
 
-/* Thin gold underline that draws itself */
-.ls-line {
-  width: 0;
-  height: 1px;
-  background: #c8a96e;
-  animation: lineIn 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.9s forwards;
+/* ── Brand name ── */
+.ls-word {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(3.8rem, 10vw, 7.5rem);
+  font-weight: 400;
+  letter-spacing: 0.22em;
+  color: #d8d3cb;
+  line-height: 1;
+  text-shadow: 0 0 80px rgba(220,215,205,0.08), 1px 1px 0 rgba(0,0,0,0.5);
 }
 
-@keyframes lineIn {
-  to { width: 60px; }
+/* ── Wing groups ── */
+.ls-wings {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  width: clamp(70px, 11vw, 130px);
+}
+
+/* Each line uses --w for its final width and --d for its delay */
+.ls-wing-line {
+  height: 2px;
+  background: #c8c0b0;
+  opacity: 0;
+  width: var(--w, 100%);
+  transform: scaleX(0);
+  animation: wingDraw 0.55s cubic-bezier(0.4, 0, 0.2, 1) var(--d, 0.9s) forwards;
+}
+
+/* Left wings anchor to the right (draw inward) */
+.ls-wings-l { align-items: flex-end; }
+.ls-wings-l .ls-wing-line { transform-origin: right; }
+
+/* Right wings anchor to the left (draw inward) */
+.ls-wings-r { align-items: flex-start; }
+.ls-wings-r .ls-wing-line { transform-origin: left; }
+
+@keyframes wingDraw {
+  from { opacity: 0; transform: scaleX(0); }
+  to   { opacity: 0.72; transform: scaleX(1); }
 }
