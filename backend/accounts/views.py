@@ -98,6 +98,7 @@ class Loginview(APIView):
             httponly=True,
             secure=True,
             samesite="None",
+            domain="zoyr-ecommerce.onrender.com",
             path="/"
         )
         response.set_cookie(
@@ -106,6 +107,7 @@ class Loginview(APIView):
             httponly=True,
             secure=True,
             samesite="None",
+            domain="zoyr-ecommerce.onrender.com",
             path="/"
         )
         return response
@@ -165,6 +167,7 @@ class RefreshTokenView(APIView):
                 httponly=True,
                 secure=True,
                 samesite="None",
+                domain="zoyr-ecommerce.onrender.com",
                 path="/"
             )
 
