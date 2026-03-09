@@ -139,9 +139,17 @@ class LogoutView(APIView):
 
         response = Response({"message": "Logged out successfully"})
 
-        
-        response.delete_cookie("access_token")
-        response.delete_cookie("refresh_token")
+        response.delete_cookie(
+            key="access_token",
+            domain="zoyr-ecommerce.onrender.com",
+            path="/"
+        )
+
+        response.delete_cookie(
+            key="refresh_token",
+            domain="zoyr-ecommerce.onrender.com",
+            path="/"
+        )
 
         return response
     
