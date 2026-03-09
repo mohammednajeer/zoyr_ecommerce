@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import "./AdminOrderDetail.css";
+import "./Adminorderdetail.css";
 import SideBar from "../../Sidebar/SideBar";
 import { useParams, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
