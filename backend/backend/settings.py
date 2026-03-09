@@ -64,6 +64,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",
     "https://zoyrcars.vercel.app/",
 ]
 
@@ -177,3 +178,9 @@ EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 
 STRIPE_SECRET_KEY = os.getenv("STRIPE_SECRET_KEY")
 STRIPE_PUBLISHABLE_KEY = os.getenv("STRIPE_PUBLISHABLE_KEY")
+
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://your-vercel-app.vercel.app",
+    "https://zoyr-ecommerce.onrender.com"
+]
