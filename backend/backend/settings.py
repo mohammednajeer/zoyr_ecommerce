@@ -65,7 +65,7 @@ MIDDLEWARE = [
 ]
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
-    "https://zoyrcars.vercel.app/",
+    "https://zoyrcars.vercel.app",
 ]
 
 ROOT_URLCONF = 'backend.urls'
@@ -136,9 +136,7 @@ SIMPLE_JWT = {
 
 CORS_ALLOW_CREDENTIALS = True
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",
-]
+
 # Internationalization
 # https://docs.djangoproject.com/en/6.0/topics/i18n/
 
@@ -181,6 +179,12 @@ STRIPE_PUBLISHABLE_KEY = os.getenv("STRIPE_PUBLISHABLE_KEY")
 
 
 CSRF_TRUSTED_ORIGINS = [
-    "https://your-vercel-app.vercel.app",
+    "https://zoyrcars.vercel.app",
     "https://zoyr-ecommerce.onrender.com"
 ]
+
+SESSION_COOKIE_SAMESITE = "None"
+SESSION_COOKIE_SECURE = True
+
+CSRF_COOKIE_SAMESITE = "None"
+CSRF_COOKIE_SECURE = True
