@@ -30,7 +30,12 @@ const STATS = [
 
 function Home() {
   const [data,   setdata]   = useState([]);
-  const [loaded, setLoaded] = useState(false);
+
+  // Only show loader if it hasn't been shown yet this session
+  const [loaded, setLoaded] = useState(
+    () => sessionStorage.getItem('zoyr_loaded') === 'true'
+  );
+
   const nav      = useNavigate();
   const location = useLocation();
 
@@ -45,6 +50,11 @@ function Home() {
        .then(res => setdata(res.data))
        .catch(err => console.error(err));
   }, []);
+
+  function handleLoaderDone() {
+    sessionStorage.setItem('zoyr_loaded', 'true');
+    setLoaded(true);
+  }
 
   async function handleAdd(id) {
     try {
@@ -62,8 +72,8 @@ function Home() {
 
   return (
     <>
-      {/* ══ LOADING SCREEN ════════════════════════════ */}
-      {!loaded && <LoadingScreen onDone={() => setLoaded(true)} />}
+      {/* ══ LOADING SCREEN — only on first visit per session ══ */}
+      {!loaded && <LoadingScreen onDone={handleLoaderDone} />}
 
       <NavBar color={true} />
 

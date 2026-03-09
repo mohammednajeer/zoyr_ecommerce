@@ -377,3 +377,7 @@ class AdminOrdersView(ListAPIView):
 
     def get_queryset(self):
         return Order.objects.select_related("user", "product").order_by("-created_at")
+    
+
+
+    
