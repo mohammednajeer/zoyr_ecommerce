@@ -96,15 +96,15 @@ class Loginview(APIView):
             key="access_token",
             value=access_token,
             httponly=True,
-            secure=False,
-            samesite="Lax"
+            secure=True,
+            samesite="None"
         )
         response.set_cookie(
             key="refresh_token",
             value = str(refresh),
             httponly=True,
-            secure=False,
-            samesite="Lax"
+            secure=True,
+            samesite="None"
         )
         return response
         
@@ -161,8 +161,8 @@ class RefreshTokenView(APIView):
                 key="access_token",
                 value=new_access,
                 httponly=True,
-                secure=False,
-                samesite="Lax"
+                secure=True,
+                samesite="None"
             )
 
             return response
