@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import "./UserOrderDetail.css";
+import "./Userorderdetail.css";
 import NavBar from "../../component/NavBar";
 import { useParams, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
