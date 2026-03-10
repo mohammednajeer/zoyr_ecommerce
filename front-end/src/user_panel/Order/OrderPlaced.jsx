@@ -63,7 +63,7 @@ export default function OrderPlaced() {
     return isNaN(dt.getTime()) ? s : dt.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
   };
 
-  const fmtPrice = p  => p  ? `₹ ${Number(p).toLocaleString('en-IN')}` : '—';
+  const fmtPrice = p  => p  ? `$ ${Number(p).toLocaleString('en-IN')}` : '—';
   const shortId  = id => id ? `${id.slice(0, 10)}···${id.slice(-6)}`   : '—';
 
   const fi         = FULFILLMENT[order?.order_status] ?? FULFILLMENT.progress;
