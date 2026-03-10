@@ -5,8 +5,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import api from "../../../api/api";
 
-const STATUS_OPTIONS = ["pending", "confirmed", "delivered", "cancelled"];
-
+/* ── Payment status → CSS class ── */
 const STATUS_CLS = {
   paid:      "aod-s-paid",
   pending:   "aod-s-pending",
@@ -15,9 +14,19 @@ const STATUS_CLS = {
   cancelled: "aod-s-cancelled",
 };
 
+/* ── Fulfillment order_status options & classes ── */
+const ORDER_STATUS_OPTIONS = ["progress", "delayed", "cancelled", "handed_over"];
+
+const ORDER_STATUS_CLS = {
+  progress:    "aod-s-confirmed",
+  delayed:     "aod-s-pending",
+  cancelled:   "aod-s-cancelled",
+  handed_over: "aod-s-delivered",
+};
+
 export default function AdminOrderDetail() {
-  const { id }  = useParams();
-  const nav     = useNavigate();
+  const { id } = useParams();
+  const nav    = useNavigate();
 
   const [order,     setOrder]     = useState(null);
   const [loading,   setLoading]   = useState(true);
@@ -28,7 +37,7 @@ export default function AdminOrderDetail() {
   useEffect(() => {
     async function load() {
       try {
-        const res = await api.get(`products/admin/orders/`);
+        const res   = await api.get(`products/admin/orders/`);
         const found = (res.data || []).find(o => String(o.id) === String(id));
         if (found) setOrder(found);
       } catch {
@@ -43,9 +52,9 @@ export default function AdminOrderDetail() {
   async function handleStatusChange(newStatus) {
     setUpdating(true);
     try {
-      await api.patch(`products/admin/orders/${id}/`, { status: newStatus });
-      setOrder(o => ({ ...o, status: newStatus }));
-      toast.dark(`Status updated to ${newStatus}`);
+      await api.patch(`products/admin/orders/${id}/`, { order_status: newStatus });
+      setOrder(o => ({ ...o, order_status: newStatus }));
+      toast.dark(`Order status updated to ${newStatus.replace("_", " ")}`);
     } catch {
       toast.error("Failed to update status");
     } finally {
@@ -53,6 +62,7 @@ export default function AdminOrderDetail() {
     }
   }
 
+  /* ── Loading state ── */
   if (loading) return (
     <div className="aod-cont">
       <SideBar />
@@ -64,6 +74,7 @@ export default function AdminOrderDetail() {
     </div>
   );
 
+  /* ── Not found ── */
   if (!order) return (
     <div className="aod-cont">
       <SideBar />
@@ -75,34 +86,38 @@ export default function AdminOrderDetail() {
     </div>
   );
 
-  const imgUrl   = order.product?.image?.url || order.product?.image;
-  const sCls     = STATUS_CLS[order.status] || "aod-s-pending";
+  /* ── Derived values (safe to compute now that order exists) ── */
+  const imgUrl = order.product?.image?.url || order.product?.image;
+  const sCls   = STATUS_CLS[order.status]             || "aod-s-pending";
+  const osCls  = ORDER_STATUS_CLS[order.order_status] || "aod-s-pending";
 
+  /* ── Field arrays ── */
   const customerFields = [
-    { key: "Full Name",   val: order.name },
-    { key: "Email",       val: order.email },
-    { key: "Phone",       val: order.phone },
-    { key: "City",        val: order.city },
-    { key: "Address",     val: order.address },
-    { key: "Pincode",     val: order.pincode },
+    { key: "Full Name", val: order.name },
+    { key: "Email",     val: order.email },
+    { key: "Phone",     val: order.phone },
+    { key: "City",      val: order.city },
+    { key: "Address",   val: order.address },
+    { key: "Pincode",   val: order.pincode },
   ];
 
   const transactionFields = [
-    { key: "Order ID",       val: `#${order.id}` },
-    { key: "Payment ID",     val: order.payment_id,   mono: true },
-    { key: "Order Status",   val: order.status },
-    { key: "Delivery Date",  val: order.delivery_date },
-    { key: "Order Date",     val: new Date(order.created_at).toLocaleString() },
-    { key: "Amount Paid",    val: `$${Number(order.product?.price).toLocaleString()}` },
+    { key: "Order ID",        val: `#${order.id}` },
+    { key: "Payment ID",      val: order.payment_id, mono: true },
+    { key: "Payment Status",  val: order.status,     isPayStatus: true },
+    { key: "Order Status",    val: order.order_status?.replace("_", " "), isOrderStatus: true },
+    { key: "Delivery Date",   val: order.delivery_date },
+    { key: "Order Date",      val: new Date(order.created_at).toLocaleString() },
+    { key: "Amount Paid",     val: `$${Number(order.product?.price).toLocaleString()}`, isPrice: true },
   ];
 
   const vehicleFields = [
-    { key: "Brand",       val: order.product?.brand },
-    { key: "Model",       val: order.product?.model },
-    { key: "Year",        val: order.product?.year },
-    { key: "Fuel Type",   val: order.product?.fuel },
-    { key: "Mileage",     val: order.product?.kmCover ? `${Number(order.product.kmCover).toLocaleString()} km` : "—" },
-    { key: "List Price",  val: `$${Number(order.product?.price).toLocaleString()}` },
+    { key: "Brand",      val: order.product?.brand },
+    { key: "Model",      val: order.product?.model },
+    { key: "Year",       val: order.product?.year },
+    { key: "Fuel Type",  val: order.product?.fuel },
+    { key: "Mileage",    val: order.product?.kmCover ? `${Number(order.product.kmCover).toLocaleString()} km` : "—" },
+    { key: "List Price", val: `$${Number(order.product?.price).toLocaleString()}` },
   ];
 
   const tabs = [
@@ -132,7 +147,16 @@ export default function AdminOrderDetail() {
               : <div className="aod-img-ph">No Image</div>
             }
             <div className="aod-img-overlay" />
-            <span className={`aod-status-hero ${sCls}`}>{order.status}</span>
+
+            {/* Payment status badge — top left */}
+            <span className={`aod-status-hero ${sCls}`}>
+              {order.status}
+            </span>
+
+            {/* Order/fulfillment status badge — top right */}
+            <span className={`aod-status-hero aod-order-status-hero ${osCls}`}>
+              {order.order_status?.replace("_", " ") || "progress"}
+            </span>
           </div>
 
           {/* Right — identity */}
@@ -145,7 +169,9 @@ export default function AdminOrderDetail() {
                 <span className="aod-meta-chip">{order.product?.brand} {order.product?.model}</span>
                 <span className="aod-meta-sep" />
                 <span className="aod-meta-chip">
-                  {new Date(order.created_at).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })}
+                  {new Date(order.created_at).toLocaleDateString("en-US", {
+                    year: "numeric", month: "short", day: "numeric"
+                  })}
                 </span>
               </div>
             </div>
@@ -156,7 +182,7 @@ export default function AdminOrderDetail() {
                 {(order.name || "?")[0].toUpperCase()}
               </div>
               <div className="aod-snap-info">
-                <span className="aod-snap-name">{order.name || "—"}</span>
+                <span className="aod-snap-name">{order.name   || "—"}</span>
                 <span className="aod-snap-email">{order.email || "—"}</span>
                 <span className="aod-snap-phone">{order.phone || "—"}</span>
               </div>
@@ -168,18 +194,18 @@ export default function AdminOrderDetail() {
               <span className="aod-amount">${Number(order.product?.price).toLocaleString()}</span>
             </div>
 
-            {/* Status updater */}
+            {/* ── Order status updater ── */}
             <div className="aod-status-control">
-              <span className="aod-sc-lbl">Update Status</span>
+              <span className="aod-sc-lbl">Update Order Status</span>
               <div className="aod-sc-btns">
-                {STATUS_OPTIONS.map(s => (
+                {ORDER_STATUS_OPTIONS.map(s => (
                   <button
                     key={s}
-                    className={`aod-sc-btn ${s} ${order.status === s ? "active" : ""}`}
+                    className={`aod-sc-btn ${s} ${order.order_status === s ? "active" : ""}`}
                     onClick={() => handleStatusChange(s)}
-                    disabled={updating || order.status === s}
+                    disabled={updating || order.order_status === s}
                   >
-                    {s}
+                    {s.replace("_", " ")}
                   </button>
                 ))}
               </div>
@@ -224,12 +250,24 @@ export default function AdminOrderDetail() {
               {transactionFields.map((f, i) => (
                 <div className="aod-field-card" key={f.key} style={{ animationDelay: `${i * 0.05}s` }}>
                   <span className="aod-field-key">{f.key}</span>
-                  <span className={`aod-field-val ${f.mono ? "mono" : ""} ${f.key === "Order Status" ? `aod-status-val ${sCls}` : ""}`}>
-                    {f.key === "Amount Paid"
-                      ? <span className="aod-field-price">{f.val}</span>
-                      : f.val || "—"
-                    }
-                  </span>
+
+                  {f.isPrice ? (
+                    <span className="aod-field-val">
+                      <span className="aod-field-price">{f.val}</span>
+                    </span>
+                  ) : f.isPayStatus ? (
+                    <span className={`aod-field-val aod-status-val ${sCls}`}>
+                      {f.val || "—"}
+                    </span>
+                  ) : f.isOrderStatus ? (
+                    <span className={`aod-field-val aod-status-val ${osCls}`}>
+                      {f.val || "—"}
+                    </span>
+                  ) : (
+                    <span className={`aod-field-val ${f.mono ? "mono" : ""}`}>
+                      {f.val || "—"}
+                    </span>
+                  )}
                 </div>
               ))}
             </div>
@@ -240,14 +278,12 @@ export default function AdminOrderDetail() {
         {activeTab === "vehicle" && (
           <div className="aod-tab-panel">
             <div className="aod-vehicle-wrap">
-              {/* vehicle image */}
               <div className="aod-vehicle-img-wrap">
                 {imgUrl
                   ? <img src={imgUrl} alt={order.product?.model} />
                   : <div className="aod-img-ph">No Image</div>
                 }
               </div>
-              {/* vehicle fields */}
               <div className="aod-vehicle-fields">
                 {vehicleFields.map((f, i) => (
                   <div className="aod-spec-row" key={f.key} style={{ animationDelay: `${i * 0.05}s` }}>

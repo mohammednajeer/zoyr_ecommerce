@@ -380,4 +380,13 @@ class AdminOrdersView(ListAPIView):
     
 
 
-    
+from rest_framework.generics import RetrieveUpdateAPIView
+
+class AdminOrderDetailView(RetrieveUpdateAPIView):
+    permission_classes = [IsAdminUser]
+    serializer_class   = OrderSerializer
+    queryset           = Order.objects.select_related("user", "product")
+
+    def patch(self, request, *args, **kwargs):
+        kwargs["partial"] = True
+        return self.update(request, *args, **kwargs)

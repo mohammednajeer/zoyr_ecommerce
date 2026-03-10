@@ -48,6 +48,12 @@ class Reservation(models.Model):
         return f"{self.user} reserved {self.product}"
     
 class Order(models.Model):
+    ORDER_STATUS_CHOICES = [
+        ("progress",   "In Progress"),
+        ("delayed",    "Delayed"),
+        ("cancelled",  "Cancelled"),
+        ("handed_over","Handed Over"),
+    ]
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
@@ -65,6 +71,11 @@ class Order(models.Model):
     payment_id = models.CharField(max_length=255, null=True, blank=True)
 
     status = models.CharField(max_length=100, default="pending")
+    order_status = models.CharField(                               # fulfillment status
+        max_length=100,
+        choices=ORDER_STATUS_CHOICES,
+        default="progress"
+    )
     created_at = models.DateTimeField(auto_now_add=True)
 
     

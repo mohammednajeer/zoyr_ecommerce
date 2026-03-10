@@ -64,17 +64,14 @@ function NavBar(props) {
   }, [loggedUser]);
 
 const handleLogout = async () => {
-
-  await axios.post("http://localhost:8000/api/logout/", {}, {
-    withCredentials:true
-  });
-
-  
-  
-  nav("/login")
+  try {
+    await api.post("logout/");
+  } catch (err) {
+    console.error("Logout error:", err);
+  }
+  nav("/login");
   toast.dark("Logged out");
 };
-
 
   const handleUserOption = (e) => {
     const value = e.target.value;

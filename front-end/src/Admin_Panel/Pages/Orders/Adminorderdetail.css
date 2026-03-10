@@ -147,7 +147,7 @@
   filter: brightness(0.95) saturate(1.05);
 }
 
-/* Overlay gradient — blends image into info panel */
+/* Overlay gradient */
 .aod-img-overlay {
   position: absolute; inset: 0;
   background: linear-gradient(
@@ -158,7 +158,7 @@
   pointer-events: none;
 }
 
-/* Status hero badge */
+/* ── Status hero badges ── */
 .aod-status-hero {
   position: absolute;
   top: 18px; left: 18px;
@@ -168,6 +168,12 @@
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.52rem; font-weight: 700;
   letter-spacing: 0.2em; text-transform: uppercase;
+}
+
+/* Fulfillment badge sits top-right */
+.aod-order-status-hero {
+  left: auto;
+  right: 18px;
 }
 
 /* Info half */
@@ -274,7 +280,9 @@
   color: var(--gold-bright); line-height: 1;
 }
 
-/* ── Status control ── */
+/* ══════════════════════════════════════════════════
+   STATUS CONTROL — order_status buttons
+══════════════════════════════════════════════════ */
 .aod-status-control {
   display: flex; flex-direction: column; gap: 10px;
 }
@@ -300,17 +308,53 @@
 .aod-sc-btn.active   { opacity: 1; transform: none !important; }
 .aod-sc-btn:hover:not(:disabled) { opacity: 0.9; transform: translateY(-2px); }
 
-/* Per-status colors */
-.aod-sc-btn.pending   { background: var(--gold-dim); color: var(--gold); border: 1px solid var(--gold-border); }
-.aod-sc-btn.pending.active { box-shadow: 0 6px 20px rgba(200,169,110,0.18); border-color: rgba(200,169,110,0.4); }
-.aod-sc-btn.confirmed { background: rgba(91,155,200,0.08); color: #5b9bc8; border: 1px solid rgba(91,155,200,0.22); }
-.aod-sc-btn.confirmed.active { box-shadow: 0 6px 20px rgba(91,155,200,0.18); border-color: rgba(91,155,200,0.4); }
-.aod-sc-btn.delivered { background: rgba(111,207,151,0.07); color: #6fcf97; border: 1px solid rgba(111,207,151,0.22); }
-.aod-sc-btn.delivered.active { box-shadow: 0 6px 20px rgba(111,207,151,0.18); border-color: rgba(111,207,151,0.4); }
-.aod-sc-btn.cancelled { background: rgba(210,50,50,0.08); color: #d97070; border: 1px solid rgba(210,50,50,0.22); }
-.aod-sc-btn.cancelled.active { box-shadow: 0 6px 20px rgba(210,50,50,0.18); border-color: rgba(210,50,50,0.4); }
+/* progress — blue */
+.aod-sc-btn.progress {
+  background: rgba(91,155,200,0.08);
+  color: #5b9bc8;
+  border: 1px solid rgba(91,155,200,0.22);
+}
+.aod-sc-btn.progress.active {
+  box-shadow: 0 6px 20px rgba(91,155,200,0.18);
+  border-color: rgba(91,155,200,0.4);
+}
 
-/* ── Hero badge colors (reuse from status) ── */
+/* delayed — gold */
+.aod-sc-btn.delayed {
+  background: var(--gold-dim);
+  color: var(--gold);
+  border: 1px solid var(--gold-border);
+}
+.aod-sc-btn.delayed.active {
+  box-shadow: 0 6px 20px rgba(200,169,110,0.18);
+  border-color: rgba(200,169,110,0.4);
+}
+
+/* cancelled — red */
+.aod-sc-btn.cancelled {
+  background: rgba(210,50,50,0.08);
+  color: #d97070;
+  border: 1px solid rgba(210,50,50,0.22);
+}
+.aod-sc-btn.cancelled.active {
+  box-shadow: 0 6px 20px rgba(210,50,50,0.18);
+  border-color: rgba(210,50,50,0.4);
+}
+
+/* handed_over — green */
+.aod-sc-btn.handed_over {
+  background: rgba(111,207,151,0.07);
+  color: #6fcf97;
+  border: 1px solid rgba(111,207,151,0.22);
+}
+.aod-sc-btn.handed_over.active {
+  box-shadow: 0 6px 20px rgba(111,207,151,0.18);
+  border-color: rgba(111,207,151,0.4);
+}
+
+/* ══════════════════════════════════════════════════
+   HERO BADGE COLOR CLASSES
+══════════════════════════════════════════════════ */
 .aod-s-paid      { background: var(--gold-dim);             color: var(--gold);  border: 1px solid var(--gold-border); }
 .aod-s-pending   { background: var(--gold-dim);             color: var(--gold);  border: 1px solid var(--gold-border); }
 .aod-s-confirmed { background: rgba(91,155,200,0.08);       color: #5b9bc8;      border: 1px solid rgba(91,155,200,0.22); }
@@ -340,7 +384,7 @@
   transition: all var(--t);
   margin-bottom: -1px;
 }
-.aod-tab:hover { color: var(--grey); }
+.aod-tab:hover  { color: var(--grey); }
 .aod-tab.active { color: var(--gold); border-bottom-color: var(--gold); }
 
 /* ══════════════════════════════════════════════════
@@ -351,7 +395,7 @@
   animation: fadeUp 0.4s ease both;
 }
 
-/* ── Field cards grid (Customer + Transaction tabs) ── */
+/* ── Field cards grid ── */
 .aod-fields-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -403,6 +447,8 @@
   color: var(--grey); letter-spacing: 0.04em;
   word-break: break-all;
 }
+
+/* Shared status pill style for both payment & order status in transaction tab */
 .aod-field-val.aod-status-val {
   display: inline-flex;
   align-items: center;
@@ -413,6 +459,7 @@
   letter-spacing: 0.16em; text-transform: uppercase;
   width: fit-content;
 }
+
 .aod-field-price {
   font-family: 'Cormorant Garamond', serif;
   font-size: 1.6rem; font-weight: 600;
@@ -519,7 +566,7 @@
   .aod-img-overlay {
     background: linear-gradient(to bottom, rgba(5,5,5,0) 55%, rgba(18,17,21,0.97) 100%);
   }
-  .aod-fields-grid { grid-template-columns: 1fr; }
+  .aod-fields-grid  { grid-template-columns: 1fr; }
   .aod-vehicle-wrap { grid-template-columns: 1fr; }
 }
 @media (max-width: 768px) {
