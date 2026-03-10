@@ -7,37 +7,38 @@ const api = axios.create({
 });
 
 api.interceptors.response.use(
-  response => response,
-  async error => {
-
+  (response) => response,
+  async (error) => {
     const originalRequest = error.config;
 
-    // 🚫 BLOCKED USER
-    if (error.response?.data?.detail === "Your account has been blocked") {
+    const isRefreshRequest = originalRequest.url?.includes("refresh/");
+    const isLogoutRequest = originalRequest.url?.includes("logout/");
 
+    // blocked user
+    if (error.response?.data?.detail === "Your account has been blocked") {
       toast.error("Access blocked. Please contact admin.");
 
-      try {
-        await api.post("logout/"); // clear cookies
-      } catch {}
+      if (!isLogoutRequest) {
+        try {
+          await api.post("logout/");
+        } catch {}
+      }
 
       return Promise.reject(error);
     }
 
-    const isRefreshRequest = originalRequest.url?.includes("refresh/");
-
     if (
       error.response?.status === 401 &&
       !originalRequest._retry &&
-      !isRefreshRequest
+      !isRefreshRequest &&
+      !isLogoutRequest
     ) {
       originalRequest._retry = true;
 
       try {
         await api.post("refresh/");
         return api(originalRequest);
-      } catch (err) {
-        // refresh failed → logout
+      } catch {
         try {
           await api.post("logout/");
         } catch {}
