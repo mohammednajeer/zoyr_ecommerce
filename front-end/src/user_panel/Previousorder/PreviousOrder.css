@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600;700&family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&display=swap');
 
-/* ─── Tokens (same as auth + profile) ────────────────── */
+/* ─── Tokens ────────────────────────────────────────── */
 :root {
   --po-gold-1:  #c8a96e;
   --po-gold-2:  #e8cc8a;
@@ -14,7 +14,7 @@
   --po-ease:    0.3s cubic-bezier(0.4,0,0.2,1);
 }
 
-/* ─── Loading ─────────────────────────────────────────── */
+/* ─── Loading ───────────────────────────────────────── */
 .po-loading {
   display: flex;
   align-items: center;
@@ -38,7 +38,7 @@
   50%      { transform: translateY(-9px); opacity: 1; }
 }
 
-/* ─── Empty state ─────────────────────────────────────── */
+/* ─── Empty state ───────────────────────────────────── */
 .po-empty {
   display: flex;
   flex-direction: column;
@@ -60,10 +60,7 @@
   margin-bottom: 8px;
 }
 
-.po-empty-icon svg {
-  width: 28px; height: 28px;
-  color: var(--po-muted);
-}
+.po-empty-icon svg { width: 28px; height: 28px; color: var(--po-muted); }
 
 .po-empty-title {
   font-family: 'Cormorant Garamond', serif;
@@ -79,7 +76,7 @@
   letter-spacing: 0.03em;
 }
 
-/* ─── Order list ──────────────────────────────────────── */
+/* ─── Order list ────────────────────────────────────── */
 .po-list {
   display: flex;
   flex-direction: column;
@@ -87,13 +84,14 @@
   width: 100%;
 }
 
-/* ─── Order card ──────────────────────────────────────── */
+/* ─── Order card ────────────────────────────────────── */
 .po-card {
   background: var(--po-dark-2);
   border: 1px solid var(--po-border);
   border-radius: 14px;
   overflow: hidden;
   position: relative;
+  cursor: pointer;
   box-shadow:
     0 0 0 1px rgba(0,0,0,0.4),
     0 12px 40px rgba(0,0,0,0.45);
@@ -102,20 +100,20 @@
 }
 
 .po-card:hover {
-  border-color: rgba(200,169,110,0.25);
+  border-color: rgba(200,169,110,0.28);
   box-shadow:
     0 0 0 1px rgba(0,0,0,0.4),
-    0 20px 55px rgba(0,0,0,0.55),
-    0 0 40px rgba(200,169,110,0.06);
-  transform: translateY(-2px);
+    0 24px 60px rgba(0,0,0,0.55),
+    0 0 50px rgba(200,169,110,0.07);
+  transform: translateY(-3px);
 }
 
 @keyframes poCardIn {
   from { opacity: 0; transform: translateY(20px) scale(0.99); }
-  to   { opacity: 1; transform: translateY(0)    scale(1);    }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
 }
 
-/* Top accent line */
+/* Top accent */
 .po-card-accent {
   position: absolute;
   top: 0; left: 50%;
@@ -129,7 +127,7 @@
 
 .po-card:hover .po-card-accent { opacity: 1; }
 
-/* ─── Card top row ────────────────────────────────────── */
+/* ─── Card top row ──────────────────────────────────── */
 .po-card-top {
   display: flex;
   align-items: center;
@@ -162,7 +160,15 @@
   letter-spacing: 0.04em;
 }
 
-/* Status badge */
+/* Badges row — payment + order status side by side */
+.po-badges-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* Payment status badge */
 .po-status-badge {
   display: inline-flex;
   align-items: center;
@@ -188,7 +194,27 @@
   50%      { opacity: 0.4; transform: scale(0.7); }
 }
 
-/* ─── Card body ───────────────────────────────────────── */
+/* Order/fulfillment status badge */
+.po-order-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  padding: 5px 13px;
+  border-radius: 4px;   /* square-ish to visually differ from the round payment badge */
+  border: 1px solid;
+  flex-shrink: 0;
+}
+
+.po-order-status-icon {
+  font-size: 0.6rem;
+  opacity: 0.8;
+}
+
+/* ─── Card body ─────────────────────────────────────── */
 .po-card-body {
   display: flex;
   gap: 0;
@@ -218,8 +244,7 @@
 }
 
 .po-img-overlay {
-  position: absolute;
-  inset: 0;
+  position: absolute; inset: 0;
   background: linear-gradient(90deg, transparent 60%, var(--po-dark-2) 100%);
   pointer-events: none;
 }
@@ -254,7 +279,6 @@
 .po-specs {
   display: flex;
   align-items: center;
-  gap: 0;
   padding: 10px 0;
   border-top: 1px solid rgba(255,255,255,0.04);
   border-bottom: 1px solid rgba(255,255,255,0.04);
@@ -287,18 +311,23 @@
 }
 
 .po-spec-divider {
-  width: 1px;
-  height: 28px;
+  width: 1px; height: 28px;
   background: rgba(255,255,255,0.06);
   flex-shrink: 0;
 }
 
-/* Price */
+/* Bottom row: price + view detail */
+.po-bottom-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 4px;
+}
+
 .po-price-row {
   display: flex;
   align-items: baseline;
   gap: 10px;
-  margin-top: 4px;
 }
 
 .po-price-label {
@@ -318,22 +347,33 @@
   line-height: 1;
 }
 
-/* ─── Responsive ──────────────────────────────────────── */
+.po-view-detail {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--po-muted);
+  transition: color var(--po-ease), letter-spacing var(--po-ease);
+}
+
+.po-card:hover .po-view-detail {
+  color: var(--po-gold-1);
+  letter-spacing: 0.24em;
+}
+
+/* ─── Responsive ────────────────────────────────────── */
 @media (max-width: 600px) {
   .po-card-body { flex-direction: column; }
 
-  .po-img-wrap {
-    width: 100%;
-    height: 180px;
-  }
-
+  .po-img-wrap { width: 100%; height: 180px; }
   .po-img-overlay {
     background: linear-gradient(to bottom, transparent 60%, var(--po-dark-2) 100%);
   }
 
-  .po-details { padding: 18px 20px; }
-
+  .po-details  { padding: 18px 20px; }
   .po-card-top { padding: 14px 18px; }
+  .po-spec     { padding: 0 10px; }
 
-  .po-spec { padding: 0 10px; }
+  .po-bottom-row { flex-direction: column; align-items: flex-start; gap: 6px; }
 }

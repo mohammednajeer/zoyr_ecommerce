@@ -24,6 +24,7 @@ import VerifyOTP from './Authentication/verifyOTP/verify-otp.jsx'
 import ProductDetails from './product section/ProductDetails.jsx'
 import AdminProductDetail from './Admin_Panel/Pages/Vehicle_listing/Adminproductdetail.jsx'
 import AdminOrderDetail from './Admin_Panel/Pages/Orders/Adminorderdetail.jsx'
+import UserOrderDetail from './user_panel/Previousorder/Userorderdetail.jsx'
 
 function App() {
   return (
@@ -44,6 +45,9 @@ function App() {
           <Route path="/verify-otp"     element={<VerifyOTP />} />
           <Route path="/product-details/:id" element={<ProductDetails />} />
 
+          {/* ↓ User order detail page */}
+          <Route path="/order-detail/:id" element={<UserOrderDetail />} />
+
           {/* Admin routes */}
           <Route path="/dashboard"      element={<AdminProtected><DashBoard /></AdminProtected>} />
           <Route path="/ordersList"     element={<AdminProtected><OrdersList /></AdminProtected>} />
@@ -52,12 +56,8 @@ function App() {
           <Route path="/vehicleUpdate"  element={<AdminProtected><VehicleAddEdit /></AdminProtected>} />
           <Route path="/vehicleUpdate/:id" element={<AdminProtected><VehicleAddEdit /></AdminProtected>} />
           <Route path="/userprofile"    element={<AdminProtected><UserProfile /></AdminProtected>} />
-
-          {/* ↓ NEW — vehicle detail page */}
           <Route path="/vehicleDetail/:id" element={<AdminProtected><AdminProductDetail /></AdminProtected>} />
-
-          {/* ↓ NEW — order detail page */}
-          <Route path="/orderDetail/:id" element={<AdminProtected><AdminOrderDetail /></AdminProtected>} />
+          <Route path="/orderDetail/:id"   element={<AdminProtected><AdminOrderDetail /></AdminProtected>} />
         </Routes>
         <ToastContainer position="bottom-right" autoClose={1000} />
       </BrowserRouter>
