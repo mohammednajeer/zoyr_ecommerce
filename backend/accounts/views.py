@@ -239,7 +239,8 @@ class AdminUsersListView(APIView):
                 "id": u.id,
                 "username": u.username,
                 "email": u.email,
-                "status": getattr(u, "status", "active")
+                "status": getattr(u, "status", "active"),
+                "is_verified": u.is_verified,
             }
             for u in users
         ]
@@ -280,7 +281,8 @@ class AdminUserDetailView(APIView):
                 "id": user.id,
                 "username": user.username,
                 "email": user.email,
-                "status": getattr(user, "status", "active")
+                "status": getattr(user, "status", "active"),
+                "is_verified": user.is_verified, 
             },
             "orders": order_data
         })

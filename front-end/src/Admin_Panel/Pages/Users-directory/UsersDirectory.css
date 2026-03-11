@@ -346,3 +346,27 @@ body { background: var(--bg); }
   .usr { flex-wrap: wrap; }
   .usr-mng { width: 100%; justify-content: flex-end; }
 }
+
+/* ── Verified badge ── */
+.usr-verified-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 11px;
+  border-radius: 20px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.52rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+.usr-verified-pill.verified {
+  background: rgba(91,155,200,0.08);
+  color: #5b9bc8;
+  border: 1px solid rgba(91,155,200,0.22);
+}
+.usr-verified-pill.unverified {
+  background: rgba(200,169,110,0.08);
+  color: var(--gold);
+  border: 1px solid var(--gold-border);
+}
