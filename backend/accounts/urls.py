@@ -4,7 +4,8 @@ from .views import (
     AdminUsersListView,
     AdminUserDetailView,
     AdminDeleteUserView,
-    AdminToggleUserStatusView
+    AdminToggleUserStatusView,
+    ResendOTPView,
 )
 
 
@@ -19,4 +20,5 @@ urlpatterns = [
     path("admin/users/<int:pk>/", AdminUserDetailView.as_view()),
     path("admin/users/<int:pk>/toggle-status/", AdminToggleUserStatusView.as_view()),
     path("admin/users/<int:pk>/delete/", AdminDeleteUserView.as_view()),
+    path("resend-otp/", ResendOTPView.as_view()),
 ]

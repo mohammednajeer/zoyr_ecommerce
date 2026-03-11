@@ -7,6 +7,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import authenticate
 from .utils import generate_otp
 from django.core.mail import send_mail
+from django.conf import settings
 from .models import EmailOTP,User
 from rest_framework.exceptions import AuthenticationFailed
 class RegisterView(APIView):
@@ -31,7 +32,7 @@ class RegisterView(APIView):
             send_mail(
                 subject="verify your account",
                 message=f"Your OTP is {otp}",
-                from_email="dummyem118@gmail.com",
+                from_email=settings.EMAIL_HOST_USER,
                 recipient_list=[user.email],
                 fail_silently=True
 
@@ -73,7 +74,7 @@ class Loginview(APIView):
             send_mail(
                 subject="verify your account",
                 message=f"Your OTP is {otp}",
-                from_email="dummyem118@gmail.com",
+                from_email=settings.EMAIL_HOST_USER,
                 recipient_list=[user.email],
                 fail_silently=False
 
@@ -313,3 +314,35 @@ class AdminToggleUserStatusView(APIView):
         user.save()
 
         return Response({"status": new_status})
+    
+
+
+class ResendOTPView(APIView):
+
+    def post(self, request):
+
+        email = request.data.get("email")
+
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            return Response({"error": "User not found"}, status=404)
+
+        EmailOTP.objects.filter(user=user).delete()
+
+        otp = generate_otp()
+
+        EmailOTP.objects.create(
+            user=user,
+            otp=otp
+        )
+
+        send_mail(
+            subject="Verify your account",
+            message=f"Your OTP is {otp}",
+            from_email=settings.EMAIL_HOST_USER,
+            recipient_list=[user.email],
+            fail_silently=False
+        )
+
+        return Response({"message": "OTP resent successfully"})
