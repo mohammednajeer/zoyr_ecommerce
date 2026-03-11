@@ -26,19 +26,22 @@ export default function OrderPlaced() {
   const [sp]               = useSearchParams();
 
   useEffect(() => {
-  // Push a duplicate entry so there's something to "replace" when back fires
-      window.history.pushState(null, '', window.location.href)
-
-      const handlePop = () => {
-        // Every time back is pressed from this page, go home instead
-        nav('/', { replace: true })
-      }
-
-      window.addEventListener('popstate', handlePop)
-      return () => window.removeEventListener('popstate', handlePop)
-    }, [nav])
-
+    // Wipe the Stripe session_id from the URL immediately
+    window.history.replaceState(null, '', '/orderplaced')
     
+    // Push a dummy entry — this is what gets consumed when back is pressed
+    window.history.pushState(null, '', '/orderplaced')
+
+    const handlePop = () => {
+      // Use window.location, NOT nav() — nav is unreliable inside popstate
+      window.location.replace('/')
+    }
+
+    window.addEventListener('popstate', handlePop)
+    return () => window.removeEventListener('popstate', handlePop)
+  }, []) 
+
+
   useEffect(() => {
     (async () => {
       const sid = sp.get('session_id');

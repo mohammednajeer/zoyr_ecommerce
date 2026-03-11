@@ -89,23 +89,30 @@ function Order() {
   const nav = useNavigate();
 
   useEffect(() => {
-    async function fetchData() {
-      try {
-        const [resRes, ordersRes] = await Promise.all([
-          api.get("products/my-reservations/"),
-          api.get("products/my-orders/"),
-        ]);
-        setCartProducts(resRes.data.map(r => r.product));
-        if (ordersRes.data?.length > 0) {
-          const last = ordersRes.data[ordersRes.data.length - 1];
-          if (last.address || last.city) { setPrevOrder(last); setShowSuggest(true); }
-        }
-      } catch (err) {
-        if (err.response?.status === 401) nav("/login");
+  async function fetchData() {
+    try {
+      const [resRes, ordersRes] = await Promise.all([
+        api.get("products/my-reservations/"),
+        api.get("products/my-orders/"),
+      ]);
+
+      // ← ADD THIS: if no reservation, they shouldn't be here
+      if (resRes.data.length === 0) {
+        window.location.replace("/");
+        return;
       }
+
+      setCartProducts(resRes.data.map(r => r.product));
+      if (ordersRes.data?.length > 0) {
+        const last = ordersRes.data[ordersRes.data.length - 1];
+        if (last.address || last.city) { setPrevOrder(last); setShowSuggest(true); }
+      }
+    } catch (err) {
+      if (err.response?.status === 401) nav("/login");
     }
-    fetchData();
-  }, []);
+  }
+  fetchData();
+}, []);
 
   function applyPrevAddress() {
     setFields(f => ({
