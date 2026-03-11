@@ -156,7 +156,7 @@ function Order() {
         pincode:       fields.pincode,
         delivery_date: fields.deliveryDate,
       });
-      window.location.href = paymentRes.data.checkout_url;
+      window.location.replace(paymentRes.data.checkout_url)
     } catch {
       toast.error("Checkout failed");
       setLoading(false);

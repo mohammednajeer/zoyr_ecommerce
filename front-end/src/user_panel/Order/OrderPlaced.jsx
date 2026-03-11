@@ -26,6 +26,20 @@ export default function OrderPlaced() {
   const [sp]               = useSearchParams();
 
   useEffect(() => {
+  // Push a duplicate entry so there's something to "replace" when back fires
+      window.history.pushState(null, '', window.location.href)
+
+      const handlePop = () => {
+        // Every time back is pressed from this page, go home instead
+        nav('/', { replace: true })
+      }
+
+      window.addEventListener('popstate', handlePop)
+      return () => window.removeEventListener('popstate', handlePop)
+    }, [nav])
+
+    
+  useEffect(() => {
     (async () => {
       const sid = sp.get('session_id');
       try {

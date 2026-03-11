@@ -16,6 +16,16 @@ function VerifyOTP() {
   const email = location.state?.email
   const username = location.state?.username
 
+  useEffect(() => {
+    async function checkLogin() {
+      try {
+        const res = await api.get("profile/")
+        nav(res.data.role === "admin" ? "/dashboard" : "/", { replace: true })
+      } catch {}
+    }
+    checkLogin()
+  }, [])
+
   /* Countdown timer for resend */
   useEffect(() => {
     if (countdown <= 0) return

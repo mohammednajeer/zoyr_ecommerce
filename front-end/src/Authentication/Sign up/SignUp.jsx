@@ -23,6 +23,17 @@ function SignUp() {
     const trimmedEmail = email.trim()
     const trimmedPassword = password.trim()
 
+    useEffect(() => {
+      async function checkLogin() {
+        try {
+          const res = await api.get("profile/")
+          nav(res.data.role === "admin" ? "/dashboard" : "/", { replace: true })
+        } catch {}
+      }
+      checkLogin()
+    }, [])
+
+    
     if (trimmedUser === "") {
       newError.name = "Username is required"
     } else if (!/^[a-zA-Z0-9@.+-_]+$/.test(trimmedUser)) {
