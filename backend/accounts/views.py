@@ -33,7 +33,7 @@ class RegisterView(APIView):
                 message=f"Your OTP is {otp}",
                 from_email="dummyem118@gmail.com",
                 recipient_list=[user.email],
-                fail_silently=False
+                fail_silently=True
 
             )
 

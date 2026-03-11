@@ -53,8 +53,8 @@ class CreateCheckoutSession(APIView):
             },
 
 
-            success_url="http://localhost:5173/orderplaced?session_id={CHECKOUT_SESSION_ID}",
-            cancel_url="http://localhost:5173/cart",
+            success_url="https://zoyrcars.vercel.app/orderplaced?session_id={CHECKOUT_SESSION_ID}",
+            cancel_url="https://zoyrcars.vercel.app/cart",
         )
 
         return Response({"checkout_url": session.url})

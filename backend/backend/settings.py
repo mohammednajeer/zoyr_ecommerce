@@ -135,7 +135,7 @@ SIMPLE_JWT = {
 }
 
 CORS_ALLOW_CREDENTIALS = True
-
+CORS_ALLOW_ALL_HEADERS = True
 
 # Internationalization
 # https://docs.djangoproject.com/en/6.0/topics/i18n/
