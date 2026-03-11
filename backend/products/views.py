@@ -383,6 +383,8 @@ class AdminOrdersView(ListAPIView):
 
 from rest_framework.generics import RetrieveUpdateAPIView
 
+from rest_framework.generics import RetrieveUpdateAPIView
+
 class AdminOrderDetailView(RetrieveUpdateAPIView):
     permission_classes = [IsAdminUser]
     serializer_class   = OrderSerializer
@@ -390,6 +392,22 @@ class AdminOrderDetailView(RetrieveUpdateAPIView):
 
     def patch(self, request, *args, **kwargs):
         kwargs["partial"] = True
+
+        order = self.get_object()
+
+        # Block any change once an order is already cancelled
+        if order.order_status == "cancelled":
+            return Response(
+                {"error": "Cancelled orders cannot be modified."},
+                status=400
+            )
+
+        new_status = request.data.get("order_status")
+
+        # When cancelling — restore the vehicle to available
+        if new_status == "cancelled":
+            product = order.product
+            product.availability = "available"
+            product.save()
+
         return self.update(request, *args, **kwargs)
-    
-    
