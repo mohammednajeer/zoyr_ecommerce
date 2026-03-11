@@ -79,8 +79,8 @@ function UsersDirectory() {
                 <span className="status-dot" />
                 {user.status}
               </span>
-              <span className={`usr-verified-pill ${user.is_verified ? 'verified' : 'unverified'}`}>
-                {user.is_verified ? '✓ Verified' : '✗ Unverified'}
+              <span className={`usr-verified-pill ${user.is_verified === true || user.is_verified === "True" ? 'verified' : 'unverified'}`}>
+                {user.is_verified === true || user.is_verified === "True" ? '✓ Verified' : '✗ Unverified'}
               </span>
               {/* Actions */}
               <div className="usr-mng">

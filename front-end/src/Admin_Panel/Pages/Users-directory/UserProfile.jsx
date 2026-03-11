@@ -91,8 +91,8 @@ function UserProfile() {
               </div>
               <div className="up-meta-row">
                 <span className="up-meta-key">Email</span>
-                <span className={`up-verified-pill ${user?.is_verified ? 'verified' : 'unverified'}`}>
-                  {user?.is_verified ? '✓ Verified' : '✗ Unverified'}
+                <span className={`up-verified-pill ${user?.is_verified === true || user?.is_verified === "True" ? 'verified' : 'unverified'}`}>
+                  {user?.is_verified === true || user?.is_verified === "True" ? '✓ Verified' : '✗ Unverified'}
                 </span>
               </div>
             </div>
