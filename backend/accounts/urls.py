@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import RegisterView,profileView,Loginview,LogoutView,RefreshTokenView,VerifyOTPView
+from .views import RegisterView,profileView,Loginview,LogoutView,RefreshTokenView
 from .views import (
     AdminUsersListView,
     AdminUserDetailView,
