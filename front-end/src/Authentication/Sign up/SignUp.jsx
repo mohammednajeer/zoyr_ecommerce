@@ -64,7 +64,8 @@ function SignUp() {
         password: trimmedPassword
       })
       const username = res.data.username || trimmedUser
-      nav("/verify-otp", { state: { email: trimmedEmail, username } })
+      toast.dark("Account Created successfully")
+      nav("/login", { state: { email: trimmedEmail, username } })
     } catch (err) {
       if (!err.response) {
         toast.error("Network error — please check your connection")

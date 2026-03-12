@@ -14,7 +14,7 @@ urlpatterns = [
     path("profile/",profileView.as_view()),
     path("logout/", LogoutView.as_view()),
     path("refresh/",RefreshTokenView.as_view()),
-    path("verify-otp/",VerifyOTPView.as_view()),
+    
     path("admin/users/", AdminUsersListView.as_view()),
     path("admin/users/<int:pk>/", AdminUserDetailView.as_view()),
     path("admin/users/<int:pk>/toggle-status/", AdminToggleUserStatusView.as_view()),

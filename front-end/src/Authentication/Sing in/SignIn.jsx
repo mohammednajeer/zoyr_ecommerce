@@ -50,11 +50,7 @@ function SignIn() {
         toast.error("Network error — please check your connection")
         return
       }
-      if (err.response?.data?.error === "Email not verified") {
-        toast.warning("Please verify your email first")
-        nav("/verify-otp", { state: { email: err.response.data.email, username: err.response.data.username } })
-        return
-      }
+      
       if (err.response?.status === 403) {
         toast.error(err.response.data?.error || "Access denied")
         return

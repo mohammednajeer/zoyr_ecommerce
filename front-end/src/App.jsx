@@ -20,7 +20,7 @@ import VehicleAddEdit from './Admin_Panel/Pages/Vehicle_listing/VehicleAddEdit.j
 import Wishlist from './user_panel/wishlist/Wishlist.jsx'
 import UserProfile from './Admin_Panel/Pages/Users-directory/UserProfile.jsx'
 import Profile from './user_panel/profile/Profile.jsx'
-import VerifyOTP from './Authentication/verifyOTP/verify-otp.jsx'
+
 import ProductDetails from './product section/ProductDetails.jsx'
 import AdminProductDetail from './Admin_Panel/Pages/Vehicle_listing/Adminproductdetail.jsx'
 import AdminOrderDetail from './Admin_Panel/Pages/Orders/Adminorderdetail.jsx'
@@ -42,7 +42,7 @@ function App() {
           <Route path="/sidebar"        element={<SideBar />} />
           <Route path="/wishlist"       element={<Wishlist />} />
           <Route path="/profile"        element={<Profile />} />
-          <Route path="/verify-otp"     element={<VerifyOTP />} />
+
           <Route path="/product-details/:id" element={<ProductDetails />} />
 
           {/* ↓ User order detail page */}
