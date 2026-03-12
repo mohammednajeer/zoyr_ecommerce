@@ -2,7 +2,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 
 const api = axios.create({
-  baseURL: "https://zoyr-ecommerce.onrender.com/api/",
+  baseURL: "http://127.0.0.1:8000//api/",
   withCredentials: true,
   timeout: 15000,   // 15 s — prevents requests hanging forever
 });
