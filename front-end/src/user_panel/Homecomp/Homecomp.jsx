@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from 'react';
-import picture1   from '../../assets/black-porsche-911-in-motion-b2-3200x2000.jpg';
+import React, { useEffect, useState, useRef } from 'react';
 import './Home.css';
 import NavBar      from '../../component/NavBar.jsx';
 import { useNavigate }  from 'react-router-dom';
@@ -30,6 +29,10 @@ const STATS = [
 
 function Home() {
   const [data,   setData]   = useState([]);
+  const [slides, setSlides] = useState([]);
+  const [slideIndex, setSlideIndex] = useState(0);
+  const isAnimatingRef = useRef(false);
+  const timerRef = useRef(null);
 
   const [loaded, setLoaded] = useState(
     () => sessionStorage.getItem('zoyr_loaded') === 'true'
@@ -49,6 +52,38 @@ function Home() {
        .then(res => setData(res.data))
        .catch(err => console.error(err));
   }, []);
+
+  useEffect(() => {
+    api.get('products/?limit=5&ordering=-year')
+       .then(res => {
+         const list = Array.isArray(res.data) ? res.data : res.data.results ?? [];
+         setSlides(list);
+       })
+       .catch(err => console.error(err));
+  }, []);
+
+  useEffect(() => {
+    if (slides.length < 2) return;
+    clearInterval(timerRef.current);
+    timerRef.current = setInterval(() => {
+      goToNext();
+    }, 3500);
+    return () => clearInterval(timerRef.current);
+  }, [slides.length, slideIndex]);
+
+  function goTo(i) {
+    if (isAnimatingRef.current || i === slideIndex) return;
+    isAnimatingRef.current = true;
+    setSlideIndex(i);
+    setTimeout(() => { isAnimatingRef.current = false; }, 800);
+  }
+
+  function goToNext() {
+    if (isAnimatingRef.current) return;
+    isAnimatingRef.current = true;
+    setSlideIndex(prev => (prev + 1) % slides.length);
+    setTimeout(() => { isAnimatingRef.current = false; }, 800);
+  }
 
   function handleLoaderDone() {
     sessionStorage.setItem('zoyr_loaded', 'true');
@@ -76,94 +111,53 @@ function Home() {
       {/* ══ NAV ══ */}
       <NavBar color={true} />
 
-      {/* ══ HERO ══ */}
-      <section className="hero">
-        <div className="hero-bg" style={{ backgroundImage: `url(${picture1})` }} />
-        <div className="hero-overlay" />
-        <div className="hero-scan" />
-        <div className="hero-grain" />
-        <div className="hero-grid" />
-        <div className="hero-arch" />
-        <div className="hero-arch-2" />
-
-        <div className="bracket bracket-tl" />
-        <div className="bracket bracket-br" />
-        <div className="bracket bracket-tr" />
-
-        <div className="hero-content">
-          <div className="hero-left">
-            <div className="hero-eyebrow">
-              <div className="hero-eyebrow-line" />
-              <span>Premium Pre-Owned Collection</span>
+      {/* ══ HERO SLIDESHOW (Mansory Style) ══ */}
+      <section className="hero-slideshow">
+        {slides.map((car, i) => {
+          const isActive = i === slideIndex;
+          const imgSrc = car.image?.url || car.image;
+          return (
+            <div key={car.id} className={`hero-slide ${isActive ? 'active' : ''}`}>
+              <div className="hero-slide-bg" style={{ backgroundImage: `url(${imgSrc})` }} />
             </div>
-
-            <div className="hero-headline">
-              <div className="hl-row"><span className="hl-word">WHERE</span></div>
-              <div className="hl-row"><span className="hl-word gold">LUXURY</span></div>
-              <div className="hl-row"><span className="hl-word">MEETS INSANITY</span></div>
-            </div>
-
-            <p className="hero-sub">
-              Step into the world of premium pre-owned vehicles. Every car in our
-              collection is meticulously selected for performance, style, and pure
-              driving pleasure.
-            </p>
-
-            <div className="hero-btns">
-              <button className="btn-primary" onClick={() => nav('/product')}>
-                Explore Collection
-              </button>
-              <button
-                className="btn-ghost"
-                onClick={() => document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' })}
-              >
-                Our Story
-              </button>
-            </div>
+          );
+        })}
+        
+        {slides.length === 0 && (
+          <div className="hero-slide active">
+            <div className="hero-slide-bg skeleton" />
           </div>
+        )}
 
-          <div className="hero-panel">
-            <div className="panel-header">
-              <span className="panel-title">Collection Highlights</span>
-              <div className="live-badge">
-                <div className="live-dot" />
-                Live
-              </div>
-            </div>
+        {/* Mansory-style dark gradient overlay on the bottom/left */}
+        <div className="hero-slide-overlay" />
 
-            {STATS.map((s) => (
-              <div className="stat-item" key={s.label}>
-                <div className="stat-meta">
-                  <span className="stat-label">{s.label}</span>
-                  <span className="stat-desc">{s.sublabel}</span>
-                </div>
-                <div className="stat-right-block">
-                  <div className="stat-num">{s.value}</div>
-                  <div className="stat-bar">
-                    <div className="stat-bar-fill" style={{ width: s.barWidth }} />
-                  </div>
-                </div>
-              </div>
-            ))}
-
-            <button className="panel-cta" onClick={() => nav('/product')}>
-              <div className="panel-cta-text">
-                <span className="panel-cta-label">View All Vehicles</span>
-                <span className="panel-cta-sub">Browse full inventory</span>
-              </div>
-              <div className="panel-arrow">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M5 12h14M12 5l7 7-7 7" />
-                </svg>
-              </div>
+        {/* Main Text Content */}
+        {slides.length > 0 && (
+          <div className="hero-slide-content">
+            <h1 className="hero-slide-title">
+              <span className="brand">{slides[slideIndex].brand}</span>
+              <span className="model">{slides[slideIndex].model}</span>
+            </h1>
+            <button className="btn-primary" onClick={() => handleAdd(slides[slideIndex].id)}>
+              Discover Now
             </button>
           </div>
-        </div>
+        )}
 
-        <div className="hero-scroll">
-          <div className="hero-scroll-line" />
-          <span className="hero-scroll-label">Scroll</span>
-        </div>
+        {/* Slide Indicators (Mansory long dashes) */}
+        {slides.length > 1 && (
+          <div className="hero-dots">
+            {slides.map((_, i) => (
+              <button
+                key={i}
+                className={`hero-dot ${i === slideIndex ? 'active' : ''}`}
+                onClick={() => goTo(i)}
+                aria-label={`Go to slide ${i + 1}`}
+              />
+            ))}
+          </div>
+        )}
       </section>
 
       {/* ══ MARQUEE ══ */}
