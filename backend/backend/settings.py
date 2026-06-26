@@ -29,9 +29,11 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DEBUG") == "True"
 
-ALLOWED_HOSTS = ["zoyr-ecommerce.onrender.com",
-    "localhost",
-    "127.0.0.1"]
+ALLOWED_HOSTS = [
+    'zoyr-ecommerce.onrender.com',
+    'localhost',
+    '127.0.0.1',
+]
 
 
 # Application definition
@@ -54,8 +56,8 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',  # ← must be FIRST
     'django.middleware.security.SecurityMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -64,8 +66,8 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",
-    "https://zoyrcars.vercel.app",
+    "https://zoyr-ecommerce.vercel.app",
+    "https://zoyr-ecommerce-8u3zl38x8-mohammed-najeers-projects.vercel.app",
 ]
 
 ROOT_URLCONF = 'backend.urls'
