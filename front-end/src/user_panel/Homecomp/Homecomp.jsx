@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from 'react';
-import picture1   from '../../assets/black-porsche-911-in-motion-b2-3200x2000.jpg';
+import React, { useEffect, useState, useRef } from 'react';
 import './Home.css';
 import NavBar      from '../../component/NavBar.jsx';
 import { useNavigate }  from 'react-router-dom';
@@ -28,8 +27,34 @@ const STATS = [
   { label: 'Inspected', sublabel: 'Quality assured', value: '100%', barWidth: '100%' },
 ];
 
+const FAQ_ITEMS = [
+  {
+    q: "Do you offer international shipping?",
+    a: "Yes, we arrange secure, climate-controlled flatbed transport and covered sea freight worldwide. All shipping options include fully insured concierge customs clearance."
+  },
+  {
+    q: "What does the ZOYR 150-point inspection include?",
+    a: "It covers full mechanical diagnostics, chassis integrity checking, paint thickness analysis to detect historical accidents, engine compression tests, and a complete road test by certified technicians."
+  },
+  {
+    q: "Can I trade-in my current exotic vehicle?",
+    a: "Absolutely. We provide premium evaluations for luxury imports, sports cars, and classic vehicles. The trade-in value can be directly applied to your new acquisition."
+  },
+  {
+    q: "Do the vehicles come with a warranty?",
+    a: "Yes, all vehicles purchased through ZOYR include a comprehensive 12-month powertrain and electrical warranty, which can be extended up to 36 months."
+  }
+];
+
 function Home() {
   const [data,   setData]   = useState([]);
+  const [slides, setSlides] = useState([]);
+  const [slideIndex, setSlideIndex] = useState(0);
+  const isAnimatingRef = useRef(false);
+  const timerRef = useRef(null);
+  const [activeCategory, setActiveCategory] = useState('All');
+  const [openFaq, setOpenFaq] = useState(null);
+  const [myReservations, setMyReservations] = useState([]);
 
   const [loaded, setLoaded] = useState(
     () => sessionStorage.getItem('zoyr_loaded') === 'true'
@@ -45,10 +70,75 @@ function Home() {
   }, []);
 
   useEffect(() => {
-    api.get('products/?limit=3&ordering=-year')
-       .then(res => setData(res.data))
+    api.get('products/my-reservations/')
+       .then(res => {
+         const ids = res.data.map(r => r.product.id);
+         setMyReservations(ids);
+       })
+       .catch(() => {});
+  }, []);
+
+  // IntersectionObserver for scroll fading out/in animations
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('reveal-active');
+          } else {
+            entry.target.classList.remove('reveal-active');
+          }
+        });
+      },
+      { threshold: 0.05, rootMargin: '0px 0px -50px 0px' }
+    );
+    const elements = document.querySelectorAll('.scroll-reveal');
+    elements.forEach((el) => observer.observe(el));
+    return () => {
+      elements.forEach((el) => observer.unobserve(el));
+    };
+  }, [data, activeCategory]);
+
+  useEffect(() => {
+    api.get('products/?limit=24&ordering=-year')
+       .then(res => {
+         const list = Array.isArray(res.data) ? res.data : res.data.results ?? [];
+         setData(list);
+       })
        .catch(err => console.error(err));
   }, []);
+
+  useEffect(() => {
+    api.get('products/?limit=5&ordering=-year')
+       .then(res => {
+         const list = Array.isArray(res.data) ? res.data : res.data.results ?? [];
+         setSlides(list);
+       })
+       .catch(err => console.error(err));
+  }, []);
+
+  useEffect(() => {
+    if (slides.length < 2) return;
+    clearInterval(timerRef.current);
+    timerRef.current = setInterval(() => {
+      goToNext();
+    }, 3500);
+    return () => clearInterval(timerRef.current);
+  }, [slides.length, slideIndex]);
+
+  function goTo(i) {
+    if (isAnimatingRef.current || i === slideIndex) return;
+    isAnimatingRef.current = true;
+    setSlideIndex(i);
+    setTimeout(() => { isAnimatingRef.current = false; }, 800);
+  }
+
+  function goToNext() {
+    if (isAnimatingRef.current) return;
+    isAnimatingRef.current = true;
+    setSlideIndex(prev => (prev + 1) % slides.length);
+    setTimeout(() => { isAnimatingRef.current = false; }, 800);
+  }
 
   function handleLoaderDone() {
     sessionStorage.setItem('zoyr_loaded', 'true');
@@ -59,12 +149,17 @@ function Home() {
     try {
       await reserveProduct(id);
       toast.success('Vehicle reserved successfully');
+      setMyReservations(prev => [...prev, id]);
+      setData(prev => prev.map(p => p.id === id ? { ...p, availability: 'reserved' } : p));
     } catch (err) {
       if (err.response?.status === 401) {
         toast.warning('Please login first');
         nav('/login', { state: { from: location.pathname } });
+      } else if (err.response?.data?.error === "You already have an active reservation") {
+        toast.warning("Finish your current reservation first 🚗");
+        nav("/cart");
       } else {
-        toast.error('Failed to reserve vehicle');
+        toast.error(err.response?.data?.error || 'Failed to reserve vehicle');
       }
     }
   }
@@ -76,98 +171,81 @@ function Home() {
       {/* ══ NAV ══ */}
       <NavBar color={true} />
 
-      {/* ══ HERO ══ */}
-      <section className="hero">
-        <div className="hero-bg" style={{ backgroundImage: `url(${picture1})` }} />
-        <div className="hero-overlay" />
-        <div className="hero-scan" />
-        <div className="hero-grain" />
-        <div className="hero-grid" />
-        <div className="hero-arch" />
-        <div className="hero-arch-2" />
+      {/* ══ HERO SLIDESHOW (Mansory Style) ══ */}
+      <section className="hero-slideshow">
+        {slides.map((car, i) => {
+          const isActive = i === slideIndex;
+          const imgSrc = car.image?.url || car.image;
+          return (
+            <div key={car.id} className={`hero-slide ${isActive ? 'active' : ''}`}>
+              <div className="hero-slide-bg" style={{ backgroundImage: `url(${imgSrc})` }} />
+            </div>
+          );
+        })}
+        
+        {slides.length === 0 && (
+          <div className="hero-slide active">
+            <div className="hero-slide-bg skeleton" />
+          </div>
+        )}
 
-        <div className="bracket bracket-tl" />
-        <div className="bracket bracket-br" />
-        <div className="bracket bracket-tr" />
+        {/* Mansory-style dark gradient overlay on the bottom/left */}
+        <div className="hero-slide-overlay" />
 
-        <div className="hero-content">
-          <div className="hero-left">
-            <div className="hero-eyebrow">
-              <div className="hero-eyebrow-line" />
-              <span>Premium Pre-Owned Collection</span>
+        {/* Main Text Content */}
+        {slides.length > 0 && (
+          <div className="hero-slide-content">
+            <div className="hero-slide-badge">Featured Masterpiece</div>
+            <h1 className="hero-slide-title">
+              <span className="brand">{slides[slideIndex].brand}</span>
+              <span className="model">{slides[slideIndex].model}</span>
+            </h1>
+            
+            {/* Real world luxury specs details in slideshow */}
+            <div className="hero-slide-specs">
+              <div className="hero-spec-box">
+                <span className="spec-label">Year</span>
+                <span className="spec-value">{slides[slideIndex].year}</span>
+              </div>
+              <div className="hero-spec-box">
+                <span className="spec-label">Fuel</span>
+                <span className="spec-value">{slides[slideIndex].fuel || 'Petrol'}</span>
+              </div>
+              <div className="hero-spec-box">
+                <span className="spec-label">Milage</span>
+                <span className="spec-value">{slides[slideIndex].kmCover?.toLocaleString() || '0'} KM</span>
+              </div>
+              <div className="hero-spec-box price">
+                <span className="spec-label">Acquisition Price</span>
+                <span className="spec-value">${Number(slides[slideIndex].price).toLocaleString()}</span>
+              </div>
             </div>
 
-            <div className="hero-headline">
-              <div className="hl-row"><span className="hl-word">WHERE</span></div>
-              <div className="hl-row"><span className="hl-word gold">LUXURY</span></div>
-              <div className="hl-row"><span className="hl-word">MEETS INSANITY</span></div>
-            </div>
-
-            <p className="hero-sub">
-              Step into the world of premium pre-owned vehicles. Every car in our
-              collection is meticulously selected for performance, style, and pure
-              driving pleasure.
-            </p>
-
-            <div className="hero-btns">
+            <div className="hero-slide-actions">
               <button className="btn-primary" onClick={() => nav('/product')}>
-                Explore Collection
+                View Inventory
               </button>
+            </div>
+          </div>
+        )}
+
+        {/* Slide Indicators (Mansory long dashes) */}
+        {slides.length > 1 && (
+          <div className="hero-dots">
+            {slides.map((_, i) => (
               <button
-                className="btn-ghost"
-                onClick={() => document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' })}
-              >
-                Our Story
-              </button>
-            </div>
-          </div>
-
-          <div className="hero-panel">
-            <div className="panel-header">
-              <span className="panel-title">Collection Highlights</span>
-              <div className="live-badge">
-                <div className="live-dot" />
-                Live
-              </div>
-            </div>
-
-            {STATS.map((s) => (
-              <div className="stat-item" key={s.label}>
-                <div className="stat-meta">
-                  <span className="stat-label">{s.label}</span>
-                  <span className="stat-desc">{s.sublabel}</span>
-                </div>
-                <div className="stat-right-block">
-                  <div className="stat-num">{s.value}</div>
-                  <div className="stat-bar">
-                    <div className="stat-bar-fill" style={{ width: s.barWidth }} />
-                  </div>
-                </div>
-              </div>
+                key={i}
+                className={`hero-dot ${i === slideIndex ? 'active' : ''}`}
+                onClick={() => goTo(i)}
+                aria-label={`Go to slide ${i + 1}`}
+              />
             ))}
-
-            <button className="panel-cta" onClick={() => nav('/product')}>
-              <div className="panel-cta-text">
-                <span className="panel-cta-label">View All Vehicles</span>
-                <span className="panel-cta-sub">Browse full inventory</span>
-              </div>
-              <div className="panel-arrow">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M5 12h14M12 5l7 7-7 7" />
-                </svg>
-              </div>
-            </button>
           </div>
-        </div>
-
-        <div className="hero-scroll">
-          <div className="hero-scroll-line" />
-          <span className="hero-scroll-label">Scroll</span>
-        </div>
+        )}
       </section>
 
       {/* ══ MARQUEE ══ */}
-      <div className="marquee-strip">
+      <div className="marquee-strip scroll-reveal">
         <div className="marquee-track">
           {MARQUEE_ITEMS.map((item, i) => (
             <span key={i} className={item === '✦' ? 'marquee-dot' : ''}>{item}</span>
@@ -176,7 +254,7 @@ function Home() {
       </div>
 
       {/* ══ PRODUCTS ══ */}
-      <section className="products" id="collection">
+      <section className="products scroll-reveal" id="collection">
         <div className="orb orb-a" />
         <div className="orb orb-b" />
         <div className="section-grid" />
@@ -205,51 +283,112 @@ function Home() {
           <div className="section-line" />
         </div>
 
+        {/* Dynamic Category Filters Strip */}
+        <div className="category-filter-strip">
+          {['All', 'SUV', 'Sedan', 'Sports'].map(category => (
+            <button
+              key={category}
+              className={`category-filter-btn ${activeCategory === category ? 'active' : ''}`}
+              onClick={() => setActiveCategory(category)}
+            >
+              {category}
+            </button>
+          ))}
+        </div>
+
         {/* ── CARDS — prd-cards style ── */}
         <div className="carsections">
-          {data.map((dt) => (
-            <div key={dt.id} className="prd-cards">
-              {/* Animated corner accents */}
-              <div className="prd-corner prd-corner-tl" />
-              <div className="prd-corner prd-corner-br" />
+          {(() => {
+            const filteredVehicles = data.filter(car => {
+              if (activeCategory === 'All') return true;
+              const modelLower = car.model?.toLowerCase() || '';
+              const brandLower = car.brand?.toLowerCase() || '';
+              if (activeCategory === 'SUV') {
+                return modelLower.includes('x5') || modelLower.includes('sport') || modelLower.includes('velar') || modelLower.includes('cayenne') || modelLower.includes('lx');
+              }
+              if (activeCategory === 'Sedan') {
+                return modelLower.includes('series') || modelLower.includes('class') || modelLower.includes('530') || modelLower.includes('730') || modelLower.includes('a6') || modelLower.includes('xjl') || modelLower.includes('flying');
+              }
+              if (activeCategory === 'Sports') {
+                return brandLower.includes('lamborghini') || brandLower.includes('porsche') || modelLower.includes('m3') || modelLower.includes('m5') || modelLower.includes('mustang') || modelLower.includes('cooper');
+              }
+              return true;
+            });
 
-              <div className="prdimg-div">
-                <img className="prdimg" src={dt.image?.url || dt.image} alt={dt.model} />
-                {/* Shimmer sweep on hover */}
-                <div className="prd-img-shimmer" />
-                <div className="prd-year-tag">{dt.year}</div>
-              </div>
+            const displayedVehicles = filteredVehicles.slice(0, 3);
 
-              <div className="prdcard-details">
-                <div className="btn--secion">
-                  <span className="prd-btn">${Number(dt.price).toLocaleString()}</span>
-                  <h5>{dt.brand}</h5>
+            if (displayedVehicles.length === 0) {
+              return (
+                <div className="no-filtered-results">
+                  No premium vehicles matching the "{activeCategory}" category are currently in stock.
                 </div>
-                <div className="car-model-text">
-                  <span>{dt.model}</span>
+              );
+            }
+
+            return displayedVehicles.map((dt) => (
+              <div key={dt.id} className="home-prd-card scroll-reveal" onClick={() => nav(`/product-details/${dt.id}`)}>
+                {/* Animated corner accents */}
+                <div className="home-prd-corner home-prd-corner-tl" />
+                <div className="home-prd-corner home-prd-corner-br" />
+
+                <div className="home-prdimg-div">
+                  <img className="home-prdimg" src={dt.image?.url || dt.image} alt={dt.model} />
+                  {/* Shimmer sweep on hover */}
+                  <div className="home-prd-img-shimmer" />
+                  <div className="home-prd-year-tag">{dt.year}</div>
                 </div>
-                <div className="car-details">
-                  <div className="dt-cntr">
-                    <div className="detail-sections">
-                      <div><p>REG.</p><p>YEAR</p></div>
-                      <h6>{dt.year}</h6>
-                    </div>
-                    <div className="detail-sections">
-                      <div><p>FUEL</p><p>TYPE</p></div>
-                      <h6>{dt.fuel}</h6>
-                    </div>
-                    <div className="detail-sections">
-                      <div><p>KMS</p><p>COVER</p></div>
-                      <h6>{dt.kmCover}</h6>
-                    </div>
+
+                <div className="home-prdcard-details">
+                  <div className="btn--secion">
+                    <span className="home-prd-btn">${Number(dt.price).toLocaleString()}</span>
+                    <h5>{dt.brand}</h5>
                   </div>
-                  <button className="AddBtn1" onClick={() => handleAdd(dt.id)}>
-                    Reserve
-                  </button>
+                  <div className="car-model-text">
+                    <span>{dt.model}</span>
+                  </div>
+                  <div className="car-details">
+                    <div className="dt-cntr">
+                      <div className="detail-sections">
+                        <div><p>REG.</p><p>YEAR</p></div>
+                        <h6>{dt.year}</h6>
+                      </div>
+                      <div className="detail-sections">
+                        <div><p>FUEL</p><p>TYPE</p></div>
+                        <h6>{dt.fuel}</h6>
+                      </div>
+                      <div className="detail-sections">
+                        <div><p>KMS</p><p>COVER</p></div>
+                        <h6>{dt.kmCover?.toLocaleString()}</h6>
+                      </div>
+                    </div>
+                    {myReservations.includes(dt.id) ? (
+                      <button className="home-add-btn" disabled onClick={e => e.stopPropagation()}>
+                        Reserved By You
+                      </button>
+                    ) : dt.availability === "sold" ? (
+                      <button className="home-add-btn" disabled onClick={e => e.stopPropagation()}>
+                        Sold
+                      </button>
+                    ) : dt.availability === "reserved" ? (
+                      <button className="home-add-btn" disabled onClick={e => e.stopPropagation()}>
+                        Reserved
+                      </button>
+                    ) : (
+                      <button
+                        className="home-add-btn"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleAdd(dt.id);
+                        }}
+                      >
+                        Reserve
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ));
+          })()}
         </div>
 
         <div className="products-footer">
@@ -265,7 +404,7 @@ function Home() {
       </section>
 
       {/* ══ ABOUT ══ */}
-      <section className="about-section" id="about">
+      <section className="about-section scroll-reveal" id="about">
         <div className="about-orb" />
         <div className="section-grid" />
 
@@ -357,6 +496,96 @@ function Home() {
               <span className="about-tag">Full Inspection</span>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* ══ ADVANTAGES / WHY CHOOSE US ══ */}
+      <section className="advantages-section scroll-reveal">
+        <div className="advantages-container">
+          <h2 className="section-title text-center">The ZOYR Distinction</h2>
+          <p className="advantages-subtitle text-center">We redefine the premium automotive buying journey through bespoke service and absolute transparency.</p>
+          
+          <div className="advantages-grid">
+            <div className="advantage-card">
+              <div className="adv-icon">🛡️</div>
+              <h4>Rigorous Certification</h4>
+              <p>Every vehicle is subjected to an exhaustive 150-point diagnostic inspection and full historical background verification.</p>
+            </div>
+            <div className="advantage-card">
+              <div className="adv-icon">💳</div>
+              <h4>Tailored Financial Solutions</h4>
+              <p>Custom flexible financing and concierge trade-in evaluations designed around your personal capital structure.</p>
+            </div>
+            <div className="advantage-card">
+              <div className="adv-icon">🚚</div>
+              <h4>White-Glove Delivery</h4>
+              <p>Seamless flatbed transport directly to your private residence, detailing completed upon arrival.</p>
+            </div>
+            <div className="advantage-card">
+              <div className="adv-icon">⚙️</div>
+              <h4>Bespoke Aftercare</h4>
+              <p>Direct priority booking for certified maintenance, customized upgrades, and comprehensive warranty programs.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ══ CLIENT TESTIMONIALS ══ */}
+      <section className="testimonials-section scroll-reveal">
+        <div className="section-header">
+          <div className="section-line" />
+          <div className="section-title-wrap">
+            <span className="section-eyebrow">Endorsements</span>
+            <h2 className="section-title">Discerning Voices</h2>
+          </div>
+          <div className="section-line" />
+        </div>
+
+        <div className="testimonials-grid">
+          <div className="testimonial-card">
+            <span className="quote-mark">“</span>
+            <p className="testimonial-text">Purchasing my Porsche Panamera through ZOYR was an absolute masterclass in client services. Transparent, prompt, and the vehicle was delivered in showroom condition.</p>
+            <div className="testimonial-author">
+              <div className="author-details">
+                <h5>Stefano Rossi</h5>
+                <span>Milan, Italy (Verified Buyer)</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="testimonial-card">
+            <span className="quote-mark">“</span>
+            <p className="testimonial-text">The level of professional inspection they provide gave me complete confidence in acquiring a collectible Aston Martin unseen. Truly outstanding team.</p>
+            <div className="testimonial-author">
+              <div className="author-details">
+                <h5>Charlotte Vance</h5>
+                <span>Zurich, Switzerland (Verified Buyer)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ══ FAQ SECTION ══ */}
+      <section className="faq-section scroll-reveal">
+        <h2 className="section-title text-center">Frequently Asked Questions</h2>
+        <p className="faq-subtitle text-center">Everything you need to know about our luxury acquisition process.</p>
+        
+        <div className="faq-accordion">
+          {FAQ_ITEMS.map((item, index) => {
+            const isOpen = openFaq === index;
+            return (
+              <div key={index} className={`faq-item ${isOpen ? 'open' : ''}`} onClick={() => setOpenFaq(isOpen ? null : index)}>
+                <div className="faq-question">
+                  <span>{item.q}</span>
+                  <span className="faq-toggle">{isOpen ? '−' : '+'}</span>
+                </div>
+                <div className="faq-answer">
+                  <p>{item.a}</p>
+                </div>
+              </div>
+            );
+          })}
         </div>
       </section>
 

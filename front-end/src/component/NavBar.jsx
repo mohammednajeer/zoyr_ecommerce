@@ -87,29 +87,50 @@ const handleLogout = async () => {
     if (inp === "cnt") contactSection.scrollIntoView({ behavior: "smooth" });
   };
 
+  const [isOpen, setIsOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 40) {
+        setScrolled(true);
+      } else {
+        setScrolled(false);
+      }
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   return (
-    <div className='navbar'>
-      <div className='leftside'>
+    <div className={`navbar ${scrolled ? 'scrolled' : ''} ${isOpen ? 'menu-open' : ''}`}>
+      {/* 3-Dot Mobile Toggle Button */}
+      <button className="mobile-menu-toggle" onClick={() => setIsOpen(!isOpen)} aria-label="Toggle Menu">
+        <span className="dot"></span>
+        <span className="dot"></span>
+        <span className="dot"></span>
+      </button>
+
+      <div className={`leftside ${isOpen ? 'open' : ''}`}>
         <ul>
-          <li onClick={() => nav("/product")}>Cars</li>
-          <li onClick={() => scrollToAbout("abt")}>About</li>
-          <li onClick={() => scrollToAbout("cnt")}>Contact</li>
+          <li onClick={() => { nav("/product"); setIsOpen(false); }}>Cars</li>
+          <li onClick={() => { scrollToAbout("abt"); setIsOpen(false); }}>About</li>
+          <li onClick={() => { scrollToAbout("cnt"); setIsOpen(false); }}>Contact</li>
         </ul>
       </div>
 
-      <div onClick={() => nav("/")} className='logocont'>
+      <div onClick={() => { nav("/"); setIsOpen(false); }} className='logocont'>
         <img src={props.color ? logowhite : logowhite} alt="Logo" />
       </div>
 
-      <div className='rightside'>
+      <div className={`rightside ${isOpen ? 'open' : ''}`}>
         <ul>
           <li>
-            <img className='navimgs' onClick={() => nav('/wishlist')} src={heart} alt="" />
+            <img className='navimgs' onClick={() => { nav('/wishlist'); setIsOpen(false); }} src={heart} alt="" />
           </li>
           <li>
             <div className='cartdiv'>
-              <img className='navimgs' style={{height:"26px", width:"26px",}} onClick={() => nav("/cart")} src={car1} alt="" />
-              
+              <img className='navimgs' style={{height:"26px", width:"26px",}} onClick={() => { nav("/cart"); setIsOpen(false); }} src={car1} alt="" />
             </div>
           </li>
           <li>
@@ -117,11 +138,30 @@ const handleLogout = async () => {
               <select className="user-select" onChange={handleUserOption} defaultValue="username">
                 <option value="username" disabled>{loggedUser.username}</option>
                 <option value="profile">Profile</option>
-                {/* <option value="orders">Previous Orders</option> */}
                 <option value="logout">Logout</option>
               </select>
             ) : (
-              <span onClick={() => nav("/login")}>Login/Signup</span>
+              <span onClick={() => { nav("/login"); setIsOpen(false); }}>Login/Signup</span>
+            )}
+          </li>
+        </ul>
+      </div>
+
+      {/* Mobile Drawer Overlay */}
+      <div className={`mobile-menu-drawer ${isOpen ? 'open' : ''}`}>
+        <ul className="mobile-nav-links">
+          <li onClick={() => { nav("/product"); setIsOpen(false); }}>Cars</li>
+          <li onClick={() => { scrollToAbout("abt"); setIsOpen(false); }}>About</li>
+          <li onClick={() => { scrollToAbout("cnt"); setIsOpen(false); }}>Contact</li>
+          <li onClick={() => { nav('/wishlist'); setIsOpen(false); }}>Wishlist</li>
+          <li onClick={() => { nav('/cart'); setIsOpen(false); }}>Cart</li>
+          <li>
+            {loggedUser ? (
+              <span onClick={() => { handleLogout(); setIsOpen(false); }} style={{color: "var(--peach, #eaa787)"}}>
+                Logout ({loggedUser.username})
+              </span>
+            ) : (
+              <span onClick={() => { nav("/login"); setIsOpen(false); }}>Login/Signup</span>
             )}
           </li>
         </ul>
