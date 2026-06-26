@@ -68,6 +68,7 @@ MIDDLEWARE = [
 CORS_ALLOWED_ORIGINS = [
     "https://zoyr-ecommerce.vercel.app",
     "https://zoyr-ecommerce-8u3zl38x8-mohammed-najeers-projects.vercel.app",
+    "https://zoyrcars.vercel.app",
 ]
 
 ROOT_URLCONF = 'backend.urls'
@@ -190,10 +191,4 @@ SESSION_COOKIE_SECURE = True
 
 CSRF_COOKIE_SAMESITE = "None"
 CSRF_COOKIE_SECURE = True
-
- 
- 
-CORS_ALLOW_HEADERS = [
-    "content-type",
-    "authorization",
-]
+
