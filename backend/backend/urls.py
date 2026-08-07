@@ -15,17 +15,24 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path,include
+from django.urls import path, include
+from django.http import JsonResponse
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
 )
 
+def health_check(request):
+    return JsonResponse({"status": "healthy", "message": "Server is active"})
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path("api/" ,include("accounts.urls")),
+    path('api/health/', health_check, name='health_check'),
+    path('health/', health_check, name='health_check_root'),
+    path("api/", include("accounts.urls")),
     path("api/products/", include("products.urls")),
     path("api/payments/", include("payments.urls")),
 ]
+
 
